@@ -27,11 +27,17 @@ export default class GameScene extends Phaser.Scene {
     this.isReloading = false;
     this.lastFireTime = 0;
     this.ammoText = this.add.text(10,50,'Ammo:'+this.ammo+'/'+this.weaponConfig.ammoCapacity,{font:'16px Arial',fill:'#fff'}).setScrollFactor(0);
+    this.uiElements.push(this.ammoText);
     this.reloadText = this.add.text(10,70,'',{font:'16px Arial',fill:'#ff0'}).setScrollFactor(0);
+    this.uiElements.push(this.reloadText);
     // 적 설정
     this.enemyConfigs = enemies;
     this.bossSpawned = false;
     this.specialCooldown = 0;
+    // mortar aiming indicator
+    this.mortarReady = false;
+    this.mortarAimPos = null;
+    this.mortarIndicator = null;
     // Managers 초기화
     this.scenarioManager = new ScenarioManager(this);
     this.spawnManager = new SpawnManager(this);
@@ -75,21 +81,31 @@ export default class GameScene extends Phaser.Scene {
     this.dashDuration = 200;
     this.dashEndTime = 0;
     this.dashText = this.add.text(10,90,'Dash Ready',{font:'16px Arial',fill:'#0f0'}).setScrollFactor(0);
+    this.uiElements.push(this.dashText);
     // chain gun spin-up and firing timers
     this.chainSpinTimer = null;
     this.chainFireTimer = null;
     // mortar prep flag and aim position
-    this.mortarReady = false;
-    this.mortarAimPos = null;
+    // mortarReady, mortarAimPos, mortarIndicator
     // SMG auto-fire flag and timing
     this.smgAuto = false;
     this.lastSmgTime = 0;
     // 무기 로직 객체 생성
     this.currentWeapon = WeaponFactory.create(this, this.weaponType);
-    // 탄환 궤적용 파티클 매니저
-    this.trailParticles = this.add.particles('bullet_missile');
     // staff charging circle
     this.chargingCircle = null;
+    // configure UI camera: main camera ignores UI, UI camera ignores world
+    this.uiElements.forEach(el => {
+      el.setScrollFactor(0);
+      this.cameras.main.ignore(el);
+    });
+    const { width, height } = this.scale;
+    const uiCam = this.cameras.add(0, 0, width, height);
+    uiCam.setZoom(1);
+    // UI camera ignores non-UI objects
+    this.children.list.forEach(child => {
+      if (!this.uiElements.includes(child)) uiCam.ignore(child);
+    });
   }
 
   update(time, delta) {
@@ -151,25 +167,38 @@ export default class GameScene extends Phaser.Scene {
     }
     // 발사체 검토: 범위 및 미사일 호밍 (최대 100ms 단위)
     this.bullets.getChildren().forEach(b => {
-      if (b.spawnX !== undefined && Phaser.Math.Distance.Between(b.spawnX, b.spawnY, b.x, b.y) > this.bulletRange) {
-        if (b.trailEmitter) { b.trailEmitter.stop(); b.trailEmitter.remove(); }
+      if(b.spawnX !== undefined && Phaser.Math.Distance.Between(b.spawnX, b.spawnY, b.x, b.y) > this.bulletRange) {
+        // no emitter; nothing to destroy
         b.destroy(); return;
       }
-      if (b.getData('type') === 'missile') {
+      if (b.getData('type') === 'missile' && b.target) {
         if (!b._lastHoming || time > b._lastHoming + 100) {
           b._lastHoming = time;
-          if (enemiesArr.length > 0) {
-            let nearest = enemiesArr[0];
-            enemiesArr.forEach(e => {
-              if (Phaser.Math.Distance.Between(e.x, e.y, b.x, b.y) < Phaser.Math.Distance.Between(nearest.x, nearest.y, b.x, b.y)) {
-                nearest = e;
-              }
-            });
-            const desired = Phaser.Math.Angle.Between(b.x, b.y, nearest.x, nearest.y);
+          if (b.target.active) {
+            const desired = Phaser.Math.Angle.Between(b.x, b.y, b.target.x, b.target.y);
             const newAngle = Phaser.Math.Angle.RotateTo(b.rotation, desired, 0.02);
             b.rotation = newAngle;
             this.physics.velocityFromRotation(newAngle, this.weaponConfig.bulletSpeed * b.damage, b.body.velocity);
           }
+        }
+      }
+      // special trails for missile/rocket
+      if (['missile','rocket'].includes(b.getData('type'))) {
+        const intervalSpec = 40;
+        if (time > b.lastTrail + intervalSpec) {
+          const color = b.getData('type')==='rocket' ? 0xffa500 : 0x999999;
+          const trail = this.add.circle(b.x, b.y, 8, color, 0.4).setDepth(0);
+          this.tweens.add({ targets: trail, alpha: 0, scale: { from:1, to:0 }, duration: 300, onComplete: () => trail.destroy() });
+          b.lastTrail = time;
+        }
+      }
+      // universal bullet trail for other bullets
+      else if (b.active) {
+        const intervalAll = 30;
+        if (time > b.lastTrail + intervalAll) {
+          const trail = this.add.circle(b.x, b.y, 2, 0xffffff, 0.3).setDepth(0);
+          this.tweens.add({ targets: trail, alpha: 0, scale: { from:1, to:0 }, duration: 200, onComplete: () => trail.destroy() });
+          b.lastTrail = time;
         }
       }
     });
@@ -209,10 +238,14 @@ export default class GameScene extends Phaser.Scene {
 
   // UI 초기화
   initUI() {
+    this.uiElements = [];
     this.timeElapsed = 0; this.maxHealth = 5; this.health = this.maxHealth; this.healthRegenRate = 0.05; this.gameOver = false;
     this.timerText = this.add.text(10,10,'Time:0',{font:'16px Arial',fill:'#fff'}).setScrollFactor(0);
+    this.uiElements.push(this.timerText);
     this.healthText = this.add.text(10,30,'HP:'+Math.floor(this.health),{font:'16px Arial',fill:'#fff'}).setScrollFactor(0);
+    this.uiElements.push(this.healthText);
     this.phaseText = this.add.text(600,10,'Phase:Combat',{font:'16px Arial',fill:'#fff'}).setScrollFactor(0);
+    this.uiElements.push(this.phaseText);
   }
 
   // 입력 이벤트
@@ -222,6 +255,7 @@ export default class GameScene extends Phaser.Scene {
     this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.isAiming = false;
     this.isScoped = false;
+    this.isChainAimed = false;
     this.input.on('pointerdown', p => {
       // SMG handling: right enables auto, left triggers burst
       if (this.weaponType === 'smg') {
@@ -229,10 +263,12 @@ export default class GameScene extends Phaser.Scene {
         if (p.leftButtonDown()) this.smgBurst(p);
         return;
       }
-      // mortar: right-click prep at world pos
+      // mortar: right-click prep at world pos with indicator
       if (p.rightButtonDown() && this.weaponType === 'mortar') {
         this.mortarReady = true;
         this.mortarAimPos = { x: p.worldX, y: p.worldY };
+        if (this.mortarIndicator) this.mortarIndicator.destroy();
+        this.mortarIndicator = this.add.circle(p.worldX, p.worldY, this.weaponConfig.explosionRadius||80, 0xff0000, 0.3);
         return;
       }
       // staff/magic/railgun/grenade charging
@@ -254,11 +290,12 @@ export default class GameScene extends Phaser.Scene {
         });
         return;
       }
-      // mortar fire when prepared
+      // mortar fire when prepared, clear indicator
       else if (p.leftButtonDown() && this.weaponType === 'mortar' && this.mortarReady) {
         this.shoot('mortar', p, 1);
         this.mortarReady = false;
         this.mortarAimPos = null;
+        if (this.mortarIndicator) { this.mortarIndicator.destroy(); this.mortarIndicator = null; }
         return;
       }
       // left-click fire for other weapons
@@ -267,19 +304,24 @@ export default class GameScene extends Phaser.Scene {
       }
       // right-click specials
       else if (p.rightButtonDown()) {
-        switch (this.weaponType) {
-          case 'pistol':
-            for (let i = 0; i < 3; i++) this.time.delayedCall(i * 100, () => this.fireRegular(p, 1));
-            return;
-          case 'rifle':
-            this.isScoped = !this.isScoped;
-            this.cameras.main.setZoom(this.isScoped ? 1.2 : 1);
-            return;
-          case 'sniper':
-            this.isScoped = !this.isScoped;
-            this.cameras.main.setZoom(this.isScoped ? 2 : 1);
-            return;
+        if (this.weaponType === 'pistol') {
+          for (let i = 0; i < 3; i++) this.time.delayedCall(i * 100, () => this.fireRegular(p, 1));
+          return;
         }
+        // rifle/sniper special zoom handled in pointer events
+      }
+      // sniper scope
+      if (p.rightButtonDown() && this.weaponType === 'sniper') {
+        this.isScoped = true;
+        this.cameras.main.setZoom(0.5);
+      }
+      // rifle/smg: zoom in on right-button hold
+      if (p.rightButtonDown() && ['smg','rifle'].includes(this.weaponType)) {
+        this.cameras.main.setZoom(1.2);
+      }
+      // chain gun enter aim on right-down
+      if (p.rightButtonDown() && this.weaponType==='chain_gun') {
+        this.isChainAimed = true;
       }
     });
     this.input.on('pointerup', p => {
@@ -289,13 +331,50 @@ export default class GameScene extends Phaser.Scene {
         const charge = Math.min((this.time.now - this.chargeStartTime)/(this.weaponConfig.chargeTime||1000),1);
         this.shoot(this.weaponType, p, charge);
         this.isAiming = false;
-        if (this.isScoped) { this.isScoped=false; this.cameras.main.setZoom(1); }
       }
       // clear chain gun timers on release
       if (this.weaponType === 'chain_gun') {
         if (this.chainSpinTimer) { this.chainSpinTimer.remove(); this.chainSpinTimer = null; }
         if (this.chainFireTimer) { this.chainFireTimer.remove(); this.chainFireTimer = null; }
       }
+      // chain gun exit aim on right-release
+      if (p.rightButtonReleased() && this.weaponType==='chain_gun') {
+        this.isChainAimed = false;
+      }
+      // sniper unscope
+      if (p.rightButtonReleased() && this.weaponType==='sniper') {
+        this.isScoped = false;
+        this.cameras.main.setZoom(1);
+      }
+      // rifle/smg reset zoom
+      if (p.rightButtonReleased() && ['smg','rifle'].includes(this.weaponType)) this.cameras.main.setZoom(1);
+      // mortar cancel prep
+      if (p.rightButtonReleased() && this.weaponType==='mortar' && this.mortarReady) {
+        this.mortarReady = false;
+        this.mortarAimPos = null;
+        if (this.mortarIndicator) { this.mortarIndicator.destroy(); this.mortarIndicator = null; }
+      }
+    });
+    // sniper: zoom out on right-button hold, reset on release
+    this.input.on('pointerdown', p => {
+      if (p.rightButtonDown() && this.weaponType === 'sniper') {
+        this.cameras.main.setZoom(0.5);
+      }
+      // rifle/smg: zoom in on right-button hold
+      if (p.rightButtonDown() && ['smg','rifle'].includes(this.weaponType)) {
+        this.cameras.main.setZoom(1.2);
+      }
+      // chain gun enter aim on right-down
+      if (p.rightButtonDown() && this.weaponType==='chain_gun') {
+        this.isChainAimed = true;
+      }
+    });
+    this.input.on('pointerup', p => {
+      if (p.rightButtonReleased() && ['sniper','smg','rifle'].includes(this.weaponType)) {
+        this.cameras.main.setZoom(1);
+      }
+      // chain gun exit aim
+      if (p.rightButtonReleased() && this.weaponType==='chain_gun') this.isChainAimed = false;
     });
   }
 
@@ -324,7 +403,11 @@ export default class GameScene extends Phaser.Scene {
     // mortar prep: disable movement
     if (this.mortarReady) { this.player.setVelocity(0); return; }
     // 달리기 속도
-    const baseSpeed = 200;
+    let baseSpeed = 200;
+    // chain gun aiming halves speed
+    if (this.isChainAimed) {
+      baseSpeed = baseSpeed / 2;
+    }
     // 충전 기능 무기: 이동속도 50%
     const chargingWeapons = ['staff','bow','railgun','magic_staff','grenade'];
     let speed = (this.isAiming && chargingWeapons.includes(this.weaponType)) ? baseSpeed/2 : baseSpeed;
@@ -340,7 +423,7 @@ export default class GameScene extends Phaser.Scene {
 
   // 적 이동/회피 및 관리
   handleEnemies(delta, enemiesArr, bulletsArr) {
-    // 적 순환: bulletsArr 참조로 nested loops 방지?
+    const time = this.time.now;
     enemiesArr.forEach(e => {
       if(e.dodge){
         let nearest = null, min = Infinity;
@@ -354,7 +437,29 @@ export default class GameScene extends Phaser.Scene {
           return;
         }
       }
-      this.physics.moveToObject(e,this.player,e.speed);
+      // movement based on pattern
+      switch(e.pattern) {
+        case 'zigzag': {
+          // zigzag toward player
+          const baseAng = Phaser.Math.Angle.Between(e.x,e.y,this.player.x,this.player.y);
+          const offset = Math.sin(time/200) * (Math.PI/8);
+          const ang = baseAng + offset;
+          this.physics.velocityFromRotation(ang, e.speed, e.body.velocity);
+          break;
+        }
+        case 'circle': {
+          // orbit around player
+          e.orbitAngle += delta/1000; // rotation speed
+          const dist = 200;
+          const tx = this.player.x + Math.cos(e.orbitAngle) * dist;
+          const ty = this.player.y + Math.sin(e.orbitAngle) * dist;
+          this.physics.moveTo(e, tx, ty, e.speed);
+          break;
+        }
+        default:
+          // direct
+          this.physics.moveToObject(e, this.player, e.speed);
+      }
       // 객체지향: HP 추적
       if(e.hp<=0){ e.destroy(); }
       else if(e.isBoss) {
@@ -388,7 +493,8 @@ export default class GameScene extends Phaser.Scene {
         : baseAngle;
       // chain gun has lower accuracy spread
       if (this.weaponType==='chain_gun') {
-        angle += Phaser.Math.FloatBetween(-0.2, 0.2);
+        const spread = this.isChainAimed ? 0.1 : 0.2;
+        angle += Phaser.Math.FloatBetween(-spread, spread);
       }
       // sniper accuracy: better when scoped
       if (this.weaponType === 'sniper') {
@@ -402,17 +508,23 @@ export default class GameScene extends Phaser.Scene {
       // 발사체 타입 및 스폰 위치 저장
       b.setData('type', this.weaponType);
       b.spawnX = this.player.x; b.spawnY = this.player.y;
-      // 로켓/미사일 궤적 파티클
-      if (['missile','rocket'].includes(this.weaponType)) {
-        b.trailEmitter = this.trailParticles.createEmitter({
-          speed: 0,
-          scale: { start: 0.3, end: 0 },
-          alpha: { start: 0.5, end: 0 },
-          lifespan: 300,
-          frequency: 50,
-          follow: b
-        });
+      // initialize universal trail timer
+      b.lastTrail = this.time.now;
+      // lock missile to nearest enemy when fired
+      if (this.weaponType === 'missile') {
+        const enemiesArr = this.enemies.getChildren();
+        if (enemiesArr.length > 0) {
+          let nearest = enemiesArr[0];
+          let minDist = Phaser.Math.Distance.Between(nearest.x, nearest.y, b.x, b.y);
+          enemiesArr.forEach(e => {
+            const d = Phaser.Math.Distance.Between(e.x, e.y, b.x, b.y);
+            if (d < minDist) { minDist = d; nearest = e; }
+          });
+          b.target = nearest;
+        }
       }
+      // set bullet size per weapon config
+      if (this.weaponConfig.bulletSize) b.setDisplaySize(this.weaponConfig.bulletSize, this.weaponConfig.bulletSize);
     }
     this.ammo--; this.ammoText.setText('Ammo:'+this.ammo+'/'+this.weaponConfig.ammoCapacity);
   }
@@ -474,6 +586,7 @@ export default class GameScene extends Phaser.Scene {
       key: 'special', x: x, y: y,
       speed: { min: -200, max: 200 },
       scale: { start: 0.5, end: 0 },
+      alpha: { start: 0.5, end: 0 },
       lifespan: 500,
       quantity: 50
     });
@@ -500,6 +613,12 @@ export default class GameScene extends Phaser.Scene {
     e.hp = cfg.hp; e.totalHp = cfg.hp;
     e.isBoss = false;
     e.dodge = cfg.dodge || false;
+    // assign movement pattern
+    const patterns = ['direct','zigzag','circle'];
+    e.pattern = Phaser.Math.RND.pick(patterns);
+    if (e.pattern === 'zigzag') e.zigzagPhase = 0;
+    if (e.pattern === 'circle') e.orbitAngle = Phaser.Math.FloatBetween(0, Math.PI*2);
+    return e;
   }
 
   // 탄환과 적의 충돌 처리
