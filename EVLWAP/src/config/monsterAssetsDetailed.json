@@ -1,0 +1,27 @@
+{
+  "Bat": {
+    "frameSize": 32,
+    "rows": 4,
+    "height": 128,
+    "actions": {
+      "idle": { "file": "asset/characters/monsters/Bat_idle.png", "width": /* e.g. 192 */ , "columns": /* frames per row */ },
+      "attack": { "file": "asset/characters/monsters/Bat_attack.png", "width": /* */ , "columns": /* */ },
+      "die": { "file": "asset/characters/monsters/Bat_die.png", "width": /* */ , "columns": /* */ },
+      "fly": { "file": "asset/characters/monsters/Bat_fly.png", "width": /* */ , "columns": /* */ },
+      "hit": { "file": "asset/characters/monsters/Bat_hit.png", "width": /* */ , "columns": /* */ }
+    }
+  },
+  "Goblin": {
+    "frameSize": 32,
+    "rows": 4,
+    "height": 128,
+    "actions": {
+      "idle": { "file": "asset/characters/monsters/Goblin_idle.png", "width": /* */ , "columns": /* */ },
+      "walk": { "file": "asset/characters/monsters/Goblin_walk.png", "width": /* */ , "columns": /* */ },
+      "attack": { "file": "asset/characters/monsters/Goblin_attack.png", "width": /* */ , "columns": /* */ },
+      "hit": { "file": "asset/characters/monsters/Goblin_hit.png", "width": /* */ , "columns": /* */ },
+      "die": { "file": "asset/characters/monsters/Goblin_die.png", "width": /* */ , "columns": /* */ }
+    }
+  }
+  // ... repeat for each enemy type
+}

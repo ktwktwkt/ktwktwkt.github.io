@@ -1,0 +1,406 @@
+{
+  "AdultRedDragon": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "AncientBlackDragon": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "AnubisWarrior": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Bat": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "Beholder": [
+    "attack (green)",
+    "attack (purple)",
+    "attack (yellow)",
+    "die",
+    "hit",
+    "idle",
+    "move"
+  ],
+  "BheurHag": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Blemmyae": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "BlueWyrmling": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Bulette": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Cyclops": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "DeathKnight": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Demon": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "DisplacerBeast": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Djinn": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Dryad": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Efreet": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "ElderSnail": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Elf": [
+    "idle (16x24)",
+    "walk (16x24)"
+  ],
+  "FaerieDragon": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "FiddleDog": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "FrostGiant": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "FrostSalamander": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Goblin": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Gog": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Griffin": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "Hellhound": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "IceGolem": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Imp": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Kappa": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Lich": [
+    "attack",
+    "charging",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Lizardfolk": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "ManticoreBishop": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Medusa": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Mummy": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "NPC 03": [
+    "idle (16x24)",
+    "walk (16x24)"
+  ],
+  "NPC 06": [
+    "idle (16x24)",
+    "walk (16x24)"
+  ],
+  "NPC 12": [
+    "idle (16x24)",
+    "walk (16x24)"
+  ],
+  "Ogre": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Oni": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "move"
+  ],
+  "Orc": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Owlbear": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Paladin": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Peasant": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Pixie": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "Planetar": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "PurpleWorm": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "move"
+  ],
+  "RabbitSoldier": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Redcap": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Ronin": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Samurai": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Satyr": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "SerpentFly": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "Skeleton": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Slime": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "move"
+  ],
+  "Tengu": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ],
+  "Vampire": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "Wizard": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "WolfRider": [
+    "attack",
+    "die",
+    "hit",
+    "idle",
+    "walk"
+  ],
+  "YoungGreenDragon": [
+    "attack",
+    "die",
+    "fly",
+    "hit",
+    "idle"
+  ]
+}

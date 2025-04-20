@@ -1,0 +1,40 @@
+AdultRedDragon_attack.png: 1344x768
+AdultRedDragon_attack_hitbox.png: 1120x768
+AdultRedDragon_attack_NOhitbox.png: 1344x768
+AdultRedDragon_die.png: 64x256
+AdultRedDragon_fly.png: 384x256
+AdultRedDragon_hit.png: 128x256
+AdultRedDragon_idle.png: 256x256
+AncientBlackDragon_attack.png: 1728x1152
+AncientBlackDragon_attack_hitbox.png: 1440x1152
+AncientBlackDragon_attack_NOhitbox.png: 1728x1152
+AncientBlackDragon_die.png: 96x384
+AncientBlackDragon_fly.png: 512x384
+AncientBlackDragon_hit.png: 192x384
+AncientBlackDragon_idle.png: 384x384
+AnubisWarrior_attack.png: 480x448
+AnubisWarrior_attack_hitbox.png: 384x448
+AnubisWarrior_attack_NOhitbox.png: 480x448
+AnubisWarrior_die.png: 32x192
+AnubisWarrior_hit.png: 64x192
+AnubisWarrior_idle.png: 128x192
+AnubisWarrior_walk.png: 128x192
+Bat_attack.png: 480x384
+Bat_attack_hitbox.png: 384x384
+Bat_attack_NOhitbox.png: 480x384
+Bat_die.png: 32x128
+Bat_fly.png: 128x128
+Bat_hit.png: 64x128
+Bat_idle.png: 128x128
+Beholder_attack (green).png: 640x512
+Beholder_attack (purple).png: 640x512
+Beholder_attack (yellow).png: 640x512
+Beholder_attack_hitbox (green).png: 512x512
+Beholder_attack_hitbox (purple).png: 512x512
+Beholder_attack_hitbox (yellow).png: 512x512
+Beholder_attack_NOhitbox.png: 640x512
+Beholder_die.png: 64x256
+Beholder_hit.png: 128x256
+Beholder_idle.png: 256x256
+Beholder_move.png: 256x256
+... (remaining entries)
