@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from './phaser';
 import BootScene from '../scenes/BootScene.js';
 import PreloadScene from '../scenes/PreloadScene.js';
 import MenuScene from '../scenes/MenuScene.js';
