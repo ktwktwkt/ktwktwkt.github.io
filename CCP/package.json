@@ -1,0 +1,19 @@
+{
+  "name": "phaser-topdown-arpg",
+  "version": "1.0.0",
+  "description": "Top-down ARPG shooter game built with Phaser 3",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "phaser": "^3.70.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

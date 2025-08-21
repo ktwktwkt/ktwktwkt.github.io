@@ -1,0 +1,151 @@
+export const WeaponType = {
+    PISTOL: 'pistol',
+    SMG: 'smg',
+    SHOTGUN: 'shotgun',
+    RIFLE: 'rifle',
+    SNIPER: 'sniper',
+    MACHINEGUN: 'machinegun',
+    CHAINGUN: 'chaingun',
+    RAILGUN: 'railgun',
+    GRENADE: 'grenade',
+    MORTAR: 'mortar',
+    BOW: 'bow',
+    CROSSBOW: 'crossbow',
+    ROCKET: 'rocket',
+    STAFF: 'staff',
+    WAND: 'wand'
+};
+
+export const FiringMode = {
+    SINGLE: 'single',
+    AUTO: 'auto',
+    BURST: 'burst',
+    CHARGE: 'charge',
+    CHARGE_RELEASE: 'charge_release',
+    OVERCHARGE: 'overcharge'
+};
+
+export const WeaponStats = {
+    [WeaponType.PISTOL]: {
+        name: '권총',
+        damage: 20,
+        fireRate: 300,
+        magazineSize: 12,
+        reloadTime: 1500,
+        bulletSpeed: 800,
+        spread: 2,
+        range: 500,
+        firingMode: FiringMode.SINGLE,
+        bulletCount: 1,
+        penetration: 0
+    },
+    [WeaponType.SMG]: {
+        name: 'SMG',
+        damage: 12,
+        fireRate: 100,
+        magazineSize: 30,
+        reloadTime: 2000,
+        bulletSpeed: 700,
+        spread: 5,
+        range: 400,
+        firingMode: FiringMode.AUTO,
+        bulletCount: 1,
+        penetration: 0
+    },
+    [WeaponType.SHOTGUN]: {
+        name: '샷건',
+        damage: 8,
+        fireRate: 800,
+        magazineSize: 6,
+        reloadTime: 2500,
+        bulletSpeed: 600,
+        spread: 15,
+        range: 250,
+        firingMode: FiringMode.SINGLE,
+        bulletCount: 8,
+        penetration: 0
+    },
+    [WeaponType.RIFLE]: {
+        name: '소총',
+        damage: 30,
+        fireRate: 200,
+        magazineSize: 20,
+        reloadTime: 2200,
+        bulletSpeed: 900,
+        spread: 1,
+        range: 700,
+        firingMode: FiringMode.AUTO,
+        bulletCount: 1,
+        penetration: 1
+    },
+    [WeaponType.SNIPER]: {
+        name: '저격총',
+        damage: 80,
+        fireRate: 1500,
+        magazineSize: 5,
+        reloadTime: 3000,
+        bulletSpeed: 1200,
+        spread: 0,
+        range: 1000,
+        firingMode: FiringMode.SINGLE,
+        bulletCount: 1,
+        penetration: 3
+    },
+    [WeaponType.MACHINEGUN]: {
+        name: '기관총',
+        damage: 25,
+        fireRate: 80,
+        magazineSize: 100,
+        reloadTime: 4000,
+        bulletSpeed: 850,
+        spread: 8,
+        range: 600,
+        firingMode: FiringMode.AUTO,
+        bulletCount: 1,
+        penetration: 1
+    },
+    [WeaponType.RAILGUN]: {
+        name: '레일건',
+        damage: 100,
+        fireRate: 2000,
+        magazineSize: 10,
+        reloadTime: 3500,
+        bulletSpeed: 2000,
+        spread: 0,
+        range: 1500,
+        firingMode: FiringMode.CHARGE_RELEASE,
+        bulletCount: 1,
+        penetration: 5,
+        chargeTime: 1000,
+        overchargeTime: 2000
+    },
+    [WeaponType.STAFF]: {
+        name: '스태프',
+        damage: 40,
+        fireRate: 1000,
+        magazineSize: 20,
+        reloadTime: 0,
+        bulletSpeed: 500,
+        spread: 3,
+        range: 600,
+        firingMode: FiringMode.CHARGE,
+        bulletCount: 1,
+        penetration: 0,
+        chargeTime: 500,
+        manaRegen: true
+    },
+    [WeaponType.WAND]: {
+        name: '마법봉',
+        damage: 15,
+        fireRate: 150,
+        magazineSize: 50,
+        reloadTime: 0,
+        bulletSpeed: 600,
+        spread: 4,
+        range: 500,
+        firingMode: FiringMode.AUTO,
+        bulletCount: 1,
+        penetration: 0,
+        manaRegen: true
+    }
+};
