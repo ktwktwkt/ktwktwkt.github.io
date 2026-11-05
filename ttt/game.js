@@ -170,6 +170,8 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 		return class ForgeScene extends Phaser.Scene {
 			objectMap = new Map();
 			actors = [];
+			staticBodyActors = new Map();
+			knownStaticBodies = new WeakSet();
 			hooks = {};
 			ctx;
 			keys;
@@ -266,6 +268,8 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				this.updateUiFrame = undefined;
 				this.effects = undefined;
 				this.actors = [];
+				this.staticBodyActors.clear();
+				this.knownStaticBodies = new WeakSet();
 				this.interaction = undefined;
 				this.motionPaths = undefined;
 				this.connections = undefined;
@@ -424,6 +428,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 						if (data.progression !== undefined && requirementsRuntime && !requirementsRuntime.progression.restore(data.progression)) throw Error("저장된 레벨·스킬 진행 정보를 확인하세요.");
 						if (data.progression === undefined) requirementsRuntime?.progression.reset();
 						for (const v of project.variables) {
+							if (v.runtimeReadOnly) continue;
 							const value = data.variables[v.name];
 							if (typeof value === v.type && (v.type !== "number" || Number.isFinite(value))) vars[v.name] = value;
 						};
@@ -636,7 +641,8 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 							});
 							return;
 						};
-						if (!go?.active) {
+						const reactivating = step.kind === "object" && property === "active" && (value === true || value === "true") && go?.scene;
+						if (!go?.active && !reactivating) {
 							report("error", "오브젝트 동작의 실행 대상을 찾을 수 없습니다.");
 							return;
 						};
@@ -995,6 +1001,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 						this.objectMap.set(o.id, go);
 						go.once("destroy", () => {
 							this.actorListDirty = true;
+							if (this.staticBodyActors.get(o.id)?.go === go) this.staticBodyActors.delete(o.id);
 							this.objectMap.delete(o.id);
 							this.effects?.stop(go);
 							this.states?.remove(o.id);
@@ -1091,6 +1098,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					players.splice(0, players.length, ...this.actors.filter((a) => a.go.active && ["platformer", "topdown"].includes(a.def.behavior)).map((a) => a.go));
 					if (spawned) setupInteractions(this.actors.slice(actorStart), triggers.slice(triggerStart));
 					for (const actor of this.actors.slice(actorStart)) {
+						if (actor.def.kind === "tilemap" || actor.go.body?.physicsType === Phaser.Physics.Arcade.STATIC_BODY) this.staticBodyActors.set(actor.def.id, actor);
 						this.collision?.bind(actor.def, actor.go);
 						this.interaction?.bind(actor.def, actor.go);
 						this.motionPaths?.bind(actor.def, actor.go);
@@ -1100,7 +1108,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					factions?.refresh();
 				};
 				buildObjects(def.objects);
-				this.refreshStaticBodies();
+				this.refreshStaticBodies(false);
 				this.physics.add.collider(actors, statics, undefined, (a, b) => this.collision?.canSeparate(a, b) ?? true);
 				this.physics.add.collider(classifiedActors, actors, undefined, (a, b) => a !== b && (this.collision?.canSeparate(a, b) ?? true));
 				const setupInteractions = (newActors, newTriggers) => {
@@ -1140,7 +1148,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				};
 				setupInteractions(this.actors, triggers);
 				for (const actor of this.actors) this.collision?.bind(actor.def, actor.go);
-				this.refreshStaticBodies();
+				this.refreshStaticBodies(false);
 				for (const event of def.events ?? []) if (event.enabled !== false && event.trigger === "key") {
 					const seen = new WeakSet();
 					const eventName = event.key === "ACTION" ? "keydown" : "keydown-" + (event.key ?? "SPACE");
@@ -1346,7 +1354,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 						buildObjects(objects, true);
 						this.states?.sync();
 						for (const o of objects) this.effects?.bind(this.objectMap.get(o.id), o.effects);
-						this.refreshStaticBodies();
+						this.refreshStaticBodies(false);
 						this.syncUiCameras?.();
 						return this.objectMap.get(mapping.get(prefab.object.id));
 					},
@@ -1792,6 +1800,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					objects: this.objectMap,
 					variable: (id) => this.logic?.read(id),
 					texture: sourceFor,
+					profile: (id) => this.states?.profile(id),
 					error: (message) => report("error", message)
 				});
 				this.ctx.rigs = this.rigs;
@@ -1829,8 +1838,27 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					version: Phaser.VERSION
 				}, "*");
 			}
-			refreshStaticBodies() {
-				for (const actor of this.actors) {
+			refreshStaticBodies(discover = true) {
+				// Normal creation registers candidates once. A script can also attach a
+				// static body later: inspect physics bodies, never all background actors.
+				const staticBodies = this.physics?.world?.staticBodies;
+				for (const body of staticBodies?.values?.() ?? staticBodies?.entries ?? []) {
+					if (this.knownStaticBodies.has(body)) continue;
+					this.knownStaticBodies.add(body);
+					const go = body.gameObject, id = go?.getData?.("forgeObjectId");
+					if (id && this.staticBodyActors.get(id)?.go === go) continue;
+					const actor = this.actors.find((row) => row.go === go);
+					if (actor) this.staticBodyActors.set(actor.def.id, actor);
+				};
+				// Explicit public discovery also supports custom body providers.
+				if (discover) {
+					for (const actor of this.actors) if (actor.def.kind === "tilemap" || actor.go.body?.physicsType === Phaser.Physics.Arcade.STATIC_BODY) this.staticBodyActors.set(actor.def.id, actor);
+				};
+				for (const [id, actor] of this.staticBodyActors) {
+					if (actor.go.isDestroyed) {
+						this.staticBodyActors.delete(id);
+						continue;
+					};
 					if (!actor.go.active) continue;
 					const go = actor.go, o = {
 						...actor.def,
@@ -1893,7 +1921,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				if (uiCapturesInput) this.states?.releaseKeys();
 				this.states?.before(delta);
 				this.timeline?.advance(delta);
-				this.refreshStaticBodies();
+				this.refreshStaticBodies(false);
 				const k = this.keys;
 				const dx = uiCapturesInput ? 0 : (k.right.isDown || k.d.isDown ? 1 : 0) - (k.left.isDown || k.a.isDown ? 1 : 0);
 				const dy = uiCapturesInput ? 0 : (k.down.isDown || k.s.isDown ? 1 : 0) - (k.up.isDown || k.w.isDown ? 1 : 0);
@@ -2269,6 +2297,13 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 						view.centerOn(b.centerX, b.centerY);
 					}
 				};
+				const requestedScale = Number(e.data.viewScale), viewScale = Number.isFinite(requestedScale) ? Math.min(2, Math.max(.1, requestedScale)) : 1;
+				if (viewScale !== 1) for (const c of s.cameras.cameras.filter((camera) => camera.visible)) {
+					const centerX = c.scrollX + c.width / 2, centerY = c.scrollY + c.height / 2;
+					c.removeBounds();
+					c.setZoom(c.zoomX * viewScale, c.zoomY * viewScale);
+					c.centerOn(centerX, centerY);
+				};
 				if (e.data.enabled !== false) s.effects.play(target, e.data.preset.id, { key: "forge-preview" });
 			}
 		};
@@ -2313,19 +2348,38 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					};
 					return;
 				};
+				const debugApi = (scene) => scene?.data?.get?.("forge.debug") || scene?.data?.get?.("spaceGame");
 				let s = game.scene.getScenes(true).find((s) => s.scene.key === d.sceneId);
-				if (d.action === "game" && typeof s?.data?.get?.("spaceGame")?.debug !== "function") s = game.scene.getScenes(true).find((scene) => typeof scene.data?.get?.("spaceGame")?.debug === "function");
+				if (d.action === "game" && typeof debugApi(s)?.debug !== "function") s = game.scene.getScenes(true).find((scene) => typeof debugApi(scene)?.debug === "function");
 				if (!s?.ctx) throw Error("선택한 씬이 실행 중이 아닙니다.");
 				if (d.action === "game") {
-					const api = s.data?.get?.("spaceGame");
-					if (typeof api?.debug !== "function") throw Error("이 게임은 전용 값 점검을 제공하지 않습니다.");
-					if (!/^(\$fields|credits|tick|ship\.(hull|shield|energy|heat|fuel|speed|velocity\.[xy]))$/.test(String(d.path))) throw Error("편집할 수 없는 게임 값입니다.");
+					const api = debugApi(s), path = String(d.path ?? ""), writing = Object.hasOwn(d, "value");
+					if (typeof api?.debug !== "function") throw Error("이 게임에 연결된 값 점검이 없습니다.");
+					if (path === "$snapshot") {
+						if (writing || typeof api.inspect !== "function") throw Error("게임 스냅샷은 읽기 전용입니다.");
+						reply(true, api.inspect(), "게임 상태");
+						return;
+					};
+					const metadata = api.debug({ path: "$fields" });
+					if (!metadata?.ok || !Array.isArray(metadata.value)) throw Error(metadata?.reason || "실행 값 목록을 읽지 못했습니다.");
+					if (path === "$fields") {
+						if (writing) throw Error("필드 목록은 읽기 전용입니다.");
+						reply(true, metadata.value, "게임 값");
+						return;
+					};
+					const field = metadata.value.find((row) => row.path === path);
+					if (!field || path.split(".").some((key) => [
+						"__proto__",
+						"prototype",
+						"constructor"
+					].includes(key))) throw Error("공개된 게임 값이 아닙니다.");
+					if (writing && !(field.editable === true || field.readOnly === false)) throw Error(field.reason || "읽기 전용 값입니다.");
 					const result = api.debug({
-						path: d.path,
-						...Object.hasOwn(d, "value") ? { value: typed("number", d.value) } : {}
+						path,
+						...writing ? { value: typed(field.type || typeof field.value, d.value) } : {}
 					});
 					if (!result?.ok) throw Error(result?.reason ?? "게임 값 적용이 거절됐습니다.");
-					reply(true, result.value, Object.hasOwn(d, "value") ? "게임 값 적용됨" : "게임 값");
+					reply(true, result.value, writing ? "게임 값 적용됨" : "게임 값");
 					return;
 				};
 				if (d.action === "runFunction") {
@@ -2405,10 +2459,14 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			if (variable) {
 				const value = variable.type === "number" ? Number(e.data.value) : variable.type === "boolean" ? e.data.value === true || e.data.value === "true" : String(e.data.value ?? "").slice(0, 1e4);
 				if (variable.type !== "number" || Number.isFinite(value)) {
-					const before = vars[variable.name];
-					vars[variable.name] = value;
-					observatory?.variableChanged(variable.id, before, value, "점검 중 수정");
-					debugSnapshot();
+					try {
+						const before = vars[variable.name];
+						vars[variable.name] = value;
+						observatory?.variableChanged(variable.id, before, vars[variable.name], "점검 중 수정");
+						debugSnapshot();
+					} catch (error) {
+						report("error", error);
+					}
 				}
 			}
 		};
@@ -2459,6 +2517,18 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			}
 		}
 	};
+	const releaseRuntimeInput = () => {
+		for (const scene of game.scene.getScenes(false)) {
+			scene.input?.resetPointers?.();
+			scene.input?.keyboard?.resetKeys?.();
+			scene.states?.releaseKeys?.();
+		}
+	};
+	const releaseHiddenInput = () => {
+		if (document.hidden) releaseRuntimeInput();
+	};
+	window.addEventListener("blur", releaseRuntimeInput);
+	document.addEventListener("visibilitychange", releaseHiddenInput);
 	window.addEventListener("message", commands);
 	const stats = setInterval(() => {
 		if (window.parent !== window) window.parent.postMessage({
@@ -2477,9 +2547,24 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 		factions?.dispose();
 		clearInterval(stats);
 		window.removeEventListener("message", commands);
+		window.removeEventListener("blur", releaseRuntimeInput);
+		document.removeEventListener("visibilitychange", releaseHiddenInput);
 	});
 	return game;
 })(Phaser,project,{},function createGameLogic(project, vars, effects) {
+	// Shared by exported runtime and editor dry runs. Preserve a live scene binding.
+	for (const variable of project.variables) if (variable.runtimeReadOnly) {
+		if (Object.getOwnPropertyDescriptor(vars, variable.name)?.get) continue;
+		const value = vars[variable.name];
+		Object.defineProperty(vars, variable.name, {
+			configurable: true,
+			enumerable: true,
+			get: () => value,
+			set: () => {
+				throw Error("관측 전용 변수입니다: " + variable.name);
+			}
+		});
+	};
 	const definitions = new Map(project.variables.map((v) => [v.id, v]));
 	const functions = new Map((project.functions ?? []).map((f) => [f.id, f]));
 	let callSequence = 0;
@@ -3089,10 +3174,11 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 	const keys = new Map();
 	const definitions = new Map();
 	const ownerEntries = new Map();
+	const targetEntries = new Map();
 	const effectTokens = new Map();
 	const diagnostics = new Map();
 	const observations = new Map();
-	let destroyed = false, operationDepth = 0;
+	let destroyed = false, operationDepth = 0, entryOrder = 0;
 	const resolveOwner = (target) => typeof target === "string" ? host.objects.has(target) ? target : host.actors().find((a) => a.def.name === target)?.def.id ?? target : target?.getData?.("forgeObjectId") ?? [...host.objects].find(([, go]) => go === target)?.[0] ?? "";
 	const property = (owner, key, targets = {}) => {
 		if (key === "inputX") return (keys.get("RIGHT")?.held || keys.get("D")?.held ? 1 : 0) - (keys.get("LEFT")?.held || keys.get("A")?.held ? 1 : 0);
@@ -3157,7 +3243,8 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			owner,
 			binding: b,
 			engine,
-			enabled: b.enabled
+			enabled: b.enabled,
+			order: entryOrder++
 		};
 		entries.set(key, entry);
 		let owned = ownerEntries.get(owner);
@@ -3166,6 +3253,23 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			ownerEntries.set(owner, owned);
 		};
 		owned.add(key);
+		for (const id of new Set(Object.values(b.targets))) {
+			let targeting = targetEntries.get(id);
+			if (!targeting) {
+				targeting = new Set();
+				targetEntries.set(id, targeting);
+			};
+			targeting.add(key);
+		}
+	};
+	const detach = (key, e) => {
+		e.engine.destroy();
+		entries.delete(key);
+		for (const [index, ids] of [[ownerEntries, [e.owner]], [targetEntries, Object.values(e.binding.targets)]]) for (const id of ids) {
+			const keys = index.get(id);
+			keys?.delete(key);
+			if (!keys?.size) index.delete(id);
+		}
 	};
 	const sync = () => {
 		if (destroyed) return;
@@ -3173,12 +3277,9 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 		for (const b of sceneDefinition.stateMachines ?? []) attach("", b);
 		for (const a of host.actors()) if (host.objects.has(a.def.id)) for (const b of a.def.stateMachines ?? []) attach(a.def.id, b);
 		for (const [key, e] of entries) if (e.owner && !host.objects.has(e.owner)) {
-			e.engine.destroy();
-			entries.delete(key);
+			detach(key, e);
 			diagnostics.delete(e.owner);
 			observations.delete(e.owner);
-			ownerEntries.get(e.owner)?.delete(key);
-			if (!ownerEntries.get(e.owner)?.size) ownerEntries.delete(e.owner);
 		};
 		for (const id of baselines.keys()) if (!host.objects.has(id)) {
 			baselines.delete(id);
@@ -3233,11 +3334,18 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			else go.setTint?.(n);
 		}
 	};
-	const apply = () => {
+	const apply = (affected) => {
 		const merged = new Map();
-		for (const e of [...entries.values()].filter((e) => e.enabled).sort((a, b) => a.binding.priority - b.binding.priority)) for (const [target, view] of e.engine.profiles()) {
+		// An immediate operation can only change this binding's owner and targets.
+		// Include every other binding contributing to those objects so priorities and
+		// layers still merge exactly as they do during the full frame evaluation.
+		const candidates = affected ? [...new Set([...affected].flatMap((id) => [...ownerEntries.get(id) ?? [], ...targetEntries.get(id) ?? []]))].flatMap((key) => {
+			const e = entries.get(key);
+			return e ? [e] : [];
+		}) : [...entries.values()];
+		for (const e of candidates.filter((e) => e.enabled).sort((a, b) => a.binding.priority - b.binding.priority || a.order - b.order)) for (const [target, view] of e.engine.profiles()) {
 			const id = target || e.owner;
-			if (!id || !host.objects.has(id)) continue;
+			if (!id || !host.objects.has(id) || affected && !affected.has(id)) continue;
 			const before = merged.get(id);
 			merged.set(id, {
 				profile: {
@@ -3248,7 +3356,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				animationToken: view.animationToken ? e.binding.id + ":" + view.animationToken : before?.animationToken ?? ""
 			});
 		};
-		for (const id of new Set([...previous.keys(), ...merged.keys()])) {
+		for (const id of affected ?? new Set([...previous.keys(), ...merged.keys()])) {
 			const go = host.objects.get(id);
 			if (!go) continue;
 			const current = merged.get(id), profile = current?.profile ?? {}, old = previous.get(id) ?? new Set(), next = new Set(Object.keys(profile));
@@ -3324,7 +3432,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 		operationDepth++;
 		try {
 			const list = find(target, machine), results = list.map(fn);
-			apply();
+			apply(new Set(list.flatMap((e) => [e.owner, ...Object.values(e.binding.targets)])));
 			return !!list.length && results.some((result) => result !== false);
 		} finally {
 			operationDepth--;
@@ -3359,10 +3467,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				effectTokens.delete(id);
 			};
 			for (const [key, e] of entries) if (e.owner === id) {
-				e.engine.destroy();
-				entries.delete(key);
-				ownerEntries.get(e.owner)?.delete(key);
-				if (!ownerEntries.get(e.owner)?.size) ownerEntries.delete(e.owner);
+				detach(key, e);
 			};
 			baselines.delete(id);
 			previous.delete(id);
@@ -3482,6 +3587,7 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 			for (const e of entries.values()) e.engine.destroy();
 			entries.clear();
 			ownerEntries.clear();
+			targetEntries.clear();
 			keys.clear();
 			diagnostics.clear();
 			observations.clear();
@@ -4407,8 +4513,11 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 					const list = go.filters?.[options.scope ?? "internal"];
 					if (!list) continue;
 					let controller;
-					if (item.type === "glow") controller = list.addGlow(color(p.color), num("outerStrength"), num("innerStrength"), num("scale"), false, num("quality"), num("distance"));
-					else if (item.type === "shadow") controller = list.addShadow(num("x"), num("y"), num("decay"), num("power"), color(p.color), num("samples"), num("intensity"));
+					if (item.type === "glow") {
+						const glowNumber = (key, fallback) => Number.isFinite(Number(p[key])) ? Number(p[key]) : fallback;
+						const quality = glowNumber("quality", 10);
+						controller = list.addGlow(color(p.color ?? "#ffffff"), glowNumber("outerStrength", 3), glowNumber("innerStrength", 0), glowNumber("scale", 1), false, quality > 0 && quality < 1 ? Math.max(1, Math.round(quality * 100)) : Math.max(1, Math.round(quality)), Math.max(1, glowNumber("distance", 10)));
+					} else if (item.type === "shadow") controller = list.addShadow(num("x"), num("y"), num("decay"), num("power"), color(p.color), num("samples"), num("intensity"));
 					else if (item.type === "blur") controller = list.addBlur(num("quality"), num("x"), num("y"), num("strength"), 16777215, num("steps"));
 					else if (item.type === "bokeh") controller = list.addBokeh(num("radius"), num("amount"), num("contrast"));
 					else if (item.type === "tiltShift") controller = list.addTiltShift(num("radius"), num("amount"), num("contrast"), num("blurX"), num("blurY"), num("strength"));
@@ -4443,9 +4552,12 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 						controller = list.addWipe(num("width"), num("direction"), num("axis"));
 						controller.progress = num("progress");
 					} else if (item.type === "displacement" || item.type === "blend") {
-						const a = project.assets.find((a) => a.id === item.assetId), f = a?.atlas?.frames[0], texture = a ? scene.textures.getFrame(project.official ? "forge-added-" + a.id : f?.pageId ?? a.id, f?.pageId ? `${a.id}:0` : f?.name ?? (a.type === "image" ? undefined : 0)) : null;
-						if (!texture) throw Error("효과에 사용할 이미지 리소스를 연결하세요.");
-						controller = item.type === "displacement" ? list.addDisplacement(texture, num("x"), num("y")) : list.addBlend(texture, Phaser.BlendModes[String(p.mode)] ?? Phaser.BlendModes.SCREEN, num("amount"));
+						const a = project.assets.find((a) => a.id === item.assetId), textureKey = a ? (project.official ? "forge-added-" : "") + a.id : "";
+						// Phaser 4 filters sample an entire GL texture and accept its key,
+						// not a Frame or a packed frame's shared TextureSource.
+						if (a?.atlas?.frames.some((frame) => frame.pageId)) throw Error("텍스처 효과에는 묶기 전 원본 이미지를 연결하세요.");
+						if (!a || a.type === "audio" || !scene.textures.getFrame(textureKey)?.glTexture) throw Error("효과에 사용할 이미지 리소스를 연결하세요.");
+						controller = item.type === "displacement" ? list.addDisplacement(textureKey, num("x"), num("y")) : list.addBlend(textureKey, Phaser.BlendModes[String(p.mode)] ?? Phaser.BlendModes.SCREEN, num("amount"));
 					} else if (item.type === "shader") {
 						let hash = 2166136261;
 						for (let i = 0; i < item.fragment.length; i++) hash = Math.imul(hash ^ item.fragment.charCodeAt(i), 16777619);
@@ -6754,7 +6866,9 @@ const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, 
 				for (const id of layer.boneIds) if (local[id] && pose[id]) local[id] = mix(local[id], pose[id], l.weight);
 			}
 		};
-		if (r.directions?.enabled) go.setFlipX(!!state.directionFlip);
+		const authoredFlip = hooks.profile?.(state.def.id)?.flipX;
+		if (authoredFlip !== undefined) go.setFlipX(authoredFlip);
+		else if (r.directions?.enabled) go.setFlipX(!!state.directionFlip);
 		else if (r.facing === "animation") {
 			const a = project.animations.find((a) => a.id === go.anims?.currentAnim?.key);
 			if (a?.direction === "left" || /[.\/:]left$/.test(a?.id ?? "")) go.setFlipX(true);

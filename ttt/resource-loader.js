@@ -1,10 +1,10 @@
-(async function restoreExportResources(project, manifestFiles, bundleFiles, cacheVersion) {
+(async function restoreExportResources(project, manifestFiles, bundleFiles, cacheVersion, runtimeVersion) {
 	const host = globalThis;
 	const entries = [], urls = new Map();
 	let loading;
-	const load = (path) => new Promise((resolve, reject) => {
+	const load = (path, version = cacheVersion) => new Promise((resolve, reject) => {
 		const script = document.createElement("script");
-		script.src = path + (cacheVersion ? "?v=" + encodeURIComponent(cacheVersion) : "");
+		script.src = path + (version ? "?v=" + encodeURIComponent(version) : "");
 		script.async = false;
 		script.onload = () => {
 			script.remove();
@@ -122,7 +122,7 @@
 		urls.clear();
 		entries.length = 0;
 		// Keep the original Phaser -> project -> game order, with resources ready before preload.
-		await load("game.js");
+		await load("game.js", runtimeVersion ?? cacheVersion);
 		loading?.remove();
 	} catch (error) {
 		loading?.remove();
@@ -137,4 +137,4 @@
 		(document.body ?? document.documentElement).appendChild(panel);
 		throw error;
 	}
-})(project,["resources/manifest-0001.js","resources/manifest-174-mw3pok78tzr1nu.js"],["resources/bundle-0001.js","resources/bundle-0002.js","resources/bundle-0003.js","resources/bundle-0004.js","resources/bundle-0005.js","resources/bundle-0006.js","resources/bundle-0007.js","resources/bundle-174-mw3pok78tzr1nu.js"],"mw3kupy8a9rpdl");
+})(project,["resources/manifest-0001.js","resources/manifest-174-mw3pok78tzr1nu.js"],["resources/bundle-0001.js","resources/bundle-0002.js","resources/bundle-0003.js","resources/bundle-0004.js","resources/bundle-0005.js","resources/bundle-0006.js","resources/bundle-0007.js","resources/bundle-174-mw3pok78tzr1nu.js"],"mw3kupy8a9rpdl","175-mw3z0gf2");

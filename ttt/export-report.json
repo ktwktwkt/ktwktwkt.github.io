@@ -22,7 +22,7 @@
   },
   "editorVersion": "1.75.0",
   "update": {
-    "runtimeModules": 133,
+    "runtimeModules": 136,
     "mediaReused": true,
     "changedSkillIds": [
       "flamegauntlets.release",
@@ -30,6 +30,9 @@
       "flamegauntlets.dashBurst",
       "flamegauntlets.infernoRing",
       "flamegauntlets.infernoLine"
-    ]
+    ],
+    "commonRuntimeUpdated": true,
+    "runtimeVersion": "175-mw3z0gf2",
+    "resourceCacheVersion": "mw3kupy8a9rpdl"
   }
 }
