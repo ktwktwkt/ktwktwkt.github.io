@@ -10,12 +10,14 @@
     "references": 210,
     "deduplicatedReferences": 0,
     "dataBytes": 331899140,
-    "chunkFiles": 7,
-    "bundleFiles": 7,
+    "chunkFiles": 8,
+    "bundleFiles": 8,
     "fragmentCount": 216,
-    "revision": "mw3kupy8a9rpdl",
+    "revision": "174-mw3pok78tzr1nu",
     "maximumFileBytes": 67108864,
     "maximumScriptBytes": 67108864,
-    "manifest": "resource-manifest.json"
+    "manifest": "resource-manifest.json",
+    "transportEntries": 218,
+    "updatedSoundResources": 8
   }
 }

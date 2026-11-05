@@ -137,4 +137,4 @@
 		(document.body ?? document.documentElement).appendChild(panel);
 		throw error;
 	}
-})(project,["resources/manifest-0001.js"],["resources/bundle-0001.js","resources/bundle-0002.js","resources/bundle-0003.js","resources/bundle-0004.js","resources/bundle-0005.js","resources/bundle-0006.js","resources/bundle-0007.js"],"mw3kupy8a9rpdl");
+})(project,["resources/manifest-0001.js","resources/manifest-174-mw3pok78tzr1nu.js"],["resources/bundle-0001.js","resources/bundle-0002.js","resources/bundle-0003.js","resources/bundle-0004.js","resources/bundle-0005.js","resources/bundle-0006.js","resources/bundle-0007.js","resources/bundle-174-mw3pok78tzr1nu.js"],"mw3kupy8a9rpdl");
