@@ -1,8 +1,8 @@
 {
   "format": "phaser-forge-resource-files",
-  "version": 1,
+  "version": 2,
   "transport": "base64-classic-script",
-  "maximumScriptBytes": 4194304,
+  "maximumScriptBytes": 67108864,
   "resources": [
     {
       "url": "resources/r000001.png",
@@ -10,7 +10,7 @@
       "mime": "image/png",
       "bytes": 1876112,
       "parts": [
-        "resources/r000001.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-forest"
@@ -22,7 +22,7 @@
       "mime": "image/png",
       "bytes": 2091340,
       "parts": [
-        "resources/r000002.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-candy"
@@ -34,7 +34,7 @@
       "mime": "image/png",
       "bytes": 2425358,
       "parts": [
-        "resources/r000003.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-rose"
@@ -46,7 +46,7 @@
       "mime": "image/png",
       "bytes": 2013227,
       "parts": [
-        "resources/r000004.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-library"
@@ -58,7 +58,7 @@
       "mime": "image/png",
       "bytes": 1974038,
       "parts": [
-        "resources/r000005.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-clock"
@@ -70,7 +70,7 @@
       "mime": "image/png",
       "bytes": 2132317,
       "parts": [
-        "resources/r000006.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.tiles-moon"
@@ -82,7 +82,7 @@
       "mime": "image/png",
       "bytes": 1043649,
       "parts": [
-        "resources/r000007.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.hero-red"
@@ -94,7 +94,7 @@
       "mime": "image/png",
       "bytes": 1166868,
       "parts": [
-        "resources/r000008.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.hero-ranger"
@@ -106,7 +106,7 @@
       "mime": "image/png",
       "bytes": 1334340,
       "parts": [
-        "resources/r000009.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.hero-gunner"
@@ -118,7 +118,7 @@
       "mime": "image/png",
       "bytes": 1599135,
       "parts": [
-        "resources/r000010.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.hero-witch"
@@ -130,7 +130,7 @@
       "mime": "image/png",
       "bytes": 2067697,
       "parts": [
-        "resources/r000011.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-1"
@@ -142,7 +142,7 @@
       "mime": "image/png",
       "bytes": 2147388,
       "parts": [
-        "resources/r000012.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-2"
@@ -154,7 +154,7 @@
       "mime": "image/png",
       "bytes": 1795893,
       "parts": [
-        "resources/r000013.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-3"
@@ -166,7 +166,7 @@
       "mime": "image/png",
       "bytes": 2101508,
       "parts": [
-        "resources/r000014.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-4"
@@ -178,7 +178,7 @@
       "mime": "image/png",
       "bytes": 2157184,
       "parts": [
-        "resources/r000015.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-5"
@@ -190,7 +190,7 @@
       "mime": "image/png",
       "bytes": 2614108,
       "parts": [
-        "resources/r000016.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-6"
@@ -202,7 +202,7 @@
       "mime": "image/png",
       "bytes": 2092647,
       "parts": [
-        "resources/r000017.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-7"
@@ -214,7 +214,7 @@
       "mime": "image/png",
       "bytes": 2542793,
       "parts": [
-        "resources/r000018.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.enemies-8"
@@ -226,8 +226,7 @@
       "mime": "image/png",
       "bytes": 3738836,
       "parts": [
-        "resources/r000019.part0001.js",
-        "resources/r000019.part0002.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.bosses-1"
@@ -239,8 +238,7 @@
       "mime": "image/png",
       "bytes": 3698678,
       "parts": [
-        "resources/r000020.part0001.js",
-        "resources/r000020.part0002.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.bosses-2"
@@ -252,7 +250,7 @@
       "mime": "image/png",
       "bytes": 2133800,
       "parts": [
-        "resources/r000021.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.props-forest-candy"
@@ -264,7 +262,7 @@
       "mime": "image/png",
       "bytes": 2621974,
       "parts": [
-        "resources/r000022.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.props-rose-library"
@@ -276,7 +274,7 @@
       "mime": "image/png",
       "bytes": 2228751,
       "parts": [
-        "resources/r000023.part0001.js"
+        "resources/bundle-0001.js"
       ],
       "references": [
         "asset:fable.art.props-clock-moon"
@@ -288,7 +286,8 @@
       "mime": "image/png",
       "bytes": 2269816,
       "parts": [
-        "resources/r000024.part0001.js"
+        "resources/bundle-0001.js",
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.weapons"
@@ -300,7 +299,7 @@
       "mime": "image/png",
       "bytes": 1890528,
       "parts": [
-        "resources/r000025.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.ui"
@@ -312,7 +311,7 @@
       "mime": "image/png",
       "bytes": 449564,
       "parts": [
-        "resources/r000026.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.arsenal151"
@@ -324,7 +323,7 @@
       "mime": "image/png",
       "bytes": 479591,
       "parts": [
-        "resources/r000027.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.support152"
@@ -336,7 +335,7 @@
       "mime": "image/png",
       "bytes": 290590,
       "parts": [
-        "resources/r000028.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.sheath152"
@@ -348,7 +347,7 @@
       "mime": "image/png",
       "bytes": 617274,
       "parts": [
-        "resources/r000029.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.crossbow153"
@@ -360,7 +359,7 @@
       "mime": "image/png",
       "bytes": 498653,
       "parts": [
-        "resources/r000030.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.smg153"
@@ -372,7 +371,7 @@
       "mime": "image/png",
       "bytes": 485860,
       "parts": [
-        "resources/r000031.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.shotgun153"
@@ -384,7 +383,7 @@
       "mime": "image/png",
       "bytes": 2283166,
       "parts": [
-        "resources/r000032.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.boss-motion157-04"
@@ -396,7 +395,7 @@
       "mime": "image/png",
       "bytes": 2266646,
       "parts": [
-        "resources/r000033.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.boss-motion157-05"
@@ -408,7 +407,7 @@
       "mime": "image/png",
       "bytes": 1839803,
       "parts": [
-        "resources/r000034.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-21"
@@ -420,7 +419,7 @@
       "mime": "image/png",
       "bytes": 2180746,
       "parts": [
-        "resources/r000035.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-22"
@@ -432,7 +431,7 @@
       "mime": "image/png",
       "bytes": 2173763,
       "parts": [
-        "resources/r000036.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-23"
@@ -444,7 +443,7 @@
       "mime": "image/png",
       "bytes": 1988437,
       "parts": [
-        "resources/r000037.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-25"
@@ -456,7 +455,7 @@
       "mime": "image/png",
       "bytes": 1926427,
       "parts": [
-        "resources/r000038.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-27"
@@ -468,7 +467,7 @@
       "mime": "image/png",
       "bytes": 1831485,
       "parts": [
-        "resources/r000039.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-29"
@@ -480,7 +479,7 @@
       "mime": "image/png",
       "bytes": 2198769,
       "parts": [
-        "resources/r000040.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.motion157-32"
@@ -492,7 +491,7 @@
       "mime": "image/png",
       "bytes": 1757217,
       "parts": [
-        "resources/r000041.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-acorn"
@@ -504,7 +503,7 @@
       "mime": "image/png",
       "bytes": 1535409,
       "parts": [
-        "resources/r000042.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-basket"
@@ -516,7 +515,7 @@
       "mime": "image/png",
       "bytes": 1388232,
       "parts": [
-        "resources/r000043.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-beetle"
@@ -528,7 +527,7 @@
       "mime": "image/png",
       "bytes": 1738174,
       "parts": [
-        "resources/r000044.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-boss.harvester"
@@ -540,7 +539,7 @@
       "mime": "image/png",
       "bytes": 1589367,
       "parts": [
-        "resources/r000045.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-boss.moon"
@@ -552,7 +551,7 @@
       "mime": "image/png",
       "bytes": 1644371,
       "parts": [
-        "resources/r000046.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-boss.octopus"
@@ -564,7 +563,7 @@
       "mime": "image/png",
       "bytes": 1606388,
       "parts": [
-        "resources/r000047.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-boss.wolf"
@@ -576,7 +575,7 @@
       "mime": "image/png",
       "bytes": 1684457,
       "parts": [
-        "resources/r000048.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-chimney"
@@ -588,7 +587,7 @@
       "mime": "image/png",
       "bytes": 1698781,
       "parts": [
-        "resources/r000049.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-coral"
@@ -600,7 +599,7 @@
       "mime": "image/png",
       "bytes": 1253428,
       "parts": [
-        "resources/r000050.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-crochet"
@@ -612,7 +611,7 @@
       "mime": "image/png",
       "bytes": 1566585,
       "parts": [
-        "resources/r000051.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-cupcrab"
@@ -624,7 +623,7 @@
       "mime": "image/png",
       "bytes": 1559969,
       "parts": [
-        "resources/r000052.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-duck"
@@ -636,7 +635,7 @@
       "mime": "image/png",
       "bytes": 1437457,
       "parts": [
-        "resources/r000053.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-fox"
@@ -648,7 +647,7 @@
       "mime": "image/png",
       "bytes": 1372625,
       "parts": [
-        "resources/r000054.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-gramophone"
@@ -660,7 +659,7 @@
       "mime": "image/png",
       "bytes": 1413952,
       "parts": [
-        "resources/r000055.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-handbell"
@@ -672,7 +671,7 @@
       "mime": "image/png",
       "bytes": 1223598,
       "parts": [
-        "resources/r000056.part0001.js"
+        "resources/bundle-0002.js"
       ],
       "references": [
         "asset:fable.art.single157-heron"
@@ -684,7 +683,8 @@
       "mime": "image/png",
       "bytes": 1622295,
       "parts": [
-        "resources/r000057.part0001.js"
+        "resources/bundle-0002.js",
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-keycoon"
@@ -696,7 +696,7 @@
       "mime": "image/png",
       "bytes": 1112700,
       "parts": [
-        "resources/r000058.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-kite"
@@ -708,7 +708,7 @@
       "mime": "image/png",
       "bytes": 1230154,
       "parts": [
-        "resources/r000059.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-mask"
@@ -720,7 +720,7 @@
       "mime": "image/png",
       "bytes": 1484890,
       "parts": [
-        "resources/r000060.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-pear"
@@ -732,7 +732,7 @@
       "mime": "image/png",
       "bytes": 1491804,
       "parts": [
-        "resources/r000061.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-pillow"
@@ -744,7 +744,7 @@
       "mime": "image/png",
       "bytes": 1433936,
       "parts": [
-        "resources/r000062.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-seahorse"
@@ -756,7 +756,7 @@
       "mime": "image/png",
       "bytes": 1792765,
       "parts": [
-        "resources/r000063.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-snail"
@@ -768,7 +768,7 @@
       "mime": "image/png",
       "bytes": 1677546,
       "parts": [
-        "resources/r000064.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-sundial"
@@ -780,7 +780,7 @@
       "mime": "image/png",
       "bytes": 1759213,
       "parts": [
-        "resources/r000065.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-swan"
@@ -792,7 +792,7 @@
       "mime": "image/png",
       "bytes": 1740537,
       "parts": [
-        "resources/r000066.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-swan-attack"
@@ -804,7 +804,7 @@
       "mime": "image/png",
       "bytes": 1599887,
       "parts": [
-        "resources/r000067.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-umbrella"
@@ -816,7 +816,7 @@
       "mime": "image/png",
       "bytes": 1315474,
       "parts": [
-        "resources/r000068.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-umbrellaBat"
@@ -828,7 +828,7 @@
       "mime": "image/png",
       "bytes": 1567744,
       "parts": [
-        "resources/r000069.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.single157-violin"
@@ -840,7 +840,7 @@
       "mime": "image/png",
       "bytes": 1269891,
       "parts": [
-        "resources/r000070.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.hero157-erin"
@@ -852,7 +852,7 @@
       "mime": "image/png",
       "bytes": 1543086,
       "parts": [
-        "resources/r000071.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.hero157-mira"
@@ -864,7 +864,7 @@
       "mime": "image/png",
       "bytes": 1288015,
       "parts": [
-        "resources/r000072.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.hero157-roy"
@@ -876,7 +876,7 @@
       "mime": "image/png",
       "bytes": 1153812,
       "parts": [
-        "resources/r000073.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.hero157-theo"
@@ -888,7 +888,7 @@
       "mime": "image/png",
       "bytes": 698499,
       "parts": [
-        "resources/r000074.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.arsenal157"
@@ -900,7 +900,7 @@
       "mime": "image/png",
       "bytes": 1661613,
       "parts": [
-        "resources/r000075.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.projectiles157"
@@ -912,7 +912,7 @@
       "mime": "image/png",
       "bytes": 573989,
       "parts": [
-        "resources/r000076.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.arsenal158"
@@ -924,7 +924,7 @@
       "mime": "image/png",
       "bytes": 264126,
       "parts": [
-        "resources/r000077.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-red"
@@ -936,7 +936,7 @@
       "mime": "image/png",
       "bytes": 293446,
       "parts": [
-        "resources/r000078.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-ranger"
@@ -948,7 +948,7 @@
       "mime": "image/png",
       "bytes": 325737,
       "parts": [
-        "resources/r000079.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-gunner"
@@ -960,7 +960,7 @@
       "mime": "image/png",
       "bytes": 364170,
       "parts": [
-        "resources/r000080.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-witch"
@@ -972,7 +972,7 @@
       "mime": "image/png",
       "bytes": 323899,
       "parts": [
-        "resources/r000081.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-erin"
@@ -984,7 +984,7 @@
       "mime": "image/png",
       "bytes": 301948,
       "parts": [
-        "resources/r000082.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-theo"
@@ -996,7 +996,7 @@
       "mime": "image/png",
       "bytes": 384924,
       "parts": [
-        "resources/r000083.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-mira"
@@ -1008,7 +1008,7 @@
       "mime": "image/png",
       "bytes": 323403,
       "parts": [
-        "resources/r000084.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.walk159-roy"
@@ -1020,7 +1020,7 @@
       "mime": "image/png",
       "bytes": 605244,
       "parts": [
-        "resources/r000085.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.gauntlets160"
@@ -1032,7 +1032,7 @@
       "mime": "image/png",
       "bytes": 550064,
       "parts": [
-        "resources/r000086.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.axes162"
@@ -1044,7 +1044,7 @@
       "mime": "image/png",
       "bytes": 2139058,
       "parts": [
-        "resources/r000087.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.hidden165"
@@ -1056,7 +1056,7 @@
       "mime": "image/png",
       "bytes": 814800,
       "parts": [
-        "resources/r000088.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.gauntlets167"
@@ -1068,7 +1068,7 @@
       "mime": "image/png",
       "bytes": 1612731,
       "parts": [
-        "resources/r000089.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.ground-base-171"
@@ -1080,7 +1080,7 @@
       "mime": "image/png",
       "bytes": 737506,
       "parts": [
-        "resources/r000090.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.ground-details-171"
@@ -1092,7 +1092,7 @@
       "mime": "image/svg+xml",
       "bytes": 468,
       "parts": [
-        "resources/r000091.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.weapon.170.lightsaber.main"
@@ -1104,7 +1104,7 @@
       "mime": "image/svg+xml",
       "bytes": 468,
       "parts": [
-        "resources/r000092.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.weapon.170.lightsaber.offhand"
@@ -1116,7 +1116,7 @@
       "mime": "image/png",
       "bytes": 3595,
       "parts": [
-        "resources/r000093.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:fable.art.practice-dummy"
@@ -1128,7 +1128,7 @@
       "mime": "image/png",
       "bytes": 1267468,
       "parts": [
-        "resources/r000094.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-combat-illustration-120.sheet"
@@ -1140,7 +1140,7 @@
       "mime": "image/png",
       "bytes": 497443,
       "parts": [
-        "resources/r000095.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-combat-illustration-slash-120.sheet"
@@ -1152,7 +1152,7 @@
       "mime": "image/png",
       "bytes": 1947819,
       "parts": [
-        "resources/r000096.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-weapon-through-hit-129.sheet"
@@ -1164,7 +1164,7 @@
       "mime": "image/png",
       "bytes": 1036406,
       "parts": [
-        "resources/r000097.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-daily-illustration-120.sheet"
@@ -1176,7 +1176,7 @@
       "mime": "image/png",
       "bytes": 1332445,
       "parts": [
-        "resources/r000098.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-magic-illustration-120.sheet"
@@ -1188,7 +1188,7 @@
       "mime": "image/png",
       "bytes": 2341213,
       "parts": [
-        "resources/r000099.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-game-ice-128.sheet"
@@ -1200,7 +1200,7 @@
       "mime": "image/png",
       "bytes": 742870,
       "parts": [
-        "resources/r000100.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-atmosphere-illustration-120.sheet"
@@ -1212,7 +1212,7 @@
       "mime": "image/png",
       "bytes": 2469137,
       "parts": [
-        "resources/r000101.part0001.js"
+        "resources/bundle-0003.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-game-lightning-128.sheet"
@@ -1224,7 +1224,8 @@
       "mime": "image/png",
       "bytes": 2747741,
       "parts": [
-        "resources/r000102.part0001.js"
+        "resources/bundle-0003.js",
+        "resources/bundle-0004.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-game-heal-128.sheet"
@@ -1236,7 +1237,7 @@
       "mime": "image/png",
       "bytes": 651994,
       "parts": [
-        "resources/r000103.part0001.js"
+        "resources/bundle-0004.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-daily-illustration-rain-ring-120.sheet"
@@ -1248,11 +1249,7 @@
       "mime": "audio/wav",
       "bytes": 13608044,
       "parts": [
-        "resources/r000104.part0001.js",
-        "resources/r000104.part0002.js",
-        "resources/r000104.part0003.js",
-        "resources/r000104.part0004.js",
-        "resources/r000104.part0005.js"
+        "resources/bundle-0004.js"
       ],
       "references": [
         "asset:fable.orchestral162.title"
@@ -1264,10 +1261,7 @@
       "mime": "audio/wav",
       "bytes": 11206636,
       "parts": [
-        "resources/r000105.part0001.js",
-        "resources/r000105.part0002.js",
-        "resources/r000105.part0003.js",
-        "resources/r000105.part0004.js"
+        "resources/bundle-0004.js"
       ],
       "references": [
         "asset:fable.orchestral162.field"
@@ -1279,14 +1273,7 @@
       "mime": "audio/wav",
       "bytes": 22413224,
       "parts": [
-        "resources/r000106.part0001.js",
-        "resources/r000106.part0002.js",
-        "resources/r000106.part0003.js",
-        "resources/r000106.part0004.js",
-        "resources/r000106.part0005.js",
-        "resources/r000106.part0006.js",
-        "resources/r000106.part0007.js",
-        "resources/r000106.part0008.js"
+        "resources/bundle-0004.js"
       ],
       "references": [
         "asset:fable.journey157.05"
@@ -1298,13 +1285,8 @@
       "mime": "audio/wav",
       "bytes": 21168044,
       "parts": [
-        "resources/r000107.part0001.js",
-        "resources/r000107.part0002.js",
-        "resources/r000107.part0003.js",
-        "resources/r000107.part0004.js",
-        "resources/r000107.part0005.js",
-        "resources/r000107.part0006.js",
-        "resources/r000107.part0007.js"
+        "resources/bundle-0004.js",
+        "resources/bundle-0005.js"
       ],
       "references": [
         "asset:fable.journey157.07"
@@ -1316,14 +1298,7 @@
       "mime": "audio/wav",
       "bytes": 23814044,
       "parts": [
-        "resources/r000108.part0001.js",
-        "resources/r000108.part0002.js",
-        "resources/r000108.part0003.js",
-        "resources/r000108.part0004.js",
-        "resources/r000108.part0005.js",
-        "resources/r000108.part0006.js",
-        "resources/r000108.part0007.js",
-        "resources/r000108.part0008.js"
+        "resources/bundle-0005.js"
       ],
       "references": [
         "asset:fable.journey157.06"
@@ -1335,19 +1310,8 @@
       "mime": "audio/wav",
       "bytes": 39513644,
       "parts": [
-        "resources/r000109.part0001.js",
-        "resources/r000109.part0002.js",
-        "resources/r000109.part0003.js",
-        "resources/r000109.part0004.js",
-        "resources/r000109.part0005.js",
-        "resources/r000109.part0006.js",
-        "resources/r000109.part0007.js",
-        "resources/r000109.part0008.js",
-        "resources/r000109.part0009.js",
-        "resources/r000109.part0010.js",
-        "resources/r000109.part0011.js",
-        "resources/r000109.part0012.js",
-        "resources/r000109.part0013.js"
+        "resources/bundle-0005.js",
+        "resources/bundle-0006.js"
       ],
       "references": [
         "asset:fable.orchestra157.battle"
@@ -1359,10 +1323,7 @@
       "mime": "audio/wav",
       "bytes": 10297992,
       "parts": [
-        "resources/r000110.part0001.js",
-        "resources/r000110.part0002.js",
-        "resources/r000110.part0003.js",
-        "resources/r000110.part0004.js"
+        "resources/bundle-0006.js"
       ],
       "references": [
         "asset:fable.orchestral162.boss"
@@ -1374,12 +1335,8 @@
       "mime": "audio/wav",
       "bytes": 15876044,
       "parts": [
-        "resources/r000111.part0001.js",
-        "resources/r000111.part0002.js",
-        "resources/r000111.part0003.js",
-        "resources/r000111.part0004.js",
-        "resources/r000111.part0005.js",
-        "resources/r000111.part0006.js"
+        "resources/bundle-0006.js",
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.orchestral162.rest"
@@ -1391,11 +1348,7 @@
       "mime": "audio/wav",
       "bytes": 13138804,
       "parts": [
-        "resources/r000112.part0001.js",
-        "resources/r000112.part0002.js",
-        "resources/r000112.part0003.js",
-        "resources/r000112.part0004.js",
-        "resources/r000112.part0005.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.orchestral162.result"
@@ -1407,7 +1360,7 @@
       "mime": "audio/wav",
       "bytes": 12394,
       "parts": [
-        "resources/r000113.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.slash"
@@ -1419,7 +1372,7 @@
       "mime": "audio/wav",
       "bytes": 15920,
       "parts": [
-        "resources/r000114.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.bow"
@@ -1431,7 +1384,7 @@
       "mime": "audio/wav",
       "bytes": 17684,
       "parts": [
-        "resources/r000115.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.gun"
@@ -1443,7 +1396,7 @@
       "mime": "audio/wav",
       "bytes": 32678,
       "parts": [
-        "resources/r000116.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.fire"
@@ -1455,7 +1408,7 @@
       "mime": "audio/wav",
       "bytes": 21212,
       "parts": [
-        "resources/r000117.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.ice"
@@ -1467,7 +1420,7 @@
       "mime": "audio/wav",
       "bytes": 23858,
       "parts": [
-        "resources/r000118.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.lightning"
@@ -1479,7 +1432,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000119.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.wind"
@@ -1491,7 +1444,7 @@
       "mime": "audio/wav",
       "bytes": 75896,
       "parts": [
-        "resources/r000120.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.arcane"
@@ -1503,7 +1456,7 @@
       "mime": "audio/wav",
       "bytes": 14156,
       "parts": [
-        "resources/r000121.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.dash"
@@ -1515,7 +1468,7 @@
       "mime": "audio/wav",
       "bytes": 7542,
       "parts": [
-        "resources/r000122.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.hit"
@@ -1527,7 +1480,7 @@
       "mime": "audio/wav",
       "bytes": 16802,
       "parts": [
-        "resources/r000123.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.hurt"
@@ -1539,7 +1492,7 @@
       "mime": "audio/wav",
       "bytes": 38852,
       "parts": [
-        "resources/r000124.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.level"
@@ -1551,7 +1504,7 @@
       "mime": "audio/wav",
       "bytes": 130582,
       "parts": [
-        "resources/r000125.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.evolution"
@@ -1563,7 +1516,7 @@
       "mime": "audio/wav",
       "bytes": 37088,
       "parts": [
-        "resources/r000126.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.elite"
@@ -1575,7 +1528,7 @@
       "mime": "audio/wav",
       "bytes": 225836,
       "parts": [
-        "resources/r000127.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boss"
@@ -1587,7 +1540,7 @@
       "mime": "audio/wav",
       "bytes": 178208,
       "parts": [
-        "resources/r000128.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.win"
@@ -1599,7 +1552,7 @@
       "mime": "audio/wav",
       "bytes": 68840,
       "parts": [
-        "resources/r000129.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.lose"
@@ -1611,7 +1564,7 @@
       "mime": "audio/wav",
       "bytes": 4896,
       "parts": [
-        "resources/r000130.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.ui"
@@ -1623,7 +1576,7 @@
       "mime": "audio/wav",
       "bytes": 33560,
       "parts": [
-        "resources/r000131.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.greatswordSwing"
@@ -1635,7 +1588,7 @@
       "mime": "audio/wav",
       "bytes": 35324,
       "parts": [
-        "resources/r000132.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.greatswordHit"
@@ -1647,7 +1600,7 @@
       "mime": "audio/wav",
       "bytes": 40616,
       "parts": [
-        "resources/r000133.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.greatswordClash"
@@ -1659,7 +1612,7 @@
       "mime": "audio/wav",
       "bytes": 18566,
       "parts": [
-        "resources/r000134.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.katanaSwing"
@@ -1671,7 +1624,7 @@
       "mime": "audio/wav",
       "bytes": 22094,
       "parts": [
-        "resources/r000135.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.katanaHit"
@@ -1683,7 +1636,7 @@
       "mime": "audio/wav",
       "bytes": 33560,
       "parts": [
-        "resources/r000136.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.katanaClash"
@@ -1695,7 +1648,7 @@
       "mime": "audio/wav",
       "bytes": 30914,
       "parts": [
-        "resources/r000137.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.bladeDraw"
@@ -1707,7 +1660,7 @@
       "mime": "audio/wav",
       "bytes": 14156,
       "parts": [
-        "resources/r000138.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.thrustHit"
@@ -1719,7 +1672,7 @@
       "mime": "audio/wav",
       "bytes": 11510,
       "parts": [
-        "resources/r000139.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.daggerHit"
@@ -1731,7 +1684,7 @@
       "mime": "audio/wav",
       "bytes": 48556,
       "parts": [
-        "resources/r000140.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.chainFinish"
@@ -1743,7 +1696,7 @@
       "mime": "audio/wav",
       "bytes": 12394,
       "parts": [
-        "resources/r000141.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.chargeReady"
@@ -1755,7 +1708,7 @@
       "mime": "audio/wav",
       "bytes": 37970,
       "parts": [
-        "resources/r000142.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.hammerSwing"
@@ -1767,7 +1720,7 @@
       "mime": "audio/wav",
       "bytes": 49438,
       "parts": [
-        "resources/r000143.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.hammerHit"
@@ -1779,7 +1732,7 @@
       "mime": "audio/wav",
       "bytes": 32678,
       "parts": [
-        "resources/r000144.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.shieldBlock"
@@ -1791,7 +1744,7 @@
       "mime": "audio/wav",
       "bytes": 21212,
       "parts": [
-        "resources/r000145.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.crossbow"
@@ -1803,7 +1756,7 @@
       "mime": "audio/wav",
       "bytes": 28268,
       "parts": [
-        "resources/r000146.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.crossbowReload"
@@ -1815,7 +1768,7 @@
       "mime": "audio/wav",
       "bytes": 18566,
       "parts": [
-        "resources/r000147.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boltHit"
@@ -1827,7 +1780,7 @@
       "mime": "audio/wav",
       "bytes": 10628,
       "parts": [
-        "resources/r000148.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.gunSmg"
@@ -1839,7 +1792,7 @@
       "mime": "audio/wav",
       "bytes": 30034,
       "parts": [
-        "resources/r000149.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.gunShotgun"
@@ -1851,7 +1804,7 @@
       "mime": "audio/wav",
       "bytes": 20330,
       "parts": [
-        "resources/r000150.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.gunRifle"
@@ -1863,7 +1816,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000151.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.sheathClick"
@@ -1875,7 +1828,7 @@
       "mime": "audio/wav",
       "bytes": 19448,
       "parts": [
-        "resources/r000152.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.whipbladeSwing"
@@ -1887,7 +1840,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000153.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.whipbladeExtend"
@@ -1899,7 +1852,7 @@
       "mime": "audio/wav",
       "bytes": 20330,
       "parts": [
-        "resources/r000154.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.chakramThrow"
@@ -1911,7 +1864,7 @@
       "mime": "audio/wav",
       "bytes": 12394,
       "parts": [
-        "resources/r000155.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.chakramCatch"
@@ -1923,7 +1876,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000156.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boomerangThrow"
@@ -1935,7 +1888,7 @@
       "mime": "audio/wav",
       "bytes": 12394,
       "parts": [
-        "resources/r000157.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boomerangCatch"
@@ -1947,7 +1900,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000158.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.warfanGust"
@@ -1959,7 +1912,7 @@
       "mime": "audio/wav",
       "bytes": 22976,
       "parts": [
-        "resources/r000159.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.pipeSwing"
@@ -1971,7 +1924,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000160.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.pipeHit"
@@ -1983,7 +1936,7 @@
       "mime": "audio/wav",
       "bytes": 30914,
       "parts": [
-        "resources/r000161.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.pipeClash"
@@ -1995,7 +1948,7 @@
       "mime": "audio/wav",
       "bytes": 29150,
       "parts": [
-        "resources/r000162.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batSwing"
@@ -2007,7 +1960,7 @@
       "mime": "audio/wav",
       "bytes": 24742,
       "parts": [
-        "resources/r000163.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batWoodHit"
@@ -2019,7 +1972,7 @@
       "mime": "audio/wav",
       "bytes": 30034,
       "parts": [
-        "resources/r000164.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batAlloyHit"
@@ -2031,7 +1984,7 @@
       "mime": "audio/wav",
       "bytes": 35324,
       "parts": [
-        "resources/r000165.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batResonanceHit"
@@ -2043,7 +1996,7 @@
       "mime": "audio/wav",
       "bytes": 37970,
       "parts": [
-        "resources/r000166.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batStarHit"
@@ -2055,7 +2008,7 @@
       "mime": "audio/wav",
       "bytes": 17684,
       "parts": [
-        "resources/r000167.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.batStarReflect"
@@ -2067,7 +2020,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000168.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.flamePunch"
@@ -2079,7 +2032,7 @@
       "mime": "audio/wav",
       "bytes": 21212,
       "parts": [
-        "resources/r000169.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.flameSwing"
@@ -2091,7 +2044,7 @@
       "mime": "audio/wav",
       "bytes": 60902,
       "parts": [
-        "resources/r000170.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.flameRing"
@@ -2103,7 +2056,7 @@
       "mime": "audio/wav",
       "bytes": 54728,
       "parts": [
-        "resources/r000171.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.flameLine"
@@ -2115,7 +2068,7 @@
       "mime": "audio/wav",
       "bytes": 13274,
       "parts": [
-        "resources/r000172.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boxingSwing"
@@ -2127,7 +2080,7 @@
       "mime": "audio/wav",
       "bytes": 16802,
       "parts": [
-        "resources/r000173.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boxingHit"
@@ -2139,7 +2092,7 @@
       "mime": "audio/wav",
       "bytes": 18566,
       "parts": [
-        "resources/r000174.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.boxingClash"
@@ -2151,7 +2104,7 @@
       "mime": "audio/wav",
       "bytes": 23858,
       "parts": [
-        "resources/r000175.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketThrust"
@@ -2163,7 +2116,7 @@
       "mime": "audio/wav",
       "bytes": 32678,
       "parts": [
-        "resources/r000176.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketIgnite"
@@ -2175,7 +2128,7 @@
       "mime": "audio/wav",
       "bytes": 30034,
       "parts": [
-        "resources/r000177.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketLaunch"
@@ -2187,7 +2140,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000178.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketPunch"
@@ -2199,7 +2152,7 @@
       "mime": "audio/wav",
       "bytes": 27386,
       "parts": [
-        "resources/r000179.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketClash"
@@ -2211,7 +2164,7 @@
       "mime": "audio/wav",
       "bytes": 45908,
       "parts": [
-        "resources/r000180.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.rocketBlast"
@@ -2223,7 +2176,7 @@
       "mime": "audio/wav",
       "bytes": 24742,
       "parts": [
-        "resources/r000181.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeSwing"
@@ -2235,7 +2188,7 @@
       "mime": "audio/wav",
       "bytes": 31796,
       "parts": [
-        "resources/r000182.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeHeavySwing"
@@ -2247,7 +2200,7 @@
       "mime": "audio/wav",
       "bytes": 24742,
       "parts": [
-        "resources/r000183.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeHit"
@@ -2259,7 +2212,7 @@
       "mime": "audio/wav",
       "bytes": 27386,
       "parts": [
-        "resources/r000184.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeClash"
@@ -2271,7 +2224,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000185.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeFireHit"
@@ -2283,7 +2236,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000186.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeIceHit"
@@ -2295,7 +2248,7 @@
       "mime": "audio/wav",
       "bytes": 19448,
       "parts": [
-        "resources/r000187.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeLightningHit"
@@ -2307,7 +2260,7 @@
       "mime": "audio/wav",
       "bytes": 37970,
       "parts": [
-        "resources/r000188.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeFireBurst"
@@ -2319,7 +2272,7 @@
       "mime": "audio/wav",
       "bytes": 32678,
       "parts": [
-        "resources/r000189.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeIceBurst"
@@ -2331,7 +2284,7 @@
       "mime": "audio/wav",
       "bytes": 25622,
       "parts": [
-        "resources/r000190.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeLightningBurst"
@@ -2343,7 +2296,7 @@
       "mime": "audio/wav",
       "bytes": 34442,
       "parts": [
-        "resources/r000191.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeFireCoat"
@@ -2355,7 +2308,7 @@
       "mime": "audio/wav",
       "bytes": 30914,
       "parts": [
-        "resources/r000192.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeIceCoat"
@@ -2367,7 +2320,7 @@
       "mime": "audio/wav",
       "bytes": 23858,
       "parts": [
-        "resources/r000193.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeLightningCoat"
@@ -2379,7 +2332,7 @@
       "mime": "audio/wav",
       "bytes": 40616,
       "parts": [
-        "resources/r000194.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.spellbladeFinish"
@@ -2391,7 +2344,7 @@
       "mime": "audio/wav",
       "bytes": 37970,
       "parts": [
-        "resources/r000195.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSwing"
@@ -2403,7 +2356,7 @@
       "mime": "audio/wav",
       "bytes": 34442,
       "parts": [
-        "resources/r000196.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSwingLow"
@@ -2415,7 +2368,7 @@
       "mime": "audio/wav",
       "bytes": 26504,
       "parts": [
-        "resources/r000197.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSwingHigh"
@@ -2427,7 +2380,7 @@
       "mime": "audio/wav",
       "bytes": 50318,
       "parts": [
-        "resources/r000198.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSweep"
@@ -2439,7 +2392,7 @@
       "mime": "audio/wav",
       "bytes": 97066,
       "parts": [
-        "resources/r000199.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberOrbit"
@@ -2451,7 +2404,7 @@
       "mime": "audio/wav",
       "bytes": 87362,
       "parts": [
-        "resources/r000200.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSpin"
@@ -2463,7 +2416,7 @@
       "mime": "audio/wav",
       "bytes": 40616,
       "parts": [
-        "resources/r000201.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberBeam"
@@ -2475,7 +2428,7 @@
       "mime": "audio/wav",
       "bytes": 20330,
       "parts": [
-        "resources/r000202.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberImpact"
@@ -2487,7 +2440,7 @@
       "mime": "audio/wav",
       "bytes": 15040,
       "parts": [
-        "resources/r000203.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberSharpHit"
@@ -2499,7 +2452,7 @@
       "mime": "audio/wav",
       "bytes": 28268,
       "parts": [
-        "resources/r000204.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberHeavyHit"
@@ -2511,7 +2464,7 @@
       "mime": "audio/wav",
       "bytes": 20330,
       "parts": [
-        "resources/r000205.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:fable.sfx.saberCatch"
@@ -2523,7 +2476,7 @@
       "mime": "image/png",
       "bytes": 353116,
       "parts": [
-        "resources/r000206.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-combat-pixel-slash-120.sheet"
@@ -2535,7 +2488,7 @@
       "mime": "image/png",
       "bytes": 2669766,
       "parts": [
-        "resources/r000207.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-game-slash-128.sheet"
@@ -2547,7 +2500,7 @@
       "mime": "image/png",
       "bytes": 1745060,
       "parts": [
-        "resources/r000208.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:starter.curated-art.effects-weapon-spear-thrust-129.sheet"
@@ -2559,7 +2512,7 @@
       "mime": "image/png",
       "bytes": 952147,
       "parts": [
-        "resources/r000209.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:a026d0f0-5314-475b-8591-3b6a6d1f2e28"
@@ -2571,11 +2524,49 @@
       "mime": "image/png",
       "bytes": 121217,
       "parts": [
-        "resources/r000210.part0001.js"
+        "resources/bundle-0007.js"
       ],
       "references": [
         "asset:b52a8bd4-521f-4883-8e5c-49ee3d9aa20b"
       ]
     }
-  ]
+  ],
+  "bundles": [
+    {
+      "path": "resources/bundle-0001.js",
+      "bytes": 67108864,
+      "fragments": 24
+    },
+    {
+      "path": "resources/bundle-0002.js",
+      "bytes": 67108862,
+      "fragments": 34
+    },
+    {
+      "path": "resources/bundle-0003.js",
+      "bytes": 67108862,
+      "fragments": 46
+    },
+    {
+      "path": "resources/bundle-0004.js",
+      "bytes": 67108862,
+      "fragments": 6
+    },
+    {
+      "path": "resources/bundle-0005.js",
+      "bytes": 67108863,
+      "fragments": 3
+    },
+    {
+      "path": "resources/bundle-0006.js",
+      "bytes": 67108863,
+      "fragments": 3
+    },
+    {
+      "path": "resources/bundle-0007.js",
+      "bytes": 39893348,
+      "fragments": 100
+    }
+  ],
+  "revision": "mw3kupy8a9rpdl"
 }

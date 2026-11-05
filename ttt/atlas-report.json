@@ -1,6 +1,6 @@
 {
   "enabled": false,
-  "mode": "split-resources",
-  "manifest": "resource-manifest.json",
-  "version": "1.71.0"
+  "mode": "bundled-data-scripts",
+  "maximumFileMiB": 64,
+  "manifest": "resource-manifest.json"
 }

@@ -5,13 +5,17 @@
   "includeSource": false,
   "atlas": false,
   "resources": {
-    "mode": "split-data-scripts",
+    "mode": "bundled-data-scripts",
     "resources": 210,
     "references": 210,
     "deduplicatedReferences": 0,
     "dataBytes": 331899140,
-    "chunkFiles": 263,
-    "maximumScriptBytes": 4194114,
+    "chunkFiles": 7,
+    "bundleFiles": 7,
+    "fragmentCount": 216,
+    "revision": "mw3kupy8a9rpdl",
+    "maximumFileBytes": 67108864,
+    "maximumScriptBytes": 67108864,
     "manifest": "resource-manifest.json"
   }
 }
