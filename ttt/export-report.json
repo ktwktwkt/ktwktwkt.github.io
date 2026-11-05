@@ -19,5 +19,17 @@
     "manifest": "resource-manifest.json",
     "transportEntries": 218,
     "updatedSoundResources": 8
+  },
+  "editorVersion": "1.75.0",
+  "update": {
+    "runtimeModules": 133,
+    "mediaReused": true,
+    "changedSkillIds": [
+      "flamegauntlets.release",
+      "flamegauntlets.line",
+      "flamegauntlets.dashBurst",
+      "flamegauntlets.infernoRing",
+      "flamegauntlets.infernoLine"
+    ]
   }
 }
