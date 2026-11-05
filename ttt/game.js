@@ -1,6 +1,8203 @@
 // Phaser Forge · Phaser 4.2.1
-const game=window.forgeGame=(function Aa(e,t,n={},r,i,a,o,s,c,l,u,d,f,p,m,h,g,_,v,y,b,x,S,C,w,T,E,D,O,k){let A,j,M=!1,N=[],P=t.framework?.enabled?t.framework.settings:void 0,F=e=>{J.sound.volume=e;let t=J.sound.context;t&&J.sound.masterVolumeNode?.gain.setValueAtTime(e,t.currentTime)},I=n=>{if(!P||!t.framework?.modules.settings||!n.keys||!n.input.keyboard)return;let r=t=>/^Key[A-Z]$/.test(t)?t.charCodeAt(3):/^Digit[0-9]$/.test(t)?t.charCodeAt(5):e.Input.Keyboard.KeyCodes[t.replace(/^Arrow/,``).toUpperCase()],i=P.controls;for(let[e,t]of[[`left`,`left`],[`right`,`right`],[`up`,`up`],[`down`,`down`],[`space`,`jump`]]){let a=r(i[t]);typeof a==`number`&&(n.keys[e]=n.input.keyboard.addKey(a))}n.keys.a=n.keys.left,n.keys.d=n.keys.right,n.keys.w=n.keys.up,n.keys.s=n.keys.down;let a=r(i.action);typeof a==`number`&&(n.keys.action=n.input.keyboard.addKey(a))},L,R=()=>L??=l?.(t,J.sound,e=>G(`error`,e)),z=null,B,V=i?.(t,e=>z?.ctx?.run(e),e=>B?.check(e,`use`).passed??!t.items?.find(t=>t.id===e)?.requirements?.use),H=null,U,ee=new Map(t.assets.map(e=>[e.id,e])),te=O?.(t),W=0,ne=t.runtimeSettings?.bloodEffects??`full`,re=(e,t)=>{t.customProperties?.bloodEffect===!0&&(e.setData?.(`forgeBloodBaseAlpha`,t.opacity),e.alpha=t.opacity*(ne===`off`?0:ne===`reduced`?.35:1))},ie=()=>globalThis.crypto?.randomUUID?.()??`forge_${Date.now().toString(36)}_${++W}`,ae=(e,t=0)=>{if(te)return te.source(e,t);let n=typeof t==`string`?e.atlas?.frames.findIndex(e=>e.name===t):-1,r=n!==void 0&&n>=0?n:t===`__BASE`?0:Number(t),i=e.atlas?.frames[r];return{key:i?.pageId??e.id,frame:i?i.pageId?`${e.id}:${r}`:i.name:e.type===`image`?`__BASE`:t}},oe=e=>({frames:Object.fromEntries((e.atlas?.frames??[]).map(e=>[e.name,{frame:{x:e.x,y:e.y,w:e.width,h:e.height},rotated:e.rotated,trimmed:!0,spriteSourceSize:{x:e.offsetX,y:e.offsetY,w:e.displayWidth??(e.rotated?e.height:e.width),h:e.displayHeight??(e.rotated?e.width:e.height)},sourceSize:{w:e.sourceWidth,h:e.sourceHeight}}]))}),G=(e,t)=>{let n=String(t);window.parent!==window&&window.parent.postMessage({source:`phaser-forge-runtime`,level:e,message:n},`*`),e===`error`&&console.error(n)};window.addEventListener(`error`,e=>G(`error`,e.message)),window.addEventListener(`unhandledrejection`,e=>G(`error`,e.reason)),window.addEventListener(`keydown`,e=>{j?.capturesInput()||t.framework?.modules.menu&&j&&e.code===j.settings().controls.menu||e.key===`Escape`&&J?.scene.getScenes(!0).some(e=>e.gameUi?.hasFocus())||([...e.ctrlKey||e.metaKey?[`Ctrl`]:[],...e.altKey?[`Alt`]:[],...e.shiftKey?[`Shift`]:[],e.key===` `?`Space`:e.key.length===1?e.key.toUpperCase():e.key].join(`+`)===(n.stopShortcut??`F5`)||e.key===`Escape`&&t.runtimeSettings?.stopOnEscape!==!1)&&window.parent!==window&&(e.preventDefault(),window.parent.postMessage({source:`phaser-forge-runtime`,level:`stop`},`*`))});let K=Object.fromEntries(t.variables.map(e=>[e.name,e.type===`number`?Number(e.value)||0:e.type===`boolean`?e.value===`true`:e.value])),se=new Map;B=y?.(t,{variable:e=>{let n=t.variables.find(t=>t.id===e);return n?K[n.name]:void 0},itemCount:e=>V?.count(e)??0});let q=new Map;window.addEventListener(`message`,e=>{if(e.source!==window.parent||e.data?.source!==`phaser-forge-storage`)return;let t=q.get(e.data.id);t&&(clearTimeout(t.timer),q.delete(e.data.id),e.data.error?t.reject(Error(e.data.error)):t.resolve(e.data.value))});let ce=(e,n,r)=>{if(!/^[a-zA-Z0-9._-]{1,80}$/.test(n))return Promise.reject(Error(`저장 키는 영문·숫자·._- 1~80자여야 합니다.`));if(e===`save`)try{if(new Blob([JSON.stringify(r)]).size>1048576)return Promise.reject(Error(`게임 저장 데이터는 슬롯당 1MB 이하여야 합니다.`))}catch(e){return Promise.reject(e)}if(window.parent!==window)return new Promise((t,i)=>{let a=String(Date.now())+Math.random().toString(36).slice(2),o=setTimeout(()=>{q.delete(a),i(Error(`게임 저장 응답 시간이 초과됐습니다.`))},8e3);q.set(a,{resolve:t,reject:i,timer:o}),window.parent.postMessage({source:`phaser-forge-runtime`,level:`storage`,id:a,action:e,key:n,value:r},`*`)});try{let i=`forge-game:`+t.id+`:`+n;return e===`load`?Promise.resolve(JSON.parse(localStorage.getItem(i)??`null`)):(e===`save`&&localStorage.setItem(i,JSON.stringify(r)),e===`remove`&&localStorage.removeItem(i),Promise.resolve(null))}catch(e){return Promise.reject(e)}},le=t.scenes.map(i=>class extends e.Scene{objectMap=new Map;actors=[];hooks={};ctx;keys;scoreText;startupData={};loadingDisplay;logic;timeline;effects;lighting;interaction;particles;motionPaths;collision;connections;projectiles;states;gameplay;gameUi;rigs;syncUiCameras;actorListDirty=!1;pruneActors;updateUiFrame;progress;runToken={active:!0};fired=new Set;variableEvents=new Map;touching=new Map;constructor(){super({key:i.id})}init(e){this.startupData=e??{}}preload(){t.assets.some(e=>e.type===`audio`?!this.cache.audio.exists(e.id):!this.textures.exists(e.id))&&(this.loadingDisplay=this.add.text(this.scale.width/2,this.scale.height/2,`리소스 로딩 0%`,{fontFamily:`system-ui`,fontSize:`24px`,color:`#bcc9da`}).setOrigin(.5),this.load.on(`progress`,e=>this.loadingDisplay?.setText(`리소스 로딩 `+Math.round(e*100)+`%`)));for(let e of t.atlasPages??[])this.textures.exists(e.id)||this.load.atlas(e.id,e.data,{frames:e.frames});t.assets.forEach(e=>{e.atlas?.frames[0]?.pageId||(e.type===`audio`?this.cache.audio.exists(e.id)||this.load.audio(e.id,e.data):this.textures.exists(e.id)||(e.atlas?this.load.atlas(e.id,e.data,oe(e)):e.type===`spritesheet`?this.load.spritesheet(e.id,e.data,{frameWidth:e.frameWidth,frameHeight:e.frameHeight,margin:e.grid?.margin??0,spacing:e.grid?.spacing??0}):this.load.image(e.id,e.data)))}),this.load.on(`loaderror`,e=>G(`error`,`리소스 로드 실패: ${t.assets.find(t=>t.id===e.key)?.name??e.key}`))}create(){te?.register(this.textures),z=this,this.loadingDisplay?.destroy(),this.loadingDisplay=null,this.objectMap=new Map,this.runToken={active:!0};let l=this.runToken,g=ie();this.events.once(`shutdown`,()=>{l.active=!1,this.logic?.cancelObservations(),this.states?.destroy(),this.gameplay?.destroy(),this.gameUi?.destroy(),this.rigs?.destroy(),this.effects?.destroy(),this.interaction?.dispose(),this.particles?.dispose(),this.motionPaths?.dispose(),this.collision?.dispose(),this.connections?.dispose(),this.projectiles?.dispose(),U?.refresh(),L?.stop(i.music?.fadeOut??0,i.id)}),this.states=void 0,this.gameplay=void 0,this.gameUi=void 0,this.rigs=void 0,this.syncUiCameras=void 0,this.updateUiFrame=void 0,this.effects=void 0,this.actors=[],this.interaction=void 0,this.motionPaths=void 0,this.connections=void 0,this.projectiles=void 0,this.particles=x?.(e),this.collision=C?.(t,()=>this.actors,e=>G(`error`,e)),this.hooks={},this.fired=new Set,this.variableEvents=new Map,this.touching=new Map,this.logic=r?.(t,K,{script:(e,n,r,i)=>{let a=t.scripts.find(t=>t.id===e);if(!a)throw Error(`호출할 공통 코드가 없습니다: `+e);let o=(a.modulePath?this.ctx.modules?.require(a.modulePath):this.ctx.utils)?.[n];if(typeof o!=`function`)throw Error(`공통 코드의 함수를 찾을 수 없습니다: `+a.name+` / `+n);return o(this.ctx,r,i)},requirement:(e,t)=>{if(!B)return{passed:!1,reasons:[`조건 판정기를 사용할 수 없습니다.`]};let n=e.targetId??``,r=e.property??(e.kind===`requirements`?`use`:`learn`);if(e.kind===`requirements`)return B.check(n,r);if(r===`learn`)return B.progression.learn(n);if(![`string`,`number`].includes(typeof t)||String(t).trim()===``||!Number.isFinite(Number(t)))throw Error(`진행 설정에는 유효한 숫자가 필요합니다.`);let i=Number(t),a=B.progression;if(r===`setLevel`)a.setLevel(i);else if(r===`setPoints`)a.setPoints(i);else if(r===`addPoints`)a.addPoints(i);else if(r===`setRank`)a.setRank(n,i);else throw Error(`지원하지 않는 진행 설정입니다.`);return{passed:!0,reasons:[]}},scene:(e,t)=>t===`overlay`?this.ctx?.openOverlay(e):t===`close`?this.ctx?.closeOverlay():this.ctx?.goto(e),sound:e=>{this.cache.audio.exists(e)&&this.sound.play(e)},message:e=>this.ctx?.notify(e),animation:(e,t)=>{let n=this.objectMap.get(t??``);n?.play&&this.anims.exists(e)&&n.play(e)},error:e=>G(`error`,e),observing:(e,t)=>A?.watching(e,t,i.id)??!1,observe:e=>A?.observe({...e,callId:g+`:`+e.callId,parentCallId:e.parentCallId?g+`:`+e.parentCallId:void 0},i.id),variableChanged:(e,t,n,r)=>A?.variableChanged(e,t,n,r),wait:(e,t)=>{this.time.delayedCall(e,()=>{l.active&&t()})},storage:this.progress=async(e,n)=>{let r=se.get(i.id);if(r&&e!==`remove`){let t=this.scene.get(r);if(!t?.progress)throw Error(`저장할 게임 씬을 찾지 못했습니다.`);return t.progress(e,n)}if(e===`save`){let e=new Set,t=new Map;for(let{def:n}of this.actors)if(n.customProperties?.gameEffectTransient===!0&&e.add(n.id),n.parentId){let e=t.get(n.parentId)??[];e.push(n.id),t.set(n.parentId,e)}let r=[...e];for(let n=0;n<r.length;n++)for(let i of t.get(r[n])??[])e.has(i)||(e.add(i),r.push(i));let a=[...this.objectMap].filter(([t,n])=>!n.isDestroyed&&!n.getData?.(`forgeUiTransient`)&&!e.has(t)).map(([e,t])=>{let n=t.getData?.(`forgeAnchor`)??t;return{id:e,active:t.active,pickupAmounts:t.getData?.(`forgePickupAmounts`),x:n.x,y:n.y,angle:n.angle,alpha:n.alpha,visible:n.visible,scaleX:n.scaleX,scaleY:n.scaleY,frame:t.getData?.(`forgeLiveRig`)?void 0:t.frame?.name,tilePositionX:t.tilePositionX,tilePositionY:t.tilePositionY,velocityX:t.body?.velocity?.x,velocityY:t.body?.velocity?.y,accelerationX:t.body?.acceleration?.x,accelerationY:t.body?.acceleration?.y}});return await ce(`save`,n,{version:1,sceneId:i.id,variables:{...K},inventory:V?.serialize(),progression:B?.progression.snapshot(),objects:a,cameras:this.cameras.cameras.filter(e=>e.forgeCameraId).map(e=>({id:e.forgeCameraId,scrollX:e.scrollX,scrollY:e.scrollY,zoom:e.zoom,rotation:e.rotation,alpha:e.alpha,visible:e.visible,useBounds:e.useBounds,bounds:e.useBounds?{x:e._bounds.x,y:e._bounds.y,width:e._bounds.width,height:e._bounds.height}:void 0})),removed:i.objects.filter(t=>e.has(t.id)||!this.objectMap.has(t.id)||this.objectMap.get(t.id)?.isDestroyed).map(e=>e.id),fired:[...this.fired],timelines:this.timeline?.status(),states:this.states?.snapshot().filter(t=>!e.has(t.owner)),gameplay:this.gameplay?.snapshot(),rigs:this.rigs?.snapshot(),lighting:this.lighting?.snapshot(),interaction:this.interaction?.snapshot(),particles:this.particles?.snapshot(),motionPaths:this.motionPaths?.snapshot(),collision:this.collision?.snapshot(),factions:U?.snapshot(),connections:this.connections?.snapshot(),music:L?.status(),projectiles:this.projectiles?.snapshot(),spawned:this.actors.filter(t=>!t.go.isDestroyed&&!e.has(t.def.id)&&!i.objects.some(e=>e.id===t.def.id)&&!t.go.getData?.(`forgeUiTransient`)).map(e=>e.def)}),l.active?!0:void 0}if(e===`remove`)return await ce(`remove`,n),l.active?!0:void 0;let a=await ce(`load`,n);if(!l.active)return;if(!a)return!1;if(a.version!==1||!t.scenes.some(e=>e.id===a.sceneId)||!a.variables||!Array.isArray(a.objects))throw Error(`이 프로젝트에서 읽을 수 없는 게임 저장 데이터입니다.`);if(a.progression!==void 0&&B&&!B.progression.restore(a.progression))throw Error(`저장된 레벨·스킬 진행 정보를 확인하세요.`);a.progression===void 0&&B?.progression.reset();for(let e of t.variables){let t=a.variables[e.name];typeof t===e.type&&(e.type!==`number`||Number.isFinite(t))&&(K[e.name]=t)}a.inventory&&V?.restore(a.inventory),U?.dispose(),U=void 0,H=a;let o=new Set([i.id]),s=!0;for(;s;){s=!1;for(let[e,t]of se)o.has(t)&&!o.has(e)&&(o.add(e),s=!0)}for(let e of[...o].reverse())e!==i.id&&(J.scene.stop(e),se.delete(e));this.scene.start(a.sceneId)},action:(e,n,r,a)=>{if(e.kind===`projectileGuidance`){let t=e.objectId||r||``,i=J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.projectiles)?.projectiles;if(!i)throw Error(`유도 이동을 제어할 오브젝트가 없습니다.`);let a=e.property||`restart`;if(!i.command(a,t,[`target`,`owner`].includes(a)?e.targetId||String(n??``):n))throw Error(`대상 오브젝트에 유도·추종·귀환 설정을 추가하세요.`);return}if(e.kind===`connection`){let t=e.objectId||r||``,i=J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.connections)?.connections,a=e.property||`on`;if(!i)throw Error(`연결 효과를 제어할 오브젝트가 없습니다.`);let o=a===`attachEnd`||a===`attachStart`?{targetId:e.targetId||String(n??``),...Number.isFinite(e.x)&&Number.isFinite(e.y)?{x:e.x,y:e.y}:{}}:[`progress`,`extend`,`retract`].includes(a)?n===void 0?void 0:Number(n):n;i.command(a,t,o);return}if(e.kind===`faction`){if(!U)throw Error(`진영 서비스를 사용할 수 없습니다.`);let t=e.objectId||r||``,i=e.property||`team`,a=e.text||U.team(t),o=e.targetId||``;if(i===`team`)U.setTeam(t,String(n??``));else if(i===`relation`||i===`relationBoth`)U.setRelation(a,o,String(n),i===`relationBoth`);else if(i===`clearRelation`||i===`clearRelationBoth`)U.clearRelation(a,o,i===`clearRelationBoth`);else if(i==="default")U.setDefault(String(n));else if(i===`enemyOfEnemy`){if(n!==!0&&n!==!1&&n!==`true`&&n!==`false`)throw Error(`적의 적 규칙은 참거짓으로 입력하세요.`);U.setEnemyOfEnemy(n===!0||n===`true`)}else throw Error(`진영 명령을 확인하세요.`);return}if([`interaction`,`particles`,`motionPath`,`collision`].includes(e.kind)){let t=e.objectId||r||``,i=e.kind===`interaction`?`interaction`:e.kind===`motionPath`?`motionPaths`:e.kind,a=J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e[i]);if(!a)throw Error(`엔진 기능을 제어할 실행 중인 오브젝트를 선택하세요.`);let o=e.property||(e.kind===`interaction`?`enable`:e.kind===`particles`?`on`:e.kind===`motionPath`?`play`:`enable`);e.kind===`interaction`?a.interaction.command(o,t,n):e.kind===`particles`?a.particles.command(t,o,e.value&&o===`explode`?Number(n):void 0):e.kind===`motionPath`?a.motionPaths.command(t,o,o===`seek`?Number(n):n):a.collision.command(t,o,n);return}if(e.kind===`lighting`){let t=e.targetId===`$self`?r||e.objectId||``:e.targetId||``;if(e.targetId===`$self`&&!t)throw Error(`이 조명 함수는 호출한 오브젝트가 필요합니다.`);let i=t?J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.lighting)?.lighting:this.lighting;if(!i)throw Error(`실행 중인 조명 대상을 찾을 수 없습니다.`);i.command(e.text||`enable`,t,n);return}if(e.kind===`framework`){j?.action(e.property||`menu`,e.targetId||e.text||``,n);return}if(e.kind===`rig`){let t=r||e.objectId||``,i=J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.rigs)?.rigs,a=e.property||`play`,o=!e.value||n===!0||n===1||n===`true`||n===`1`;a===`play`?i?.play(t,e.targetId||``,e.duration):a===`aim`?i?.aim(t,o,e.text||``):a===`pause`?i?.pause(t,o):a===`auto`?i?.auto(t):a===`reset`&&i?.reset(t);return}if(e.kind===`agent`){let t=r||e.objectId||``;(J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.gameplay)?.gameplay)?.agent(t,e.property||`enable`,e.targetId||``);return}if(e.kind===`combat`){let t=r||e.objectId||``,i=e.property||`attack`,a=J.scene.scenes.find(e=>e.objectMap?.get(t)?.active&&e.gameplay)?.gameplay;i===`attack`?a?.attack(t,e.targetId||void 0,e.text||`basic`):i===`damage`?a?.damage(t,Number(n),e.targetId||``):i===`heal`?a?.heal(t,Number(n)):i===`revive`?a?.revive(t):i===`status`?a?.status(t,e.text||``,e.targetId||t):i===`clearStatus`&&a?.clearStatus(t,e.text||``);return}if(e.kind===`effect`){let t=e.text===`camera`?this.cameras.cameras.find(t=>t.forgeCameraId===e.cameraId)??this.cameras.main:this.objectMap.get(r??``)??this.cameras.main;e.property===`clear`?this.effects?.stop(t):e.property===`remove`?this.effects?.stop(t,e.targetId):this.effects?.play(t,e.targetId??``,{duration:e.duration||void 0});return}if(e.kind===`music`){let t=e.property??`play`,r=R();t===`play`?r?.play(e.targetId??``,{volume:Number(n),fade:(e.duration??0)/1e3,loop:e.text!==`once`,owner:i.id}):t===`stop`?r?.stop((e.duration??0)/1e3):t===`pause`?r?.pause():t===`resume`?r?.resume():t===`volume`&&r?.volume(Number(n),(e.duration??0)/1e3);return}if(e.kind===`state`){let t=r??``,i=e.targetId||void 0,a=e.property??`set`;if(a===`trigger`)this.states?.trigger(t,e.text??``,i);else if(a===`signal`)this.states?.signal(t,e.text??``,i);else if(a===`change`)this.states?.change(t,e.layerId??``,e.stateId??``,i);else if(a===`enable`||a===`disable`)this.states?.enable(t,a===`enable`,i);else if(a===`reset`)this.states?.reset(t,i);else{let r=Number(this.states?.get(t,e.text??``,i)),a=Number(n);this.states?.set(t,e.text??``,e.operation===`add`?r+a:e.operation===`subtract`?r-a:e.operation===`multiply`?r*a:n,i)}return}if(e.kind===`timeline`){let t=e.targetId??``,r=e.property??`play`;r===`pause`?this.timeline?.pause(t):r===`stop`?this.timeline?.stop(t):r===`seek`?this.timeline?.seek(t,Number(n)||0):this.timeline?.play(t,r!==`resume`);return}if(e.kind===`item`){z=this;let i=e.targetId??``,a=Number(n)||1;if(e.property===`pickup`){let n=this.objectMap.get(r??``);if(!n?.active)return;let o=n.getData(`forgePickupAmounts`)??{},s=o[e.id],c=typeof s==`number`&&Number.isSafeInteger(s)&&s>0?s:Math.min(1e6,Math.max(1,Number.isFinite(a)?Math.floor(a):1)),l=V?.give(i,c)??0,u=c-l;if(l>0&&this.ctx?.notify(((t.items??[]).find(e=>e.id===i||e.key===i)?.name??`아이템`)+` `+l+`개 획득`),u<=0){let e=this.actors.find(e=>e.go===n);e&&this.fireEvents(e.def.events??[],`collect`,e.def.id),n.destroy()}else n.setData(`forgePickupAmounts`,{...o,[e.id]:u}),l||this.ctx?.notify(`소지품이 가득합니다.`);return}e.property===`take`?V?.take(i,a):e.property===`use`?V?.use(i):e.property===`equip`?V?.equip(i):e.property===`unequip`?V?.unequip((t.items??[]).find(e=>e.id===i)?.slot??``):V?.give(i,a);return}let o=this.objectMap.get(r??``),s=Number(n)||0,c=e.property??`x`;if(e.kind===`gravity`){this.physics.world.gravity.set(e.x??0,e.y??900);return}if(e.kind===`camera`){let t=this.cameras.cameras.find(t=>t.forgeCameraId===e.cameraId)??this.cameras.main,n=e.duration??500;c===`shake`?t.shake(n,Math.min(.1,Math.max(0,s||.007))):c===`flash`?t.flash(n):c===`fade`?t.fadeOut(n):c===`zoom`&&t.zoomTo(Math.max(.05,Math.min(20,s)),n);return}if(e.kind===`spawn`){let t=o?.getWorldTransformMatrix(),n={};for(let[t,i]of Object.entries(e.spawnBindings??{})){let a=i===`$self`?r||e.objectId||``:i;if(!a)throw Error(`생성 인수의 호출 대상이 없습니다.`);n[t]=a}this.ctx?.spawn(e.targetId,e.property===`atTarget`?t?.tx??0:e.x??0,e.property===`atTarget`?t?.ty??0:e.y??0,{values:a,bindings:n});return}if(!o?.active){G(`error`,`오브젝트 동작의 실행 대상을 찾을 수 없습니다.`);return}if(e.kind===`destroy`){o.destroy();return}let l=o.getData?.(`forgeAnchor`)??o,u={rotation:`angle`,opacity:`alpha`,width:`displayWidth`,height:`displayHeight`}[c]??c,d=c.startsWith(`velocity`)||c.startsWith(`acceleration`)?o.body:l;if(!d||c.startsWith(`velocity`)&&!d.velocity||c.startsWith(`acceleration`)&&!d.acceleration){G(`error`,`속도·가속도를 변경하려면 동적 물리를 설정하세요.`);return}let f=c.startsWith(`velocity`)?`velocity`:c.startsWith(`acceleration`)?`acceleration`:``,p=f?d[f][c.endsWith(`X`)?`x`:`y`]:c===`scale`?l.scaleX/(l.getData(`forgeScaleX`)||1):d[u],m=e.operation===`add`?Number(p)+s:e.operation===`subtract`?Number(p)-s:e.operation===`multiply`?Number(p)*s:s;if(e.kind===`object`&&c===`text`&&o.setText)o.setText(e.operation===`add`?String(p??``)+String(n??``):String(n??``));else if(!Number.isFinite(m))G(`error`,`오브젝트 동작의 값이 유효한 수가 아닙니다.`);else if(c===`scale`&&(m=Math.max(1e-4,Math.min(1e4,m))),(c===`width`||c===`height`)&&(m=Math.max(1,Math.min(16384,m))),c===`opacity`&&(m=Math.max(0,Math.min(1,m))),e.kind===`tween`){let t=c===`scale`?{scaleX:m*(l.getData(`forgeScaleX`)||1),scaleY:m*(l.getData(`forgeScaleY`)||1)}:{[u]:m};this.tweens.add({targets:l,...t,duration:e.duration??500,ease:e.ease??`Linear`})}else f?d[f][c.endsWith(`X`)?`x`:`y`]=m:c===`scale`?l.setScale(m*(l.getData(`forgeScaleX`)||1),m*(l.getData(`forgeScaleY`)||1)):c===`text`&&o.setText?o.setText(String(n??``)):[`visible`,`active`,`flipX`,`flipY`].includes(c)?(d[u]=n===!0||n===`true`,c===`active`&&o.body&&(o.body.enable=d[u])):d[u]=m}}),this.physics.world.gravity.y=i.gravity,this.physics.world.gravity.x=i.physicsSettings?.gravityX??0,this.physics.world.setFPS(i.physicsSettings?.fps??60),this.input.setTopOnly(i.physicsSettings?.topOnly??!0),this.physics.world.setBounds(i.physicsSettings?.boundsX??0,i.physicsSettings?.boundsY??0,i.physicsSettings?.boundsWidth??i.worldWidth,i.physicsSettings?.boundsHeight??i.worldHeight,i.physicsSettings?.left??!0,i.physicsSettings?.right??!0,i.physicsSettings?.up??!0,i.physicsSettings?.down??!0),F(t.audioVolume*(P?.masterVolume??1)),this.cameras.main.setBackgroundColor(i.background),this.keys=this.input.keyboard.addKeys({left:`LEFT`,right:`RIGHT`,up:`UP`,down:`DOWN`,a:`A`,d:`D`,w:`W`,s:`S`,space:`SPACE`,action:`Z`,r:`R`}),I(this);let _=e=>{t.runtimeSettings?.restartOnR!==!1&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!this.gameUi?.capturesInput()&&!j?.capturesInput()&&this.scene.restart()};this.input.keyboard.on(`keydown-R`,_),this.events.once(`shutdown`,()=>this.input.keyboard.off(`keydown-R`,_));for(let e of t.animations){let n=t.assets.find(t=>t.id===e.assetId);if(this.anims.exists(e.id)||!n)continue;let r=`__forge_blank_`+e.assetId;e.frames.includes(-1)&&!this.textures.exists(r)&&this.textures.createCanvas(r,n.frameWidth,n.frameHeight);let i=e.frames.flatMap((t,i)=>{let a=t===-1?{key:r,frame:`__BASE`}:ae(n,t);return this.textures.exists(a.key)&&this.textures.get(a.key).has(a.frame)?[{...a,...e.frameDurations?{duration:e.frameDurations[i]}:{}}]:[]});i.length&&this.anims.create({key:e.id,frames:i,frameRate:e.frameDurations?1e3:e.fps,repeat:e.repeat,yoyo:e.yoyo})}let y=[],O=[],M=[],N=[],W=[],oe=[];this.actorListDirty=!1,this.pruneActors=()=>{this.actors=this.actors.filter(e=>!e.go.isDestroyed);for(let e of[O,oe,y,W,M]){let t=e.filter(e=>!e.isDestroyed);e.splice(0,e.length,...t)}this.actorListDirty=!1,U?.refresh()};let q=(n,r=!1)=>{let a=this.actors.length,o=N.length,s=r?this.actors.reduce((e,t)=>{let n=t.go;return n?.active&&!n.isDestroyed&&n.scene===this&&!n.parentContainer?Math.max(e,Number(n.depth)||0):e},-1)+1:0;for(let e of n.filter(e=>e.kind===`group`))this.objectMap.set(e.id,this.add.container(e.x,e.y).setSize(e.width,e.height));for(let r of n){let a=parseInt(r.color.slice(1),16),o,c=ee.get(r.assetId)??(r.kind===`sprite`&&r.rigPlayback?.enabled?ee.get(r.rigPlayback.assetId):void 0);if(r.kind===`group`)o=this.objectMap.get(r.id);else if(r.kind===`tilemap`){if(!c||!this.textures.exists(c.id))continue;let e=Array.from({length:r.rows},(e,t)=>r.tiles.slice(t*r.columns,(t+1)*r.columns)),t=this.make.tilemap({data:e,tileWidth:r.tileMap?.tileWidth??c.frameWidth,tileHeight:r.tileMap?.tileHeight??c.frameHeight}),n=(r.tileMap?.sources??[{assetId:c.id,start:0}]).flatMap(e=>{let n=ee.get(e.assetId);if(!n||!this.textures.exists(n.id))return[];let i=n.id,a=n.width,o=n.height,s=n.frameWidth,c=n.frameHeight,l=n.grid?.margin??0,u=n.grid?.spacing??0;if(n.atlas?.frames.length){s=t.tileWidth,c=t.tileHeight,l=u=0,i=`__forge_tiles__`+n.id+`__`+s+`x`+c;let e=n.atlas.frames.length,r=Math.max(1,Math.ceil(Math.sqrt(e*c/s))),d=Math.ceil(e/r);a=r*s,o=d*c;let f=this.game.renderer.gl,p=Math.min(8192,f?f.getParameter(f.MAX_TEXTURE_SIZE):8192);if(!Number.isFinite(a*o)||a>p||o>p||a*o>16777216)throw Error(`타일의 논리 크기가 너무 큽니다: `+n.name+` · 타일 크기를 줄이거나 타일셋을 나누세요.`);if(!this.textures.exists(i)){let t=this.textures.createCanvas(i,a,o);if(!t)throw Error(`타일 아틀라스를 준비하지 못했습니다: `+n.name);let l=t.context;l.imageSmoothingEnabled=!1;try{for(let t=0;t<e;t++){let e=ae(n,t),i=this.textures.get(e.key)?.get(e.frame);if(!i||!i.source?.image)throw Error(`타일 프레임을 찾을 수 없습니다: `+n.name+` · `+t);let a=s/Math.max(1,i.realWidth),o=c/Math.max(1,i.realHeight),u=t%r*s+(i.x??0)*a,d=Math.floor(t/r)*c+(i.y??0)*o,f=i.width*a,p=i.height*o;i.rotated?(l.save(),l.translate(u,d+p),l.rotate(-Math.PI/2),l.drawImage(i.source.image,i.cutX,i.cutY,i.cutWidth,i.cutHeight,0,0,p,f),l.restore()):l.drawImage(i.source.image,i.cutX,i.cutY,i.cutWidth,i.cutHeight,u,d,f,p)}t.refresh()}catch(e){throw this.textures.remove(i),e}}}let d=t.addTilesetImage(n.id,i,s,c,l,u,e.start);if(!d)return[];d.updateTileData(a,o),n.atlas?.frames.length&&(d.total=n.atlas.frames.length);for(let t of r.tileMap?.animations??[])if(t.index>=e.start&&t.index<e.start+(`count`in e?e.count:4096)){let n=0;d.tileData[t.index-e.start]={animation:t.frames.map(t=>{let r={tileid:t.index-e.start,duration:t.duration,startTime:n};return n+=t.duration,r}),animationDuration:t.frames.reduce((e,t)=>e+t.duration,0)}}return[d]});if(!n.length)continue;o=t.createLayer(0,n,r.x-r.width/2,r.y-r.height/2),o.setScale(r.width/(r.columns*(r.tileMap?.tileWidth??c.frameWidth)),r.height/(r.rows*(r.tileMap?.tileHeight??c.frameHeight))),r.tileMap?.flags&&o.forEachTile(e=>{let t=r.tileMap.flags[e.y*r.columns+e.x]??0;e.rotation=[0,0,Math.PI,Math.PI,Math.PI*1.5,Math.PI/2,Math.PI*1.5,Math.PI/2][t],e.flipX=[!1,!0,!0,!1,!0,!1,!1,!0][t]}),r.physics===`static`&&(r.tileMap?.collisionTiles?o.setCollision(r.tileMap.collisionTiles):o.setCollisionByExclusion([-1]),r.tileMap?.collisionOverrides&&(o.forEachTile(e=>{let t=r.tileMap.collisionOverrides[e.y*r.columns+e.x];t!==void 0&&t>=0&&e.setCollision(t===1&&e.index>=0,t===1&&e.index>=0,t===1&&e.index>=0,t===1&&e.index>=0,!1)}),o.calculateFacesWithin?.()),y.push(o))}else if(r.kind===`sprite`&&c&&this.textures.exists(ae(c,r.frame).key))o=r.background?.enabled?this.add.tileSprite(r.x,r.y,r.width,r.height,ae(c,r.frame).key,ae(c,r.frame).frame).setTilePosition(r.background.offsetX,r.background.offsetY).setTileScale(r.background.tileScaleX,r.background.tileScaleY):r.gameUi?.nineSlice?.enabled&&m&&h?m(this,ae(c,r.frame).key,ae(c,r.frame).frame,r.width,r.height,r.gameUi.nineSlice,h).setPosition(r.x,r.y):this.add.sprite(r.x,r.y,ae(c,r.frame).key,ae(c,r.frame).frame).setDisplaySize(r.width,r.height),!r.background?.enabled&&r.animationId&&this.anims.exists(r.animationId)&&o.play?.(r.animationId);else if(r.kind===`text`)o=this.add.text(r.x,r.y,r.textBinding&&this.logic?this.logic.format(r.textBinding):r.text,{fontFamily:`system-ui, sans-serif`,fontSize:`${r.fontSize}px`,color:r.color,align:r.gameUi?.enabled?r.gameUi.text.align??`center`:`center`,...r.gameUi?.enabled?{fixedWidth:r.width,fixedHeight:r.height}:{},wordWrap:{width:r.width}}).setOrigin(.5);else if(r.kind===`ellipse`)o=this.add.ellipse(r.x,r.y,r.width,r.height,a);else if(r.kind===`particles`){let e=c?ae(c,r.frame).key:`__forge_particle`;if(!this.textures.exists(e)){let t=this.make.graphics({x:0,y:0});t.fillStyle(16777215),t.fillCircle(3,3,3),t.generateTexture(e,6,6),t.destroy()}o=this.add.particles(r.x,r.y,e,r.particleSettings&&this.particles?this.particles.config(r.particleSettings,c?ae(c,r.frame).frame:void 0):{...c?{frame:ae(c,r.frame).frame}:{},speed:{min:10,max:r.speed},lifespan:1500,quantity:1,frequency:100,scale:{start:.8,end:0},alpha:{start:1,end:0},tint:a}),this.particles?.register(r.id,o,r.particleSettings,!(H?.sceneId===i.id&&H?.particles))}else o=this.add.rectangle(r.x,r.y,r.width,r.height,a);r.kind!==`group`&&(o.setOrigin&&o.setOrigin(r.renderSettings?.originX??.5,r.renderSettings?.originY??.5),o.setFlip&&o.setFlip(r.renderSettings?.flipX??!1,r.renderSettings?.flipY??!1),r.renderSettings?.blend&&!(r.kind===`particles`&&r.particleSettings)&&o.setBlendMode(e.BlendModes[r.renderSettings.blend]),r.renderSettings?.tint&&o.setTint&&o.setTint(parseInt(r.renderSettings.tint.slice(1),16))),r.scale!==void 0&&o.setScale(o.scaleX*r.scale,o.scaleY*r.scale);let l={...r.customProperties,...r.tileMap?.properties};if(o.setData(Object.fromEntries(Object.entries(l).filter(([e])=>![`__proto__`,`constructor`,`prototype`].includes(e)&&!e.startsWith(`forge`)))),o.setData({forgeId:r.id,forgeValue:r.value,forgeScaleX:o.scaleX/(r.scale??1),forgeScaleY:o.scaleY/(r.scale??1)}),o.setDepth((r.parentId?0:s)+n.indexOf(r)),r.kind===`tilemap`){let e=this.add.container(r.x,r.y).setSize(r.width,r.height).setScale(r.scale??1).setAngle(r.rotation).setAlpha(r.opacity).setVisible(r.visible);e.setData({forgeScaleX:1,forgeScaleY:1}),r.parentId&&this.objectMap.get(r.parentId)?.add(e),o.setData(`forgeAnchor`,e);let t=o.setVisible.bind(o);o.setVisible=n=>(e.setVisible(n),t(n)),e.once(`destroy`,()=>{o.active&&!o.isDestroyed&&o.destroy()}),o.once(`destroy`,()=>{e.active&&!e.isDestroyed&&e.destroy()})}else r.parentId&&this.objectMap.get(r.parentId)?.add(o);if(o.setName(r.name).setAlpha(r.opacity).setVisible(r.visible).setAngle(r.rotation),r.fixed?(o.setScrollFactor(0),W.push(o)):o.setScrollFactor?.(r.renderSettings?.scrollFactorX??1,r.renderSettings?.scrollFactorY??1),o.setData?.(`forgeObjectId`,r.id),this.objectMap.set(r.id,o),o.once(`destroy`,()=>{this.actorListDirty=!0,this.objectMap.delete(r.id),this.effects?.stop(o),this.states?.remove(r.id);for(let e of r.events??[])this.fired.delete(e.id),this.touching.delete(e.id)}),r.lifetime&&this.time.delayedCall(r.lifetime,()=>{o.active&&o.destroy()}),re(o,r),this.actors.push({def:r,go:o,startX:r.x,startY:r.y}),this.lighting?.bind(r,o),r.kind!==`tilemap`&&r.kind!==`particles`&&r.kind!==`group`&&r.physics!==`none`&&(this.physics.add.existing(o,r.physics===`static`),r.physics===`static`?y.push(o):(o.body.setAllowGravity(r.gravity).setBounce(r.bounce).setCollideWorldBounds(!0),O.push(o),r.collision&&M.push(o))),o.body&&r.kind!==`tilemap`){let t=r.bodySettings??{},n=Math.abs(o.scaleX/(r.scale??1))||1,i=Math.abs(o.scaleY/(r.scale??1))||1;if(t.shape===`circle`&&o.body.setCircle?o.body.setCircle((t.radius??Math.min(r.width,r.height)/2)/n):(t.width!==void 0||t.height!==void 0)&&o.body.setSize((t.width??r.width)/n,(t.height??r.height)/i,!1),(t.offsetX!==void 0||t.offsetY!==void 0)&&o.body.setOffset((t.offsetX??0)/n,(t.offsetY??0)/i),o.body.setVelocity&&(o.body.setVelocity(t.velocityX??0,t.velocityY??0),o.body.setAcceleration(t.accelerationX??0,t.accelerationY??0),o.body.setDrag(t.dragX??0,t.dragY??0),o.body.setMaxVelocity(t.maxVelocityX??1e4,t.maxVelocityY??1e4),o.body.setMass(t.mass??1),o.body.setImmovable(t.immovable??!1),o.body.pushable=t.pushable??!0,o.body.setCollideWorldBounds(t.collideWorldBounds??!0)),o.parentContainer&&o.body.physicsType===e.Physics.Arcade.DYNAMIC_BODY){let e=o.body.postUpdate.bind(o.body);o.body.postUpdate=()=>{let t=o.x,n=o.y;e();let r=o.x-t,i=o.y-n,a=o.parentContainer.getWorldTransformMatrix(),s=a.a*a.d-a.b*a.c;o.x=t+(a.d*r-a.c*i)/s,o.y=n+(-a.b*r+a.a*i)/s}}}[`collectible`,`goal`].includes(r.behavior)&&(o.body||this.physics.add.existing(o,!0),N.push({def:r,go:o})),r.behavior===`button`&&o.setInteractive({useHandCursor:!0}).on(`pointerdown`,()=>{this.gameUi?.isDisabled(r.id)||(r.soundId&&this.cache.audio.exists(r.soundId)&&this.sound.play(r.soundId),r.targetScene&&t.scenes.some(e=>e.id===r.targetScene)&&this.scene.start(r.targetScene))}),r.events?.some(e=>e.trigger===`click`)&&o.setInteractive({useHandCursor:!0}).on(`pointerdown`,()=>{this.gameUi?.isDisabled(r.id)||this.fireEvents(r.events??[],`click`,r.id)}),(r.tween===`float`||r.behavior===`float`)&&this.tweens.add({targets:o,y:r.y-9,duration:1400,yoyo:!0,repeat:-1,ease:`Sine.inOut`}),r.tween===`pulse`&&this.tweens.add({targets:o,alpha:.35,duration:800,yoyo:!0,repeat:-1,ease:`Sine.inOut`}),r.tween===`spin`&&this.tweens.add({targets:o,angle:360,duration:2400,repeat:-1})}oe.splice(0,oe.length,...this.actors.filter(e=>e.go.active&&[`platformer`,`topdown`].includes(e.def.behavior)).map(e=>e.go)),r&&le(this.actors.slice(a),N.slice(o));for(let e of this.actors.slice(a))this.collision?.bind(e.def,e.go),this.interaction?.bind(e.def,e.go),this.motionPaths?.bind(e.def,e.go),this.connections?.bind(e.def,e.go),this.projectiles?.bind(e.def,e.go);U?.refresh()};q(i.objects),this.refreshStaticBodies(),this.physics.add.collider(O,y,void 0,(e,t)=>this.collision?.canSeparate(e,t)??!0),this.physics.add.collider(M,O,void 0,(e,t)=>e!==t&&(this.collision?.canSeparate(e,t)??!0));let le=(e,t)=>{for(let e of t)this.physics.add.overlap(oe,e.go,()=>{if(e.go.active&&e.go.visible){if(e.def.behavior===`collectible`){if(e.def.itemId){let t=V?.give(e.def.itemId,e.def.itemQuantity??1)??0;if(!t)return;let n=(e.def.itemQuantity??1)-t;if(n>0){e.def={...e.def,itemQuantity:n};return}}K.score=(Number(K.score)||0)+e.def.value,e.def.soundId&&this.cache.audio.exists(e.def.soundId)&&this.sound.play(e.def.soundId),this.fireEvents(e.def.events??[],`collect`,e.def.id),e.go.destroy(),G(`info`,`아이템 획득 +${e.def.value}`)}else e.def.targetScene&&this.scene.start(e.def.targetScene)}});for(let t of e)for(let e of t.def.events??[])if(e.trigger===`overlap`){t.go.body||this.physics.add.existing(t.go,!0);let n=e.otherObjectId?this.objectMap.get(e.otherObjectId):void 0;n&&!n.body&&this.physics.add.existing(n,!0),this.physics.add.overlap(n??oe,t.go,(n,r)=>{if(n===r||!t.go.active)return;let i=this.game.loop.frame,a=this.touching.get(e.id)??-100;this.touching.set(e.id,i),i-a>2&&this.fireEvents([e],`overlap`,t.def.id,(n===t.go?r:n)?.getData?.(`forgeObjectId`))})}};le(this.actors,N);for(let e of this.actors)this.collision?.bind(e.def,e.go);this.refreshStaticBodies();for(let e of i.events??[])if(e.enabled!==!1&&e.trigger===`key`){let t=new WeakSet,n=e.key===`ACTION`?`keydown`:`keydown-`+(e.key??`SPACE`),r=n=>{(!this.gameUi?.capturesInput()&&!j?.capturesInput()||e.allowWhileUi)&&(e.key!==`ACTION`||n.code===(P?.controls.action??`KeyZ`))&&(n.ctrlKey||n.metaKey||n.altKey||t.has(n)||n.repeat||(t.add(n),this.fireEvents([e],`key`)))};this.input.keyboard.on(n,r),this.events.once(`shutdown`,()=>this.input.keyboard.off(n,r))}if(i.cameras.forEach((e,n)=>{let r=n===0?this.cameras.main:this.cameras.add(e.x,e.y,e.width,e.height,!1,e.name);r.forgeCameraId=e.id,r.setViewport(e.x,e.y,e.width,e.height).setName(e.name).setZoom(e.zoom).setScroll(e.scrollX,e.scrollY).setVisible(e.visible),e.bounds?.enabled===!1?r.removeBounds():r.setBounds(e.bounds?.x??0,e.bounds?.y??0,e.bounds?.width??i.worldWidth,e.bounds?.height??i.worldHeight),r.setRotation((e.rotation??0)*Math.PI/180),e.deadzone?.enabled&&r.setDeadzone(e.deadzone.width,e.deadzone.height);let a=this.objectMap.get(e.follow);if(a){let n=a.getWorldTransformMatrix().tx,i=a.getWorldTransformMatrix().ty,o=a.parentContainer?{get x(){return a.active&&(n=a.getWorldTransformMatrix().tx),n},get y(){return a.active&&(i=a.getWorldTransformMatrix().ty),i}}:a;r.startFollow(o,e.roundPixels??t.pixelArt,e.lerp,e.lerp,e.followOffsetX??0,e.followOffsetY??0)}let o=H?.sceneId===i.id&&Array.isArray(H?.cameras)?H.cameras.find(t=>t?.id===e.id):void 0;o&&[`scrollX`,`scrollY`,`zoom`,`rotation`,`alpha`].every(e=>Number.isFinite(o[e]))&&o.zoom>0&&o.zoom<=100&&o.alpha>=0&&o.alpha<=1&&(r.setScroll(o.scrollX,o.scrollY).setZoom(o.zoom).setRotation(o.rotation).setAlpha(o.alpha),typeof o.visible==`boolean`&&r.setVisible(o.visible),o.useBounds===!1?r.removeBounds():o.useBounds===!0&&o.bounds&&[`x`,`y`,`width`,`height`].every(e=>Number.isFinite(o.bounds[e]))&&o.bounds.width>0&&o.bounds.height>0&&r.setBounds(o.bounds.x,o.bounds.y,o.bounds.width,o.bounds.height)),n>0&&W.length&&r.ignore(W),e.effect===`fade`&&r.fadeIn(650,0,0,0),e.effect===`shake`&&r.shake(500,.007),e.effect===`flash`&&r.flash(500)}),t.showScore&&(this.scoreText=this.add.text(t.width-25,25,``,{fontFamily:`monospace`,fontSize:`18px`,color:`#fff1ce`,backgroundColor:`#192632`,padding:{x:10,y:6}}).setOrigin(1,0).setScrollFactor(0).setDepth(9999)),this.scoreText&&this.cameras.cameras.slice(1).forEach(e=>e.ignore(this.scoreText)),this.ctx={project:t,debugEnabled:!!n.editorInspection,presentation:{bloodMode:()=>ne,setBloodMode:e=>{if(![`off`,`reduced`,`full`].includes(e))throw Error(`혈흔 표시는 끄기·약하게·보통 중 하나를 선택하세요.`);ne=e;for(let e of J.scene.getScenes(!1))for(let t of e.actors??[])t.go.active&&re(t.go,t.def)}},requirements:B?{check:B.check}:void 0,progression:B?.progression,framework:j,controls:{isDown:e=>!j?.capturesInput()&&!!this.keys?.[e===`jump`?`space`:e]?.isDown,justDown:t=>!j?.capturesInput()&&!!this.keys?.[t===`jump`?`space`:t]&&e.Input.Keyboard.JustDown(this.keys[t===`jump`?`space`:t])},catalog:a?.(t.definitions??[])??{},definition:e=>{let n=t.definitions?.find(t=>t.published&&(t.id===e||t.key===e));return n?this.ctx.catalog[n.key]:void 0},sceneBlueprint:e=>{let n=t.scenes.find(t=>t.id===e||t.name===e);return n?structuredClone(n):void 0},inventory:V?new Proxy(V,{get:(e,t)=>{let n=e[t];return typeof n==`function`?(...e)=>(z=this,n(...e)):n}}):void 0,spawn:(e,n=t.width/2,r=t.height/2,i={})=>{let a=t.prefabs.find(t=>t.id===e||t.name===e);if(!a)return G(`error`,`생성할 프리팹을 찾을 수 없습니다.`),null;if(!Number.isFinite(n)||!Number.isFinite(r))throw Error(`생성 위치는 유효한 숫자여야 합니다.`);if(!i||typeof i!=`object`)throw Error(`생성 설정은 값과 대상 연결을 담은 객체여야 합니다.`);this.actors=this.actors.filter(e=>!e.go.isDestroyed);for(let[e,t]of this.objectMap)t.isDestroyed&&this.objectMap.delete(e);for(let e of[O,y,oe,W,M]){let t=e.filter(e=>!e.isDestroyed);e.splice(0,e.length,...t)}let o=a.objects??[a.object],s=new Set(o.map(e=>e.id));for(let[e,t]of Object.entries(i.bindings??{})){if(s.has(e))throw Error(`프리팹 내부 연결은 생성 인수로 바꿀 수 없습니다.`);if(!this.objectMap.get(t)?.active)throw Error(`생성할 프리팹의 외부 연결 대상이 현재 씬에 없습니다.`)}let c={};for(let[e,t]of Object.entries(i.values??{}))if(e===`name`){if(typeof t!=`string`||!t.trim()||t.length>200)throw Error(`생성할 이름은 1~200자여야 합니다.`);c[e]=t}else if(e===`color`){if(typeof t!=`string`||!/^#[0-9a-fA-F]{6}$/.test(t))throw Error(`생성 색은 #RRGGBB 형식이어야 합니다.`);c[e]=t}else{let n={opacity:[0,1],rotation:[-36e3,36e3],speed:[0,1e4],value:[-1e9,1e9],"gameplay.combat.maxHp":[1,1e8]}[e],r=Number(t);if(!n||!(typeof t==`number`||typeof t==`string`&&t.trim())||!Number.isFinite(r)||r<n[0]||r>n[1])throw Error(`생성할 `+e+` 값이 허용 범위를 벗어났습니다.`);if(e===`gameplay.combat.maxHp`&&!a.object.gameplay?.combat)throw Error(`프리팹에 전투 설정이 없습니다.`);c[e]=r}if(this.actors.length+o.length>5e3)return G(`error`,`실행 중 오브젝트가 5000개를 넘었습니다.`),null;let l=new Map(o.map(e=>[e.id,ie()])),u=JSON.parse(JSON.stringify(o)),d=new Map([...l,...Object.entries(i.bindings??{})]);for(let e of u){let t=e.id;e.id=l.get(t),e.parentId=e.parentId?l.get(e.parentId):void 0;for(let t of e.rigPlayback?.aims??[])t.targetId&&=d.get(t.targetId)??t.targetId;if(e.gameplay?.agent?.targetId&&(e.gameplay.agent.targetId=d.get(e.gameplay.agent.targetId)??e.gameplay.agent.targetId),e.projectileGuidance)for(let t of[`targetId`,`ownerId`])e.projectileGuidance[t]&&(e.projectileGuidance[t]=d.get(e.projectileGuidance[t])??e.projectileGuidance[t]);if(e.lighting?.light?.follow===`object`&&(e.lighting.light.targetId=d.get(e.lighting.light.targetId)??e.lighting.light.targetId),e.interaction&&(e.interaction.targetIds=e.interaction.targetIds.map(e=>d.get(e)??e),e.interaction.areaObjectId&&(e.interaction.areaObjectId=d.get(e.interaction.areaObjectId)??e.interaction.areaObjectId)),e.connection)for(let t of[e.connection.start,e.connection.end]){let e=t.bindingKey?i.bindings?.[t.bindingKey]:void 0;e?(t.mode=`object`,t.targetId=e):t.mode===`object`&&t.targetId&&(t.targetId=d.get(t.targetId)??t.targetId)}for(let t of e.events??[])t.id=ie(),t.otherObjectId&&=d.get(t.otherObjectId)??t.otherObjectId;if(t===a.object.id){delete e.parentId,e.x=n,e.y=r;for(let[t,n]of Object.entries(c))t===`gameplay.combat.maxHp`?e.gameplay.combat.maxHp=n:e[t]=n}for(let t of e.effects??[])t.id=ie();for(let t of e.stateMachines??[]){t.id=ie();for(let e of Object.keys(t.targets))t.targets[e]=d.get(t.targets[e])??t.targets[e]}}q(u,!0),this.states?.sync();for(let e of u)this.effects?.bind(this.objectMap.get(e.id),e.effects);return this.refreshStaticBodies(),this.syncUiCameras?.(),this.objectMap.get(l.get(a.object.id))},texture:(e,n=0)=>{let r=t.assets.find(t=>t.id===e);return r?ae(r,n):{key:e,frame:n}},applyResource:(e,t)=>{let n=typeof e==`string`?this.ctx.find(e):e;if(!n||!t)return!1;if(t.kind===`animation`&&n.play&&this.anims.exists(t.animationId))return n.play(t.animationId),!0;if(t.kind===`asset`){let e=ee.get(t.assetId);if(e&&e.type!==`audio`&&n.setTexture){let r=ae(e,t.frame??0);if(this.textures.exists(r.key)&&this.textures.get(r.key).has(r.frame))return n.anims?.stop(),n.setTexture(r.key,r.frame),!0}}return G(`error`,`적용할 리소스와 대상 오브젝트를 확인하세요.`),!1},scene:this,objects:this.objectMap,vars:K,data:this.startupData,storage:{load:async(e,t=null)=>await ce(`load`,e)??t,save:(e,t)=>ce(`save`,e,t),remove:e=>ce(`remove`,e)},utils:{},physics2d:E?.(e,this),find:e=>this.objectMap.get(e)??[...this.objectMap.values()].find(t=>t.name===e),goto:(e,n={})=>{let r=t.scenes.find(t=>t.id===e||t.name===e);if(r){let e=se.get(i.id);e&&(this.scene.stop(e),se.delete(i.id)),this.scene.start(r.id,n)}},openOverlay:(e,n={})=>{let r=t.scenes.find(t=>t.id===e||t.name===e);return!r||r.id===i.id||this.scene.isActive(r.id)?!1:(se.set(r.id,i.id),this.scene.launch(r.id,n),this.scene.pause(i.id),!0)},closeOverlay:()=>{let e=se.get(i.id);return e?(se.delete(i.id),this.scene.resume(e),this.scene.stop(i.id),!0):!1},notify:e=>{let n=this.add.text(t.width/2,t.height/2,e,{fontFamily:`system-ui`,fontSize:`28px`,color:`#b7c9e3`,backgroundColor:`#192632`,padding:{x:24,y:16},align:`center`}).setOrigin(.5).setScrollFactor(0).setDepth(1e4);this.time.delayedCall(2600,()=>n.destroy())},log:e=>G(`info`,e),run:(e,n={},r)=>{let i=t.functions?.find(t=>t.id===e||t.name===e);return i?this.logic?.run(i.id,n,r):!1}},H?.sceneId===i.id&&Array.isArray(H.spawned)){let e=H.spawned.filter(e=>e&&typeof e.id==`string`&&!i.objects.some(t=>t.id===e.id));if(e.length+i.objects.length>5e3)throw Error(`저장한 진행의 오브젝트가 5,000개를 넘습니다.`);q(e,!0)}if(this.timeline=o?.(t,i.id,{apply:(e,t,n)=>{let r=this.objectMap.get(e);if(!r?.active)return;let a=r.getData?.(`forgeAnchor`)??r;if(t===`scale`)a.setScale(Math.max(1e-4,Math.min(1e4,n))*(a.getData(`forgeScaleX`)||1),Math.max(1e-4,Math.min(1e4,n))*(a.getData(`forgeScaleY`)||1));else if(t===`rotation`)a.angle=n;else if(t===`opacity`)a.alpha=Math.max(0,Math.min(1,n));else if(t===`visible`)a.visible=n>=.5;else if(t===`frame`){let t=ee.get(i.objects.find(t=>t.id===e)?.assetId??``);if(t&&r.setTexture){let e=ae(t,Math.max(0,Math.round(n)));r.setTexture(e.key,e.frame)}}else a[t]=n;a.body?.updateFromGameObject&&a.body.updateFromGameObject()},marker:e=>this.logic?.run(e.functionId,e.args),error:e=>G(`error`,e)}),this.ctx.timeline=this.timeline,H?.sceneId===i.id){for(let e of H.objects){let t=this.objectMap.get(e.id);if(!t)continue;let n=t.getData?.(`forgeAnchor`)??t;for(let t of[`x`,`y`,`angle`,`alpha`,`scaleX`,`scaleY`])Number.isFinite(e[t])&&(n[t]=e[t]);typeof e.visible==`boolean`&&(n.visible=e.visible),typeof e.active==`boolean`&&t.setActive(e.active),e.pickupAmounts&&typeof e.pickupAmounts==`object`&&!Array.isArray(e.pickupAmounts)&&Object.entries(e.pickupAmounts).every(([e,t])=>e.length>0&&e.length<=200&&typeof t==`number`&&Number.isSafeInteger(t)&&t>0&&t<=1e6)&&t.setData(`forgePickupAmounts`,{...e.pickupAmounts}),e.frame!==void 0&&t.setFrame&&!this.actors.find(e=>e.go===t)?.def.rigPlayback?.enabled&&t.setFrame(e.frame),t.setTilePosition&&Number.isFinite(e.tilePositionX)&&Number.isFinite(e.tilePositionY)&&t.setTilePosition(e.tilePositionX,e.tilePositionY),n.body?.updateFromGameObject&&n.body.updateFromGameObject(),Number.isFinite(e.velocityX)&&Number.isFinite(e.velocityY)&&n.body?.setVelocity?.(e.velocityX,e.velocityY),Number.isFinite(e.accelerationX)&&Number.isFinite(e.accelerationY)&&n.body?.setAcceleration?.(e.accelerationX,e.accelerationY)}for(let e of this.actors)re(e.go,e.def);this.ctx.resumed=!0,this.ctx.checkpoint=H,H=null}if(this.ctx.resumed){let e=this.ctx.checkpoint;this.fired=new Set(e?.fired??[]);for(let t of e?.removed??[])this.objectMap.get(t)?.destroy();this.actors=this.actors.filter(e=>!e.go.isDestroyed);for(let e of[O,oe,y,W,M]){let t=e.filter(e=>!e.isDestroyed);e.splice(0,e.length,...t)}this.timeline?.restore(e?.timelines??[])}else this.timeline?.autoplay();if(v&&(this.lighting=v(t,i,this,()=>this.actors,e=>G(`error`,e)),this.ctx.lighting=this.lighting,this.ctx.checkpoint?.lighting&&this.lighting.restore(this.ctx.checkpoint.lighting)),U??=w?.(t.factionSettings,{actors:()=>J.scene.getScenes(!1).filter(e=>e.scene.isActive()||e.scene.isPaused()).flatMap(e=>e.actors??[])}),this.ctx.checkpoint?.factions&&!U?.restore(this.ctx.checkpoint.factions))throw Error(`저장된 진영 관계를 확인하세요.`);if(this.ctx.factions=U,b){let e=new Map;this.interaction=b({actors:()=>this.actors,relation:(e,t)=>U?.relation(U.team(e),U.team(t))??`neutral`,fire:(e,t,n)=>{let r=this.actors.find(t=>t.def.id===e);r&&this.fireEvents(r.def.events??[],t,e,n)},isKeyDown:t=>{if(this.gameUi?.capturesInput()||j?.capturesInput())return!1;let n=e.get(t);return n||(n=this.input.keyboard?.addKey(t,!1),n&&e.set(t,n)),!!n?.isDown}});for(let e of this.actors)this.interaction.bind(e.def,e.go);this.ctx.checkpoint?.interaction&&this.interaction.restore(this.ctx.checkpoint.interaction),this.ctx.interaction=this.interaction}if(S&&(this.motionPaths=S(this,()=>this.actors,e=>G(`error`,e)),this.ctx.checkpoint?.motionPaths&&this.motionPaths.restore(this.ctx.checkpoint.motionPaths),this.ctx.motionPaths=this.motionPaths),D){this.projectiles=D(t,this,{actors:()=>this.actors,object:e=>this.objectMap.get(e),run:(e,t,n)=>{this.logic?.run(e,t,n)},relation:(e,t)=>U?.relation(U.team(e),U.team(t))??`neutral`,resolveTarget:(e,t,n)=>e===`$self`?n:e===`$owner`?t:e===`$player`?this.actors.find(e=>e.go.active&&[`platformer`,`topdown`].includes(e.def.behavior))?.def.id??``:e===`$target`?String(this.objectMap.get(t)?.getData?.(`aiTarget`)??``):e,paused:()=>!!(this.gameUi?.capturesInput()||j?.capturesInput()),error:e=>G(`error`,e)});for(let e of this.actors)this.projectiles.bind(e.def,e.go);if(this.ctx.checkpoint?.projectiles&&!this.projectiles.restore(this.ctx.checkpoint.projectiles))throw Error(`저장된 유도 이동 상태를 확인하세요.`);this.ctx.projectiles=this.projectiles;let e=(e,t)=>this.projectiles?.update(t);this.events.on(`postupdate`,e),this.events.once(`shutdown`,()=>this.events.off(`postupdate`,e))}if(this.ctx.checkpoint?.particles&&this.particles?.restore(this.ctx.checkpoint.particles),this.ctx.checkpoint?.collision&&this.collision?.restore(this.ctx.checkpoint.collision),this.ctx.particles=this.particles,this.ctx.collision=this.collision,T){this.connections=T(this,{actors:()=>this.actors,source:(e,t)=>{let n=ee.get(e);return n?ae(n,t):void 0},error:e=>G(`error`,e)});for(let e of this.actors)this.connections.bind(e.def,e.go);this.ctx.checkpoint?.connections&&this.connections.restore(this.ctx.checkpoint.connections),this.connections.update(0),this.ctx.connections=this.connections;let e=(e,t)=>this.connections?.update(t);this.events.on(`postupdate`,e),this.events.once(`shutdown`,()=>this.events.off(`postupdate`,e))}if(u){this.effects=u(e,t,this,e=>G(`error`,e)),this.ctx.effects=this.effects,this.effects.bind(this.cameras.main,i.effects),i.cameras.forEach((e,t)=>this.effects?.bind(this.cameras.cameras[t],e.effects));for(let e of this.actors)e.go.active&&this.effects.bind(e.go.getData?.(`forgeAnchor`)??e.go,e.def.effects)}if(this.ctx.music=R(),this.ctx.checkpoint?.music?L?.restore(this.ctx.checkpoint.music,i.id):i.music&&L?.play(i.music.assetId,{volume:i.music.volume,loop:i.music.loop,fade:i.music.fadeIn,owner:i.id}),s&&c&&t.stateMachines?.length){this.states=s(t,i,{objects:this.objectMap,effect:(e,t)=>{let n=this.objectMap.get(e);n&&(this.effects?.stop(n,void 0,`forge-state`),t&&this.effects?.play(n,t,{key:`forge-state`}))},actors:()=>this.actors,variable:e=>this.logic?.read(e),run:(e,t,n,r)=>{this.logic?.run(e,t,n||void 0,[],{remaining:512},()=>!0,r)},gravity:()=>this.physics.world.gravity,factions:()=>U,error:e=>G(`error`,e)},c),this.ctx.states=this.states;let e=e=>e.code.replace(/^Key|^Digit/,``).replace(/^Arrow/,``).toUpperCase(),n=t=>!this.gameUi?.capturesInput()&&this.states?.key(e(t),!0),r=t=>this.states?.key(e(t),!1),a=()=>this.states?.releaseKeys();this.input.keyboard.on(`keydown`,n),this.input.keyboard.on(`keyup`,r),window.addEventListener(`blur`,a),this.events.once(`shutdown`,()=>{this.input.keyboard?.off(`keydown`,n),this.input.keyboard?.off(`keyup`,r),window.removeEventListener(`blur`,a)}),this.states.start(this.ctx.checkpoint?.states??[])}if(d&&(this.gameplay=d(t,i,{scene:this,actors:()=>this.actors,objects:this.objectMap,factions:()=>U,skillAllowed:(e,t)=>{if(!e.definitionId)return!e.requireLearned;let n=B?.progression.use(e.definitionId,{requireLearned:e.requireLearned})??{passed:!1,reasons:[`스킬 조건 판정기를 사용할 수 없습니다.`]};return this.objectMap.get(t)?.setData(`requirementReasons`,n.reasons),n.passed},states:()=>this.states,run:(e,t,n)=>this.logic?.run(e,t,n),write:(e,n)=>{let r=t.variables.find(t=>t.id===e);r&&typeof n===r.type&&(r.type!==`number`||Number.isFinite(n))&&(K[r.name]=n)},equipment:()=>V?.stats()??{},error:e=>G(`error`,e)}),this.ctx.gameplay=this.gameplay,this.gameplay.restore(this.ctx.checkpoint?.gameplay??[])),f&&i.objects.some(e=>e.gameUi?.enabled||e.gameUi?.buttonFrames?.enabled)){let n=new Map,r=new Set,a=this.cameras.add(this.cameras.main.x,this.cameras.main.y,this.cameras.main.width,this.cameras.main.height).setName(`게임 UI`),o=e=>{let t=e?.getData?.(`forgeAnchor`)??e;if(!t)return;let n=e=>{r.add(e),e.cameraFilter&=~a.id,e.setData?.(`forgeGameUi`,!0);for(let t of e.list??[])n(t)};n(t)},s=new Set(i.objects.filter(e=>e.gameUi?.enabled).map(e=>e.id)),c=!0;for(;c;){c=!1;for(let e of i.objects)e.parentId&&s.has(e.parentId)&&!s.has(e.id)&&(s.add(e.id),c=!0)}for(let e of s)o(this.objectMap.get(e));this.syncUiCameras=()=>{for(let e of r)e.active||r.delete(e);let e=new Set(r);for(let t of r)for(let n=t.parentContainer;n;n=n.parentContainer)e.add(n);for(let e of this.cameras.cameras)if(e!==a)for(let t of r)e.ignore(t);let t=n=>{e.has(n)||a.ignore(n);for(let e of n.list??[])t(e)};for(let e of this.children.list)t(e)};let l=e=>{r.has(e)||a.ignore(e)};this.events.on(e.Scenes.Events.ADDED_TO_SCENE,l),this.events.once(`shutdown`,()=>this.events.off(e.Scenes.Events.ADDED_TO_SCENE,l)),this.updateUiFrame=()=>{for(let e of r)e.active||r.delete(e);let e=this.cameras.main;(a.x!==e.x||a.y!==e.y||a.width!==e.width||a.height!==e.height)&&a.setViewport(e.x,e.y,e.width,e.height);for(let[e,t]of n){if(!e.active||!e.visible){t.setVisible(!1);continue}let n=e.getBounds();t.setVisible(!0).setPosition(n.centerX,n.centerY).setSize(n.width+8,n.height+8)}},this.gameUi=f(t,i,{objects:this.objectMap,create:e=>{if(this.actors.filter(e=>!e.go.isDestroyed).length+e.length>5e3)throw Error(`게임 UI의 반복 오브젝트가 전체 5000개 한도를 넘었습니다.`);this.actors=this.actors.filter(e=>!e.go.isDestroyed);for(let[e,t]of this.objectMap)t.isDestroyed&&this.objectMap.delete(e);for(let e of[O,y,oe,W,M]){let t=e.filter(e=>!e.isDestroyed);e.splice(0,e.length,...t)}q(e,!0);for(let t of e)o(this.objectMap.get(t.id));return this.syncUiCameras?.(),new Map(e.map(e=>[e.id,this.objectMap.get(e.id)]))},variable:e=>this.logic?.read(e),writeVariable:(e,n)=>{let r=t.variables.find(t=>t.id===e);if(!r||r.type===`number`&&(typeof n!=`number`||!Number.isFinite(n))||r.type===`boolean`&&typeof n!=`boolean`||r.type===`string`&&typeof n!=`string`)return!1;let i=K[r.name];return K[r.name]=typeof n==`string`?n.slice(0,1e4):n,A?.variableChanged(e,i,K[r.name],`UI 입력`),!0},run:(e,t,n)=>this.logic?.run(e,t,n),viewport:()=>({width:this.cameras.main.width,height:this.cameras.main.height}),error:e=>G(`error`,e),gamepads:()=>[...navigator.getGamepads?.()??[]],inventory:()=>V?.list().map(({item:e,quantity:t})=>({id:e.id,key:e.key,name:e.name,description:e.description,quantity:t,iconAssetId:e.iconAssetId,iconFrame:e.iconFrame,equipped:Object.values(V.equipment()).includes(e.id)}))??[],focus:(e,t)=>{let i=n.get(e);if(i&&(r.delete(i),i.destroy()),n.delete(e),!t||!e.active)return;let a=e.getBounds(),s=this.add.rectangle(a.centerX,a.centerY,a.width+8,a.height+8).setFillStyle(0,0).setStrokeStyle(2,11454962).setScrollFactor(0).setDepth(10001);o(s),this.syncUiCameras?.(),n.set(e,s)}}),this.ctx.gameUi=this.gameUi,this.ctx.gameUi.attachVisual=e=>(o(e),this.syncUiCameras?.(),e);let u=e=>this.gameUi?.keyDown(e);this.input.keyboard?.on(`keydown`,u),this.events.once(`shutdown`,()=>{this.input.keyboard?.off(`keydown`,u);for(let e of n.values())e.destroy()}),this.gameUi.update(0,0),this.syncUiCameras()}this.rigs=p?.(t,this,{actors:()=>this.actors,objects:this.objectMap,variable:e=>this.logic?.read(e),texture:ae,error:e=>G(`error`,e)}),this.ctx.rigs=this.rigs,this.rigs?.update(0),this.rigs?.restore(this.ctx.checkpoint?.rigs);for(let e of i.events??[])e.enabled!==!1&&e.trigger===`timer`&&this.time.addEvent({delay:e.interval,loop:!e.once,callback:()=>this.fireEvents([e],`timer`)}),e.enabled!==!1&&e.trigger===`change`&&this.variableEvents.set(e.id,this.logic?.read(e.variableId));if(k)this.ctx.modules=k(t,this.ctx,e,e=>G(`error`,e)),this.ctx.modules.load();else for(let n of t.scripts)try{let t=Function(`ctx`,`Phaser`,n.code)(this.ctx,e);t&&typeof t==`object`&&Object.assign(this.ctx.utils,t)}catch(e){G(`error`,`${n.name}: ${e}`)}try{this.hooks=Function(`Phaser`,`${i.code}\nreturn {create:typeof create==='function'?create:null,update:typeof update==='function'?update:null};`)(e),this.hooks.create?.(this.ctx),this.fireEvents(i.events??[],`start`)}catch(e){G(`error`,`${i.name} create: ${e}`)}G(`success`,`${i.name} 실행 · Phaser ${e.VERSION}`),window.parent!==window&&window.parent.postMessage({source:`phaser-forge-runtime`,level:`ready`,sceneId:i.id,version:e.VERSION},`*`)}refreshStaticBodies(){for(let t of this.actors){if(!t.go.active)continue;let n=t.go,r={...t.def,...this.states?.profile(t.def.id)},i=n.getData?.(`forgeAnchor`);if(i?.active&&r.kind===`tilemap`){let e=i.getWorldTransformMatrix(),t=-i.width/2,a=-i.height/2;n.x=e.a*t+e.c*a+e.tx,n.y=e.b*t+e.d*a+e.ty,n.scaleX=Math.hypot(e.a,e.b)*i.width/(r.columns*(r.tileMap?.tileWidth??ee.get(r.assetId)?.frameWidth??r.tileSize)),n.scaleY=Math.hypot(e.c,e.d)*i.height/(r.rows*(r.tileMap?.tileHeight??ee.get(r.assetId)?.frameHeight??r.tileSize)),n.rotation=Math.atan2(e.b,e.a),n.visible=i.visible,n.alpha=i.alpha;let o=i.parentContainer;for(;o;)n.visible=n.visible&&o.visible,n.alpha*=o.alpha,o=o.parentContainer}if(!n.active||!n.body||n.body.physicsType!==e.Physics.Arcade.STATIC_BODY)continue;let a=n.getWorldTransformMatrix(),o=[a.a,a.b,a.c,a.d,a.tx,a.ty].join(`,`);if(n._forgeStaticPose===o)continue;n._forgeStaticPose=o;let s=Math.hypot(a.a,a.b),c=Math.hypot(a.c,a.d),l=Math.abs(n.scaleX/(r.scale??1))||1,u=Math.abs(n.scaleY/(r.scale??1))||1,d=r.bodySettings??{},f=n.body;f.world.staticTree.remove(f),f.position.set(a.tx-(n.displayOriginX-(d.offsetX??0)/l)*s,a.ty-(n.displayOriginY-(d.offsetY??0)/u)*c),f.width=(d.shape===`circle`?(d.radius??Math.min(r.width,r.height)/2)*2:d.width??r.width)/l*s,f.height=(d.shape===`circle`?(d.radius??Math.min(r.width,r.height)/2)*2:d.height??r.height)/u*c,f.halfWidth=f.width/2,f.halfHeight=f.height/2,f.center.set(f.position.x+f.halfWidth,f.position.y+f.halfHeight),f.world.staticTree.insert(f)}}fireEvents(e,t,n,r){for(let i of e)i.enabled!==!1&&i.trigger===t&&(!r||!i.otherObjectId||i.otherObjectId===r)&&(!i.once||!this.fired.has(i.id))&&(i.once&&this.fired.add(i.id),this.logic?.run(i.functionId,r?Object.fromEntries(Object.entries(i.args).map(([e,t])=>[e,t===`$other`?r:t===`$self`?n??``:t])):i.args,n))}update(n,r){if(!this.keys)return;this.gameUi?.update(n,r);for(let e of this.actors)if(e.go.active&&e.def.background?.enabled&&e.go.setTilePosition){let t=e.def.background;e.go.setTilePosition(e.go.tilePositionX+t.speedX*r/1e3,e.go.tilePositionY+t.speedY*r/1e3)}this.updateUiFrame?.();let a=!!(this.gameUi?.capturesInput()||j?.capturesInput());a&&this.states?.releaseKeys(),this.states?.before(r),this.timeline?.advance(r),this.refreshStaticBodies();let o=this.keys,s=a?0:(o.right.isDown||o.d.isDown?1:0)-(o.left.isDown||o.a.isDown?1:0),c=a?0:(o.down.isDown||o.s.isDown?1:0)-(o.up.isDown||o.w.isDown?1:0),l=!a&&this.actors.some(e=>(this.states?.profile(e.def.id)?.behavior??e.def.behavior)===`platformer`&&e.go.active&&e.go.body)&&(e.Input.Keyboard.JustDown(o.space)||e.Input.Keyboard.JustDown(o.up)||e.Input.Keyboard.JustDown(o.w));for(let e of this.actors){let{go:t}=e,i=this.states?.profile(e.def.id),a=i?{...e.def,...i}:e.def;if(t.active&&!(this.motionPaths?.isDriving(a.id)||this.projectiles?.isDriving(a.id))){if(t.getData?.(`gameplayBlocked`))(t.getData?.(`forgeAnchor`)??t).body?.setVelocity?.(0,0);else{if(!a.stop&&a.behavior===`platformer`&&t.body?.setVelocity){let e=t.body.allowGravity?this.physics.world.gravity.x+t.body.gravity.x:0,n=t.body.allowGravity?this.physics.world.gravity.y+t.body.gravity.y:0,r=Math.hypot(e,n),i=r?e/r:0,o=r?n/r:1,c=o,u=-i,d=t.body.velocity.x*i+t.body.velocity.y*o;t.body.setVelocity(c*s*a.speed+i*d,u*s*a.speed+o*d),s&&t.setFlipX&&t.setFlipX(s<0);let f=Math.abs(i)>Math.abs(o)?i>0?`right`:`left`:o>0?`down`:`up`;l&&(t.body.blocked[f]||t.body.touching[f])&&t.body.setVelocity(c*s*a.speed-i*a.jump,u*s*a.speed-o*a.jump)}if(!a.stop&&a.behavior===`topdown`&&t.body?.setVelocity){let e=Math.hypot(s,c)||1;t.body.setVelocity(s/e*a.speed,c/e*a.speed),s&&t.setFlipX&&t.setFlipX(s<0)}!a.stop&&a.behavior===`patrol`&&t.body?.setVelocityX&&t.body.setVelocityX(Math.cos(n/1500)*a.speed),a.behavior===`rotate`&&(t.angle+=a.speed*r/1e3)}}}let u=this.actors.filter(e=>e.def.behavior===`gravityZone`&&e.go.active).sort((e,t)=>(e.def.gravityField?.priority??0)-(t.def.gravityField?.priority??0));for(let t of this.actors){let n=t.go,r=t.def;if(!n.active||!n.body||n.body.physicsType!==e.Physics.Arcade.DYNAMIC_BODY)continue;let i=r.bodySettings??{},a=this.physics.world.gravity,o=i.gravityMode===`replace`?i.gravityX??0:a.x+(i.gravityMode===`add`?i.gravityX??0:0),s=i.gravityMode===`replace`?i.gravityY??900:a.y+(i.gravityMode===`add`?i.gravityY??0:0);if(r.gravity&&n.body.allowGravity){let e=n.body.center;for(let t of u){let n=t.go.getWorldTransformMatrix().applyInverse(e.x,e.y),r=t.def.renderSettings,i=r?.originX??.5,a=r?.originY??.5;if(n.x>=-t.def.width*i&&n.x<=t.def.width*(1-i)&&n.y>=-t.def.height*a&&n.y<=t.def.height*(1-a)){let e=t.def.gravityField;e?.mode===`add`?(o+=e.x,s+=e.y):(o=e?.x??0,s=e?.y??-700)}}}n.body.setGravity(o-a.x,s-a.y)}this.scoreText?.active&&this.scoreText.setText(`★ `+(K.score??0));for(let e of this.actors)if(e.go.active&&e.def.textBinding&&e.go.setText){let t=this.logic?.format(e.def.textBinding);t!==void 0&&e.go.text!==t&&e.go.setText(t)}for(let e of i.events??[])if(e.trigger===`change`){let t=this.logic?.read(e.variableId);Object.is(t,this.variableEvents.get(e.id))||(this.variableEvents.set(e.id,t),this.fireEvents([e],`change`))}if(window.parent!==window&&Math.floor(n/250)!==Math.floor((n-r)/250)&&window.parent.postMessage({source:`phaser-forge-runtime`,level:`variables`,values:Object.fromEntries(t.variables.map(e=>[e.name,typeof K[e.name]==`string`?K[e.name].slice(0,512):K[e.name]]))},`*`),this.hooks.update)try{this.hooks.update(this.ctx,n,r)}catch(e){G(`error`,`${i.name} update: ${e}`),this.hooks.update=null}this.gameplay?.update(r),this.interaction?.update(r),this.states?.after(),this.states?.endFrame(),this.rigs?.update(r),this.actorListDirty&&this.pruneActors?.()}}),ue=n.startSceneId??t.startSceneId,de=t.scenes.findIndex(e=>e.id===ue);if(de>0){let[e]=le.splice(de,1);le.unshift(e)}let J=new e.Game({autoFocus:n.autoFocus!==!1,type:n.renderer??e.AUTO,parent:`game`,width:t.width,height:t.height,backgroundColor:`#141a24`,pixelArt:t.pixelArt,roundPixels:t.pixelArt,render:{maxLights:Math.max(16,...t.scenes.map(e=>e.lighting?.maxLights??16))},banner:!1,scale:{mode:e.Scale.FIT,autoCenter:e.Scale.CENTER_BOTH},physics:{default:`arcade`,arcade:{gravity:{x:0,y:900},debug:!!n.debug}},scene:le,audio:{disableWebAudio:!1}}),fe=!1,pe=0,me=()=>J.scene.getScenes(!1).find(e=>e.ctx&&!se.has(e.scene.key)&&(e.scene.isActive()||e.scene.isPaused())),he=new Map,ge=e=>e.forgeMusicBus?P?.musicVolume??1:P?.effectsVolume??1;if(t.framework?.enabled&&t.framework.modules.settings&&J.sound){let e=J.sound.add.bind(J.sound);J.sound.add=(...t)=>{let n=e(...t),r=n.pannerNode??n.spatialNode??n.volumeNode,i=r&&J.sound.context?.createGain();i&&(r.disconnect(J.sound.destination),r.connect(i),i.connect(J.sound.destination));let a=!i&&n.updateVolume?.bind(n);a&&(n.updateVolume=()=>{a(),n.audio&&(n.audio.volume*=ge(n))});let o={update:()=>{i?i.gain.setValueAtTime(ge(n),J.sound.context.currentTime):n.updateVolume?.()},dispose:()=>{i?.disconnect()}};return he.set(n,o),n.on(`play`,o.update),n.once(`destroy`,()=>{o.dispose(),he.delete(n)}),o.update(),n}}t.framework?.enabled&&(j=g?.(t,{mount:document.getElementById(`game`)??document.body,scene:()=>{let e=me();return e?{id:e.scene.key,name:t.scenes.find(t=>t.id===e.scene.key)?.name??e.scene.key}:void 0},progress:async(e,t)=>{let n=me();if(!n?.progress)throw Error(`실행 중인 게임 씬이 없습니다.`);return n.progress(e,t)},storage:{load:async(e,t)=>await ce(`load`,e)??t,save:(e,t)=>ce(`save`,e,t),remove:e=>ce(`remove`,e)},vars:K,run:(e,t)=>{me()?.ctx?.run(e,t)},pause:e=>{if(e!==M){if(M=e,e){N=J.scene.getScenes(!0).map(e=>e.scene.key);for(let e of N)J.scene.pause(e)}else{for(let e of N)J.scene.isPaused(e)&&J.scene.resume(e);N=[]}}},navigate:e=>{if(t.scenes.some(t=>t.id===e)){for(let e of J.scene.getScenes(!1))(e.scene.isActive()||e.scene.isPaused())&&J.scene.stop(e.scene.key);se.clear(),J.scene.start(e)}},reset:()=>{H=null,U?.dispose(),U=void 0,B?.progression.reset(),V?.restore({version:1,quantities:Object.fromEntries((t.items??[]).map(e=>[e.id,e.initialQuantity])),equipment:{}})},applySettings:e=>{P=e,F(t.audioVolume*e.masterVolume),J.sound.mute=e.muted,J.sound.context&&J.sound.masterMuteNode?.gain.setValueAtTime(+!e.muted,J.sound.context.currentTime);for(let e of he.values())e.update();for(let e of J.scene.getScenes(!1))I(e);J.canvas&&(J.canvas.style.imageRendering=e.pixelated?`pixelated`:`auto`)},fullscreen:async e=>{e?await document.documentElement.requestFullscreen?.():document.fullscreenElement&&await document.exitFullscreen()},error:e=>G(`error`,e)}));let _e=e=>{let t=e?new Set(e.filter(e=>e.kind===`object`).map(e=>e.sceneId+`:`+e.targetId)):void 0,n=e?new Set(e.filter(e=>e.kind!==`variable`).map(e=>e.sceneId)):void 0,r=J.scene.getScenes(!1).filter(e=>e.objectMap&&(e.scene.isActive()||e.scene.isPaused())&&(!n||n.has(e.scene.key)));return{source:`phaser-forge-runtime`,level:`inspect`,objects:r.flatMap(e=>[...e.objectMap].filter(([n])=>!t||t.has(e.scene.key+`:`+n)).map(([t,n])=>{let r=n.getData?.(`forgeAnchor`)??n,i=r.getWorldTransformMatrix?.();return{id:t,sceneId:e.scene.key,name:n.name||t,active:n.active,x:r.x,y:r.y,rotation:r.angle,opacity:r.alpha,scaleX:r.scaleX,scaleY:r.scaleY,visible:r.visible,worldX:i?.tx??r.x,worldY:i?.ty??r.y,velocityX:n.body?.velocity?.x,velocityY:n.body?.velocity?.y,body:n.body?{x:n.body.x,y:n.body.y,width:n.body.width,height:n.body.height}:null}})),values:{...K},music:L?.status(),states:e&&!e.some(e=>e.kind===`state`)?[]:r.flatMap(e=>(e.states?.inspect()??[]).map(t=>({...t,sceneId:e.scene.key}))),timelines:r.flatMap(e=>e.timeline?.status()??[])}},Y=()=>{window.parent!==window&&window.parent.postMessage(_e(),`*`),A?.flush()},ve=n.editorInspection?new Map(t.variables.map(e=>[e.id,e.name])):void 0;n.editorInspection&&window.parent!==window&&(A=_?.({sample:_e,variableName:e=>ve?.get(e),send:e=>window.parent.postMessage({source:`phaser-forge-runtime`,level:`observation`,packet:e},`*`),pause:()=>{fe||(fe=!0,pe=J.loop.time,J.loop.sleep(),J.sound.pauseAll())}}));let X=A?setInterval(()=>A?.flush(),100):void 0;n.observatoryConfig&&A?.configure(n.observatoryConfig);let Z=e=>{if(e.source===window.parent&&e.data?.source===`phaser-forge-editor`){if(e.data.action===`observeConfigure`&&A?.configure(e.data.config??{enabled:!1}),e.data.action===`observeClear`&&A?.clear(),e.data.action===`pause`&&(fe=!0,pe=J.loop.time,J.loop.sleep(),J.sound.pauseAll()),e.data.action===`resume`&&(fe=!1,J.loop.wake(),J.sound.resumeAll()),e.data.action===`step`&&fe&&(pe+=1e3/60,J.loop.frame++,J.loop.time=pe,J.loop.delta=1e3/60,J.step(pe,1e3/60),Y()),e.data.action===`effectPreview`){let t=J.scene.getScenes(!0).find(e=>e.ctx);if(t?.effects&&e.data.preset){let n=t.forgeEffectPreviewViews??=new Map(t.cameras.cameras.map(e=>[e,{x:e.x,y:e.y,width:e.width,height:e.height,zoomX:e.zoomX,zoomY:e.zoomY,scrollX:e.scrollX,scrollY:e.scrollY,rotation:e.rotation,visible:e.visible,useBounds:e.useBounds,bounds:e._bounds&&{x:e._bounds.x,y:e._bounds.y,width:e._bounds.width,height:e._bounds.height},follow:e._follow,lerpX:e.lerp?.x,lerpY:e.lerp?.y,offsetX:e.followOffset?.x,offsetY:e.followOffset?.y,roundPixels:e.roundPixels}]));for(let e of t.cameras.cameras)t.effects.stop(e,void 0,`forge-preview`);for(let e of t.ctx.objects.values())t.effects.stop(e,void 0,`forge-preview`);for(let[e,t]of n)e.stopFollow(),e.removeBounds(),e.setViewport(t.x,t.y,t.width,t.height).setZoom(t.zoomX,t.zoomY).setRotation(t.rotation).setScroll(t.scrollX,t.scrollY).setVisible(t.visible),t.useBounds&&t.bounds&&e.setBounds(t.bounds.x,t.bounds.y,t.bounds.width,t.bounds.height),t.follow&&e.startFollow(t.follow,t.roundPixels,t.lerpX,t.lerpY,t.offsetX,t.offsetY);t.effects.upsert(e.data.preset);let r=e.data.mode===`camera`?t.cameras.cameras.find(t=>t.forgeCameraId===e.data.cameraId)??t.cameras.main:t.ctx.find(e.data.targetId||`효과 대상`),i=e.data.mode===`camera`?null:t.ctx.find(e.data.targetId||`효과 대상`);if(e.data.fit&&r){let a=e.data.mode===`camera`?r:t.cameras.cameras.find(e=>e.visible&&!(i.cameraFilter&e.id))??t.cameras.main,o=J.scale.width,s=J.scale.height;for(let e of t.cameras.cameras)e.setVisible(e===a);if(a.stopFollow(),a.removeBounds(),e.data.mode===`camera`){let e=n.get(a),t=Math.min(o/e.width,s/e.height);a.setViewport((o-e.width*t)/2,(s-e.height*t)/2,e.width*t,e.height*t).setZoom(e.zoomX*t,e.zoomY*t),a.centerOn(e.scrollX+e.width/2,e.scrollY+e.height/2)}else{let e=i.getBounds();a.setViewport(0,0,o,s).setRotation(0),a.setZoom(Math.max(.001,Math.min(16,Math.min(o/Math.max(1,e.width),s/Math.max(1,e.height))*.75))),a.centerOn(e.centerX,e.centerY)}}e.data.enabled!==!1&&t.effects.play(r,e.data.preset.id,{key:`forge-preview`})}}if(e.data.action===`debugCommand`){if(!n.editorInspection)return;let r=String(e.data.requestId??``).slice(0,100),i=e.data.command??{},a=(e,t,n)=>{window.parent.postMessage({source:`phaser-forge-runtime`,level:`debugResult`,result:{requestId:r,ok:e,value:t,message:n}},`*`),Y()};try{let e=(e,t)=>{if(e===`number`){if(t===null||typeof t==`object`||typeof t==`boolean`||typeof t==`string`&&!t.trim()||!Number.isFinite(Number(t)))throw Error(`유한한 숫자를 입력하세요.`);return Number(t)}if(e===`boolean`){if(t===!0||t===`true`)return!0;if(t===!1||t===`false`)return!1;throw Error(`참/거짓 값을 확인하세요.`)}if(t&&typeof t==`object`)throw Error(`문자열을 입력하세요.`);return String(t??``).slice(0,1e4)};if(i.action===`getVariable`||i.action===`setVariable`){let n=t.variables.find(e=>e.id===i.id);if(!n)throw Error(`정식 게임 변수를 선택하세요.`);if(i.action===`getVariable`)a(!0,K[n.name]);else{let t=e(n.type,i.value),r=K[n.name];K[n.name]=t,A?.variableChanged(n.id,r,t,`점검 중 수정`),a(!0,t,`적용됨`)}return}let n=J.scene.getScenes(!0).find(e=>e.scene.key===i.sceneId);if(i.action===`game`&&typeof n?.data?.get?.(`spaceGame`)?.debug!=`function`&&(n=J.scene.getScenes(!0).find(e=>typeof e.data?.get?.(`spaceGame`)?.debug==`function`)),!n?.ctx)throw Error(`선택한 씬이 실행 중이 아닙니다.`);if(i.action===`game`){let t=n.data?.get?.(`spaceGame`);if(typeof t?.debug!=`function`)throw Error(`이 게임은 전용 값 점검을 제공하지 않습니다.`);if(!/^(\$fields|credits|tick|ship\.(hull|shield|energy|heat|fuel|speed|velocity\.[xy]))$/.test(String(i.path)))throw Error(`편집할 수 없는 게임 값입니다.`);let r=t.debug({path:i.path,...Object.hasOwn(i,`value`)?{value:e(`number`,i.value)}:{}});if(!r?.ok)throw Error(r?.reason??`게임 값 적용이 거절됐습니다.`);a(!0,r.value,Object.hasOwn(i,`value`)?`게임 값 적용됨`:`게임 값`);return}if(i.action===`runFunction`){let r=t.functions?.find(e=>e.id===i.id);if(!r)throw Error(`함수를 찾지 못했습니다.`);if(i.objectId&&!n.objectMap?.get(i.objectId)?.active)throw Error(`함수 실행 대상이 없습니다.`);let o=i.args??{};if(!o||typeof o!=`object`||Array.isArray(o)||Object.keys(o).some(e=>!r.parameters.some(t=>t.name===e)))throw Error(`함수 인수를 확인하세요.`);let s=Object.fromEntries(r.parameters.map(t=>[t.name,e(t.type,Object.hasOwn(o,t.name)?o[t.name]:t.value)]));if(n.logic.run(r.id,s,i.objectId||void 0,[],{remaining:512},()=>!0,()=>!!n.runToken?.active)===!1)throw Error(`함수 실행이 거절됐습니다. 실행 기록을 확인하세요.`);a(!0,s,`함수 실행 요청됨`);return}if(i.action===`setObject`){let t=n.objectMap?.get(i.id);if(!t?.active)throw Error(`편집할 실행 오브젝트가 없습니다.`);let r=i.property,o=t.getData?.(`forgeAnchor`)??t;if(![`x`,`y`,`rotation`,`opacity`,`visible`,`velocityX`,`velocityY`].includes(r))throw Error(`읽기 전용 속성입니다.`);let s=e(r===`visible`?`boolean`:`number`,i.value);if(r===`visible`)o.visible=s;else if(r===`rotation`)o.angle=s;else if(r===`opacity`){if(Number(s)<0||Number(s)>1)throw Error(`불투명도는 0~1입니다.`);o.alpha=s}else if(r===`velocityX`||r===`velocityY`){let e=r===`velocityX`?`setVelocityX`:`setVelocityY`;if(typeof t.body?.[e]!=`function`)throw Error(`물리 몸체가 없어 속도를 수정할 수 없습니다.`);t.body[e](s)}else{if(Math.abs(Number(s))>1e7)throw Error(`위치 범위를 넘었습니다.`);o[r]=s}o.body?.updateFromGameObject?.(),n.refreshStaticBodies?.(),a(!0,s,`적용됨`);return}if(i.action===`stateCommand`&&i.command===`set`){let t=(n.states?.inspect().find(e=>e.owner===(i.owner||``)&&e.bindingId===i.bindingId))?.parameters.find(e=>e.id===i.key||e.name===i.key);if(!t)throw Error(`실행 중인 상태 매개변수가 없습니다.`);if(t.type===`trigger`)throw Error(`트리거는 값으로 수정할 수 없습니다.`);let r=e(t.type??typeof t.value,i.value);n.states.set(i.owner||``,i.key,r,i.bindingId),a(!0,r,`적용됨`);return}throw Error(`지원하지 않는 점검 명령입니다.`)}catch(e){a(!1,void 0,e instanceof Error?e.message:String(e))}}else{if(e.data.action===`inspect`&&Y(),e.data.action===`stateCommand`){let t=J.scene.getScenes(!0).find(t=>t.scene.key===e.data.sceneId),n=e.data,r=n.owner||``,i=n.bindingId;t?.states&&t.states.inspect().some(e=>e.owner===r&&e.bindingId===i)&&(n.command===`set`?t.states.set(r,n.key,n.value,i):n.command===`trigger`?t.states.trigger(r,n.key,i):n.command===`signal`?t.states.signal(r,String(n.key).slice(0,200),i):n.command===`change`?t.states.change(r,n.layerId,n.stateId,i):n.command===`enable`?t.states.enable(r,!!n.value,i):n.command===`layer`?t.states.enableLayer(r,n.layerId,!!n.value,i):n.command===`reset`&&t.states.reset(r,i),Y())}if(e.data.action===`setVariable`){let n=t.variables.find(t=>t.id===e.data.id);if(n){let t=n.type===`number`?Number(e.data.value):n.type===`boolean`?e.data.value===!0||e.data.value===`true`:String(e.data.value??``).slice(0,1e4);if(n.type!==`number`||Number.isFinite(t)){let e=K[n.name];K[n.name]=t,A?.variableChanged(n.id,e,t,`점검 중 수정`),Y()}}}if(e.data.action===`setObject`){let t=J.scene.getScenes(!0).find(t=>t.scene.key===e.data.sceneId),n=t?.objectMap?.get(e.data.id),r=e.data.property,i=Number(e.data.value);if(n&&Number.isFinite(i)&&[`x`,`y`,`rotation`,`opacity`,`visible`,`velocityX`,`velocityY`].includes(r)){let e=n.getData?.(`forgeAnchor`)??n;r===`rotation`?e.angle=i:r===`opacity`?e.alpha=Math.max(0,Math.min(1,i)):r===`visible`?e.visible=i>=.5:r===`velocityX`&&n.body?.setVelocityX?n.body.setVelocityX(i):r===`velocityY`&&n.body?.setVelocityY?n.body.setVelocityY(i):(r===`x`||r===`y`)&&(e[r]=Math.max(-1e7,Math.min(1e7,i))),e.body?.updateFromGameObject?.(),t.refreshStaticBodies?.(),Y()}}if(e.data.action===`runFunction`){let n=J.scene.getScenes(!0).find(t=>t.scene.key===e.data.sceneId)||J.scene.getScenes(!0).find(e=>e.ctx);if(n?.logic&&t.functions?.some(t=>t.id===e.data.id))try{n.logic.run(e.data.id,e.data.args&&typeof e.data.args==`object`?e.data.args:{},e.data.objectId||void 0,[],{remaining:512},()=>!0,()=>!!n.runToken?.active)}catch(e){G(`error`,e)}Y()}if(e.data.action===`inventory`&&V){let n=t.items?.find(t=>t.id===e.data.itemId);if(!n)return;z=J.scene.getScenes(!0).find(e=>e.ctx)??z;try{e.data.operation===`use`&&V.use(n.id),e.data.operation===`equip`&&V.equip(n.id),e.data.operation===`unequip`&&V.unequip(n.slot)}catch(e){G(`error`,e)}}}}};window.addEventListener(`message`,Z);let ye=setInterval(()=>{window.parent!==window&&window.parent.postMessage({source:`phaser-forge-runtime`,level:`stats`,inventory:V?.serialize(),fps:J.loop.actualFps,objects:J.scene.getScenes(!0).reduce((e,t)=>e+t.children.length,0)},`*`)},1e3);return J.events.once(`destroy`,()=>{A?.dispose(),clearInterval(X),j?.dispose(),L?.destroy(),U?.dispose(),clearInterval(ye),window.removeEventListener(`message`,Z)}),J})(Phaser,project,{},function en(e,t,n){let r=new Map(e.variables.map(e=>[e.id,e])),i=new Map((e.functions??[]).map(e=>[e.id,e])),a=0,o=new Map,s=(e,t)=>t===`number`?Number.isFinite(Number(e))?Number(e):0:t===`boolean`?e===!0||e===`true`:String(e??``),c=(n,i)=>n?n.source===`definition`?(()=>{let[t,r]=n.value.split(`/`),i=(e.definitions?.find(e=>e.id===t&&e.published))?.fields.find(e=>e.id===r&&e.published);if(!i)return``;if(i.type===`number`)return Number(i.value)||0;if(i.type===`boolean`)return i.value===`true`;if([`json`,`reference-list`,`resource`,`resource-list`].includes(i.type))try{return JSON.parse(i.value)}catch{return null}return i.value})():n.source===`variable`?t[r.get(n.value)?.name??``]:n.source===`parameter`?i[n.value]:n.value:``,l=e=>{let n=r.get(e.variableId),i=n?t[n.name]:``;return typeof i==`number`&&(i=e.digits>0?i.toFixed(e.digits):String(i)),e.prefix+String(i??``)+e.suffix},u=e=>e.replace(/\{\{([A-Za-z_$][\w$]*)\}\}/g,(e,n)=>String(t[n]??``)),d=(l,f={},p,m=[],h={remaining:512},g=()=>!0,_=()=>!0,v)=>{let y=i.get(l),b=!!n.observe&&!!n.observing?.(l,m),x=b?String(++a):``,S=b?Date.now():0,C=!1,w=(e,t={})=>{if(b)try{n.observe?.({kind:e,functionId:l,functionName:y?.name??l,callId:x,parentCallId:v,stack:[...m,l],time:Date.now(),target:p,...t})}catch{}},T=(e=`return`,t)=>{b&&!C&&(C=!0,o.delete(x),w(e,{duration:Date.now()-S,message:t}))},E=e=>{w(`error`,{message:e}),n.error(e)};if(!y)return E(`연결된 게임 함수를 찾을 수 없습니다.`),!1;if(m.includes(l)||m.length>=16)return E(`게임 함수의 순환 호출을 중단했습니다: `+y.name),!1;let D=Object.fromEntries(y.parameters.map(e=>[e.name,s(Object.hasOwn(f,e.name)?f[e.name]:e.value,e.type)]));w(`call`,{args:D}),b&&o.set(x,()=>T(`cancel`,`씬 종료로 중단`));let O=()=>(T(),g()),k=(i,a=O)=>{if(!_())return T(`cancel`),!1;try{for(let o=0;o<i.length;o++){if(!_())return T(`cancel`),!1;let f=i[o],g=()=>k(i.slice(o+1),a);if(b&&w(`step`,{stepId:f.id,stepKind:f.kind}),--h.remaining<0)return E(`한 이벤트의 동작이 512개를 넘었습니다.`),T(`cancel`),!1;if(f.kind===`script`){if(!n.script)throw Error(`공통 코드 호출은 게임 실행에서 확인하세요.`);let e=Object.fromEntries(Object.entries(f.scriptArgs??{}).map(([e,t])=>[e,c(t,D)])),i=n.script(f.targetId??``,f.property??``,e,f.objectId===`$self`?p??``:f.objectId||p||``),a=e=>{if(!f.resultVariableId)return;let i=r.get(f.resultVariableId);if(!i)throw Error(`코드 실행 결과의 변수가 연결되지 않았습니다.`);let a=t[i.name],o=s(e,i.type);t[i.name]=o,n.variableChanged?.(i.id,a,o,l),w(`variable`,{variableId:i.id,before:a,after:o,stepId:f.id})};if(i&&typeof i.then==`function`)return w(`wait`,{stepId:f.id,message:`공통 코드 응답 대기`}),Promise.resolve(i).then(e=>{_()?(a(e),w(`resume`),g()):T(`cancel`)}).catch(e=>{_()&&E(String(e)),T(`cancel`)}),!0;a(i)}else{if(f.kind===`wait`)return n.wait?(w(`wait`,{duration:Math.max(16,f.duration??500),stepId:f.id}),n.wait(Math.max(16,f.duration??500),()=>{_()?(w(`resume`),g()):T(`cancel`)}),!0):(E(`동작 대기는 게임 실행에서 확인하세요.`),T(`cancel`),!1);if(f.kind===`storage`)return n.storage?(w(`wait`,{message:`저장 장치 응답 대기`,stepId:f.id}),n.storage(f.property??`save`,f.text||`checkpoint`).then(e=>{e===void 0?T(`cancel`,`불러오기 후 씬 재시작`):(w(`resume`),k(e?f.then??[]:f.otherwise??[],g))}).catch(e=>{E(String(e)),k(f.otherwise??[],g)}),!0):(E(`게임 저장·불러오기는 게임 실행에서 확인하세요.`),T(`cancel`),!1);if(f.kind===`requirements`||f.kind===`progression`){let e=n.requirement?.(f,c(f.value,D))??{passed:!1,reasons:[`조건과 진행 판정기를 게임 실행에서 확인하세요.`]};for(let[i,a,o]of[[f.resultVariableId,e.passed,`boolean`],[f.reasonVariableId,e.reasons.join(`
-`),`string`]]){if(!i)continue;let e=r.get(i);if(!e||e.type!==o){E(`조건 판정 결과의 `+(o===`boolean`?`참거짓`:`문자열`)+` 변수를 확인하세요.`);continue}let s=t[e.name];t[e.name]=a,n.variableChanged?.(e.id,s,a,l)}return w(`condition`,{stepId:f.id,after:e.passed,message:e.reasons.join(` / `)}),k(e.passed?f.then??[]:f.otherwise??[],g)}if([`object`,`tween`,`spawn`,`destroy`,`camera`,`gravity`,`item`,`timeline`,`state`,`music`,`effect`,`rig`,`agent`,`combat`,`framework`,`lighting`,`interaction`,`particles`,`motionPath`,`collision`,`faction`,`connection`,`projectileGuidance`].includes(f.kind))n.action?.(f.targetValue?{...f,targetId:String(c(f.targetValue,D)??``)}:f,c(f.value,D),f.objectId===`$self`?p:f.objectId||p,f.kind===`spawn`?Object.fromEntries(Object.entries(f.spawnValues??{}).map(([e,t])=>[e,c(t,D)])):void 0);else if(f.kind===`value`){let e=r.get(f.variableId??``);if(!e){E(y.name+`: 변수가 연결되지 않았습니다.`);continue}let i=s(c(f.value,D),e.type),a=i;if(f.operation&&f.operation!==`set`&&e.type===`number`){let n=Number(t[e.name])||0,r=Number(i);a=f.operation===`add`?n+r:f.operation===`subtract`?n-r:n*r}if(typeof a==`number`&&!Number.isFinite(a)){E(y.name+`: 계산 결과가 수의 범위를 벗어났습니다.`);continue}let o=t[e.name];t[e.name]=a,b&&w(`variable`,{stepId:f.id,variableId:e.id,before:o,after:a});try{n.variableChanged?.(e.id,o,a,l)}catch{}}else if(f.kind===`condition`){let e=r.get(f.variableId??``);if(!e){E(y.name+`: 조건 변수가 연결되지 않았습니다.`);continue}let n=t[e.name],i=s(c(f.value,D),e.type),a=f.compare===`eq`?n===i:f.compare===`ne`?n!==i:f.compare===`lt`?Number(n)<Number(i):f.compare===`lte`?Number(n)<=Number(i):f.compare===`gt`?Number(n)>Number(i):Number(n)>=Number(i);return b&&w(`condition`,{stepId:f.id,variableId:e.id,before:n,after:a}),k(a?f.then??[]:f.otherwise??[],g)}else if(f.kind===`scene`)return T(`cancel`,`씬 이동`),n.scene(f.targetId??``,f.property),!1;else if(f.kind===`sound`){let t=f.property===`definition`?c(f.value,D):null,r=f.property===`definition`?t?.kind===`asset`?t.assetId:``:f.targetId;r&&(f.property!==`definition`||e.assets.some(e=>e.id===r&&e.type===`audio`))?n.sound(r):E(y.name+`: 재생할 소리 연결을 확인하세요.`)}else if(f.kind===`message`)n.message(u(f.text??``));else if(f.kind===`animation`){let t=f.property===`definition`?c(f.value,D):null,r=f.property===`definition`?t?.kind===`animation`?t.animationId:``:f.targetId;r&&(f.property!==`definition`||e.animations.some(e=>e.id===r))?n.animation(r,f.objectId||p):E(y.name+`: 재생할 애니메이션 연결을 확인하세요.`)}else if(f.kind===`function`){let e=d(f.targetId??``,D,p,[...m,l],h,g,_,x||v);return e||T(`cancel`,`하위 함수 중단`),e}}}return a()}catch(e){throw w(`error`,{message:String(e)}),T(`cancel`),e}};return k(y.steps)};return{run:d,format:l,cancelObservations:()=>{for(let e of[...o.values()])e();o.clear()},read:e=>t[r.get(e)?.name??``]}},function n(e,t=()=>{},n=()=>!0){let r=e.items??[],i=new Map(r.map(e=>[e.id,e.initialQuantity])),a=new Map,o=e=>r.find(t=>t.id===e||t.key===e),s=e=>i.get(o(e)?.id??``)??0,c=e=>Number.isFinite(e)?Math.max(0,Math.floor(e)):0,l=0,u=(e,n)=>{if(e){if(l>=8)throw Error(`아이템 효과가 순환 호출됩니다.`);l++;try{t(e,n)}finally{l--}}},d=e=>{let t=a.get(e),n=t?o(t):void 0;return n?(a.delete(e),u(n.onUnequip,n.id),!0):!1},f=(e,t=1)=>{let n=o(e);if(!n)return 0;let r=s(e),a=Math.min(n.stackLimit,r+c(t));return i.set(n.id,a),a-r},p=(e,t=1)=>{let n=o(e);if(!n)return 0;let r=Math.min(s(e),c(t));if(i.set(n.id,s(e)-r),!s(e))for(let[e,t]of a)t===n.id&&d(e);return r};return{count:s,give:f,take:p,list:()=>r.filter(e=>s(e.id)>0).map(e=>({item:e,quantity:s(e.id)})),use:e=>{let t=o(e);return!t||!s(e)||!n(t.id)?!1:(t.consumable&&p(t.id,1),u(t.onUse,t.id),!0)},equip:e=>{let t=o(e);return!t||!t.slot||!s(e)?!1:(a.get(t.slot)===t.id||(d(t.slot),a.set(t.slot,t.id),u(t.onEquip,t.id)),!0)},unequip:d,equipment:()=>Object.fromEntries(a),stats:()=>{let e=Object.create(null);for(let t of new Set(a.values()))for(let n of o(t)?.stats??[])e[n.name]=(e[n.name]||0)+n.value;return e},weight:()=>r.reduce((e,t)=>e+s(t.id)*t.weight,0),serialize:()=>({version:1,quantities:Object.fromEntries(i),equipment:Object.fromEntries(a)}),restore:e=>{let t=e;if(!t||t.version!==1||!t.quantities||typeof t.quantities!=`object`||!t.equipment||typeof t.equipment!=`object`)return!1;let n=new Map(r.map(e=>[e.id,Math.min(e.stackLimit,c(Number(t.quantities[e.id]??0)))]));i.clear(),n.forEach((e,t)=>i.set(t,e)),a.clear();for(let[e,n]of Object.entries(t.equipment)){let t=o(String(n));t?.slot===e&&s(t.id)&&a.set(e,t.id)}return!0}}},function La(e=[]){let t=e=>{if(e.type===`number`)return Number.isFinite(Number(e.value))?Number(e.value):0;if(e.type===`boolean`)return e.value===`true`;if([`json`,`reference-list`,`resource`,`resource-list`].includes(e.type))try{return JSON.parse(e.value)}catch{return null}return e.value};return Object.fromEntries(e.filter(e=>e.published).map(e=>[e.key,Object.fromEntries(e.fields.filter(e=>e.published).map(e=>[e.key,t(e)]))]))},function Si(e,t,n){let r=new Map((e.timelines??[]).filter(e=>e.sceneId===t).map(e=>[e.id,{...e,tracks:e.tracks.map(e=>({...e,keys:[...e.keys].sort((e,t)=>e.time-t.time)}))}])),i=new Map,a=(e,t)=>{if(e===`hold`)return+(t===1);if(e===`sine`)return(1-Math.cos(Math.PI*t))/2;if(e===`quad`)return t*t;if(e===`cubic`)return 1-(1-t)**3;if(e===`back`)return 1+2.70158*(t-1)**3+1.70158*(t-1)**2;if(e===`bounce`){let e=7.5625,n=2.75;return t<1/n?e*t*t:t<2/n?e*(t-=1.5/n)*t+.75:t<2.5/n?e*(t-=2.25/n)*t+.9375:e*(t-=2.625/n)*t+.984375}return t},o=(e,t)=>{let n=e.keys;if(!n.length)return;if(t<=n[0].time)return n[0].value;let r=0,i=n.length-1;for(;r<i;){let e=Math.ceil((r+i)/2);n[e].time<=t?r=e:i=e-1}let o=n[r],s=n[r+1];if(!s||t===o.time||e.property===`visible`||e.property===`frame`)return o.value;let c=(t-o.time)/(s.time-o.time);return o.value+(s.value-o.value)*a(o.ease,c)},s=(e,t)=>{let n=Math.max(0,t-e.delay),r=e.duration*(e.yoyo?2:1),i=n>=(e.repeat<0?1/0:r*(e.repeat+1)),a=i?r:n%r;return e.yoyo&&a>e.duration&&(a=2*e.duration-a),{time:Math.max(0,Math.min(e.duration,a)),complete:i,active:t>=e.delay}},c=(e,t)=>{for(let r of e.tracks)if(r.enabled){let e=o(r,t);e!==void 0&&n.apply(r.objectId,r.property,e)}},l=(e,t)=>{let n=r.get(e);if(!n)return!1;let a=i.get(e)??{time:0,playing:!1,complete:!1};return a.time=n.delay+Math.max(0,Math.min(n.duration,t)),a.complete=!1,i.set(e,a),c(n,Math.max(0,Math.min(n.duration,t))),!0},u=(e,t=!0)=>{let a=r.get(e);if(!a)return n.error?.(`재생할 타임라인을 찾을 수 없습니다.`),!1;let o=i.get(e);if(i.set(e,{time:t||o?.complete?0:o?.time??0,playing:!0,complete:!1}),c(a,s(a,i.get(e).time).time),t&&a.delay===0)for(let e of a.markers)e.time===0&&n.marker?.(e);return!0},d=e=>{let t=i.get(e);t&&(t.playing=!1)};return{sample:o,ease:a,position:s,seek:l,play:u,pause:d,stop:e=>{d(e),l(e,0)},advance:e=>{for(let[t,a]of[...i]){if(!a.playing)continue;let o=r.get(t),l=a.time,u=l+Math.max(0,Number.isFinite(e)?e:0)*o.timeScale;a.time=u;let d=s(o,u);c(o,d.time);let f=o.duration*(o.yoyo?2:1),p=[];for(let e of o.markers){for(let t of[e.time,...o.yoyo&&e.time>0&&e.time<o.duration?[f-e.time]:[]]){let n=Math.max(0,Math.floor((l-o.delay-t)/f)+1),r=Math.min(o.repeat<0?1/0:o.repeat,Math.floor((u-o.delay-t)/f));for(let i=n;i<=r&&p.length<=512;i++)p.push({at:o.delay+i*f+t,marker:e});if(p.length>512)break}if(p.length>512)break}if(p.length>512)n.error?.(`한 프레임의 타임라인 이벤트가 512개를 넘어 중단했습니다.`),a.playing=!1;else{for(let e of p.sort((e,t)=>e.at-t.at)){if(i.get(t)!==a||!a.playing)break;n.marker?.(e.marker)}i.get(t)===a&&d.complete&&(a.complete=!0,a.playing=!1)}}},restore:e=>{for(let t of e){let e=r.get(t.id);if(!e||!Number.isFinite(t.time))continue;let n={time:Math.max(0,t.time),playing:!!t.playing,complete:!!t.complete};i.set(t.id,n),c(e,s(e,n.time).time)}},status:()=>[...i].map(([e,t])=>({id:e,...t,position:s(r.get(e),t.time).time})),autoplay:()=>{for(let e of r.values())e.autoplay&&u(e.id)}}},function Ti(e,t,n,r){let i=new Map((e.stateMachines??[]).map(e=>[e.id,e])),a=new Map,o=new Map,s=new Map,c=new Map,l=new Map,u=new Map,d=new Map,f=new Map,p=new Map,m=new Map,h=new Map,g=!1,_=0,v=e=>typeof e==`string`?n.objects.has(e)?e:n.actors().find(t=>t.def.name===e)?.def.id??e:e?.getData?.(`forgeObjectId`)??[...n.objects].find(([,t])=>t===e)?.[0]??``,y=(e,t,r={})=>{if(t===`inputX`)return(u.get(`RIGHT`)?.held||u.get(`D`)?.held?1:0)-(u.get(`LEFT`)?.held||u.get(`A`)?.held?1:0);if(t===`inputY`)return(u.get(`DOWN`)?.held||u.get(`S`)?.held?1:0)-(u.get(`UP`)?.held||u.get(`W`)?.held?1:0);let i=n.objects.get(e);if(!i)return;let a=h.get(e);if(a&&Object.prototype.hasOwnProperty.call(a,t))return a[t];if(t===`faction`||t===`team`)return n.factions?.()?.team(e)??i.getData?.(`faction`)??``;if(t.startsWith(`relation:`)){let i=r[t.slice(9)],a=n.factions?.();return i&&n.objects.get(i)?.active&&a?a.relation(a.team(e),a.team(i)):void 0}let o=/^(distance|deltaX|deltaY):(.+)$/.exec(t);if(o){let e=n.objects.get(r[o[2]]??``);if(!e||e.active===!1)return;let t=i.getData?.(`forgeAnchor`)??i,s=e.getData?.(`forgeAnchor`)??e,c=h.get(r[o[2]]),l=(c?.x??s.x)-(a?.x??t.x),u=(c?.y??s.y)-(a?.y??t.y);return o[1]===`distance`?Math.hypot(l,u):o[1]===`deltaX`?l:u}if(t===`velocityX`||t===`velocityY`)return i.body?.velocity?.[t.endsWith(`X`)?`x`:`y`]??0;if(t===`absVelocityX`||t===`absVelocityY`)return Math.abs(i.body?.velocity?.[t.endsWith(`X`)?`x`:`y`]??0);if(t===`speed`)return Math.hypot(i.body?.velocity?.x??0,i.body?.velocity?.y??0);if(t===`normalVelocity`){let e=n.gravity(),t=e.x+(i.body?.gravity?.x??0),r=e.y+(i.body?.gravity?.y??0),a=Math.hypot(t,r)||1;return((i.body?.velocity?.x??0)*t+(i.body?.velocity?.y??0)*r)/a}if(t===`grounded`){let e=n.gravity(),t=i.body?.allowGravity?e.x+(i.body.gravity?.x??0):0,r=i.body?.allowGravity?e.y+(i.body.gravity?.y??0):0,a=Math.abs(t)>Math.abs(r)?t>0?`right`:`left`:r>=0?`down`:`up`;return!!(i.body?.blocked?.[a]||i.body?.touching?.[a])}if(t.startsWith(`blocked`)){let e=t.slice(7).toLowerCase();return!!(i.body?.blocked?.[e]||i.body?.touching?.[e])}return t===`animationComplete`?!!i.anims?.currentAnim&&!i.anims.isPlaying:t===`animationPlaying`?!!i.anims?.isPlaying:t===`opacity`?(i.getData?.(`forgeAnchor`)??i).alpha:t.startsWith(`data:`)?i.getData?.(t.slice(5)):i[t]},b=(e,t)=>{let o=e+`/`+t.id;if(a.has(o))return;let s=i.get(t.machineId);if(!s){n.error(`연결된 상태 구성을 찾을 수 없습니다: `+t.name);return}let c=r(s,t,{variable:n.variable,property:(n,r)=>y(r?t.targets[r]??``:e,n,t.targets),key:(e,t)=>{let n=u.get(e.toUpperCase());return t===`pressed`?!!n?.pressed:t===`released`?!!n?.released:t===`up`?!n?.held:!!n?.held},run:(t,r)=>n.run(t,Object.fromEntries(s.parameters.map(e=>[e.key,c.get(e.id)])),e,r),error:n.error}),l={owner:e,binding:t,engine:c,enabled:t.enabled};a.set(o,l);let d=f.get(e);d||(d=new Set,f.set(e,d)),d.add(o)},x=()=>{if(!g){for(let e of n.actors())d.set(e.def.id,e.def);for(let e of t.stateMachines??[])b(``,e);for(let e of n.actors())if(n.objects.has(e.def.id))for(let t of e.def.stateMachines??[])b(e.def.id,t);for(let[e,t]of a)t.owner&&!n.objects.has(t.owner)&&(t.engine.destroy(),a.delete(e),m.delete(t.owner),h.delete(t.owner),f.get(t.owner)?.delete(e),f.get(t.owner)?.size||f.delete(t.owner));for(let e of s.keys())n.objects.has(e)||(s.delete(e),c.delete(e),l.delete(e),o.delete(e))}},S=(e,t,n)=>{let r=e.getData?.(`forgeAnchor`)??e;return[`behavior`,`speed`,`jump`,`stop`].includes(n)?n!==`stop`&&t?.[n]:n===`gravity`?e.body?.allowGravity??!1:n===`bodyEnabled`?e.body?.enable??!0:n===`opacity`?r.alpha:n===`visible`?r.visible:n===`tint`?{tinted:e.isTinted,color:e.tintTopLeft??e.fillColor??16777215}:n.startsWith(`velocity`)?e.body?.velocity?.[n.endsWith(`X`)?`x`:`y`]??0:n.startsWith(`acceleration`)?e.body?.acceleration?.[n.endsWith(`X`)?`x`:`y`]??0:e[n]},C=new Set,w=(e,t,r)=>{if(e.getData?.(`forgeMotionPath`)&&(t===`gravity`||t.startsWith(`velocity`)||t.startsWith(`acceleration`))){let t=e.getData?.(`forgeId`)??e.name??``;C.has(t)||(C.add(t),n.error(`이동 경로 사용 중에는 상태의 속도·가속도·중력을 함께 제어할 수 없습니다.`));return}let i=e.getData?.(`forgeAnchor`)??e;if(t===`visible`)i.visible=r;else if(t===`opacity`)i.alpha=r;else if(t===`flipX`)e.setFlipX?.(r);else if(t===`flipY`)e.setFlipY?.(r);else if(t===`gravity`)e.body?.setAllowGravity?.(r);else if(t===`bodyEnabled`&&e.body)e.body.enable=r;else if(t.startsWith(`velocity`)&&e.body?.velocity)e.body.velocity[t.endsWith(`X`)?`x`:`y`]=r;else if(t.startsWith(`acceleration`)&&e.body?.acceleration)e.body.acceleration[t.endsWith(`X`)?`x`:`y`]=r;else if(t===`tint`){let t=typeof r==`string`?parseInt(r.slice(1),16):r?.color??16777215;e.setFillStyle?e.setFillStyle(t):typeof r==`object`&&!r.tinted?e.clearTint?.():e.setTint?.(t)}},T=()=>{let e=new Map;for(let t of[...a.values()].filter(e=>e.enabled).sort((e,t)=>e.binding.priority-t.binding.priority))for(let[r,i]of t.engine.profiles()){let a=r||t.owner;if(!a||!n.objects.has(a))continue;let o=e.get(a);e.set(a,{profile:{...o?.profile,...i.profile},effectToken:i.effectToken?t.binding.id+`:`+i.effectToken:o?.effectToken,animationToken:i.animationToken?t.binding.id+`:`+i.animationToken:o?.animationToken??``})}for(let t of new Set([...c.keys(),...e.keys()])){let r=n.objects.get(t);if(!r)continue;let i=e.get(t),a=i?.profile??{},u=c.get(t)??new Set,f=new Set(Object.keys(a)),m=s.get(t)??new Map;s.set(t,m);for(let e of f)m.has(e)||(e.startsWith(`animation`)?m.has(`animation`)||m.set(`animation`,{id:r.anims?.currentAnim?.key,playing:r.anims?.isPlaying,progress:r.anims?.getProgress?.(),timeScale:r.anims?.timeScale}):m.set(e,S(r,d.get(t),e)));for(let e of u)!f.has(e)&&!e.startsWith(`animation`)&&w(r,e,m.get(e));if(u.has(`animationSpeed`)&&!f.has(`animationSpeed`)&&r.anims&&(r.anims.timeScale=m.get(`animation`)?.timeScale??1),[...u].some(e=>e.startsWith(`animation`))&&![...f].some(e=>e.startsWith(`animation`))){let e=m.get(`animation`);e?.id&&r.play?(r.play(e.id),Number.isFinite(e.progress)&&r.anims.setProgress(e.progress),e.playing||r.anims.stop(),r.anims.timeScale=e.timeScale??1):r.anims?.stop(),l.delete(t)}for(let[e,t]of Object.entries(a))w(r,e,t);o.set(t,a);let h=a.effectId?i?.effectToken??a.effectId:``;if(h!==(p.get(t)??``)&&(n.effect?.(t,a.effectId??``),h?p.set(t,h):p.delete(t)),i){if(a.animationMode===`stop`)r.anims?.stop();else if(a.animationId&&r.play&&i.animationToken!==l.get(t)&&(a.restartAnimation!==!1||r.anims?.currentAnim?.key!==a.animationId||!r.anims.isPlaying))try{r.play(a.animationId)}catch(e){n.error(String(e))}a.animationSpeed!==void 0&&r.anims&&(r.anims.timeScale=a.animationSpeed),i.animationToken&&l.set(t,i.animationToken)}f.size?c.set(t,f):(c.delete(t),o.delete(t),s.delete(t))}},E=(e,t)=>{let n=v(e??``);return[...f.get(n)??[]].flatMap(e=>{let t=a.get(e);return t?[t]:[]}).filter(e=>e.owner===n&&(!t||[e.binding.id,e.binding.name,e.binding.machineId,i.get(e.binding.machineId)?.name].includes(t)))},D=(e,t,r)=>{if(_>=16)return n.error(`상태 함수의 반복 제어를 중단했습니다. 진입 함수의 초기화·재진입 연결을 확인하세요.`),!1;_++;try{let n=E(e,t),i=n.map(r);return T(),!!n.length&&i.some(e=>e!==!1)}finally{_--}},O={sync:x,isEnabled:(e,t)=>E(e,t).some(e=>e.enabled&&e.engine.isEnabled()),evaluate:(e,t,n=0)=>D(e,t,e=>!e.enabled||!e.engine.isEnabled()?!1:(e.engine.update(n),!0)),start:(e=[])=>{x();for(let t of a.values()){let n=e.find(e=>e.owner===t.owner&&e.bindingId===t.binding.id);n?(t.enabled=n.enabled??t.enabled,t.engine.restore(n)):t.enabled&&t.engine.start()}T()},before:e=>{for(let t of a.values())t.enabled&&t.engine.update(e);T()},remove:e=>{p.has(e)&&(n.effect?.(e,``),p.delete(e));for(let[t,n]of a)n.owner===e&&(n.engine.destroy(),a.delete(t),f.get(n.owner)?.delete(t),f.get(n.owner)?.size||f.delete(n.owner));s.delete(e),c.delete(e),o.delete(e),l.delete(e),d.delete(e),m.delete(e),h.delete(e)},after:()=>{for(let[e,t]of o){let r=n.objects.get(e);if(r){if(t.stop&&r.body?.setVelocity){let i=k(e),a=n.gravity();if((t.behavior??i?.behavior)===`platformer`){let e=r.body.allowGravity?a.x+(r.body.gravity?.x??0):0,t=r.body.allowGravity?a.y+(r.body.gravity?.y??0):0,n=Math.hypot(e,t)||1,i=e/n,o=t/n,s=r.body.velocity.x*i+r.body.velocity.y*o;r.body.setVelocity(i*s,o*s)}else r.body.setVelocity(0,0)}for(let e of[`velocityX`,`velocityY`,`accelerationX`,`accelerationY`,`flipX`,`flipY`])t[e]!==void 0&&w(r,e,t[e])}}},profile:e=>o.get(e),observe:(e,t)=>{let n=v(e);t?h.set(n,Object.fromEntries(Object.entries(t).filter(([,e])=>e!==void 0))):h.delete(n)},diagnose:(e,t,r)=>{let i=v(e);if(!r){m.get(i)?.delete(t),m.get(i)?.size||m.delete(i);return}let a=m.get(i);a||m.set(i,a=new Map),a.get(t)!==r&&(a.set(t,r),n.error(r))},key:(e,t)=>{e=e.toUpperCase().replace(/^(SHIFT|CONTROL|ALT|META)(LEFT|RIGHT)$/,`$1`).replace(/^CONTROL$/,`CTRL`);let n=u.get(e)??{held:!1,pressed:!1,released:!1};u.set(e,{held:t,pressed:n.pressed||t&&!n.held,released:n.released||!t&&n.held})},releaseKeys:()=>{for(let[e,t]of u)t.held&&u.set(e,{held:!1,pressed:!1,released:!0})},endFrame:()=>{for(let e of u.values())e.pressed=!1,e.released=!1},set:(e,t,n,r)=>D(e,r,e=>e.engine.set(t,n)),get:(e,t,n)=>E(e,n).map(e=>e.engine.get(t)).find(e=>e!==void 0),setParameters:(e,t,n)=>{let r=E(e,n),i=!1;for(let e of r)for(let[n,r]of Object.entries(t))i=e.engine.set(n,r)||i;return i},trigger:(e,t,n)=>D(e,n,e=>e.engine.trigger(t)),signal:(e,t,n)=>D(e,n,e=>e.engine.signal(t)),change:(e,t,n,r,i=!1)=>D(e,r,e=>e.engine.force(t,n,i)),enable:(e,t,n)=>D(e,n,e=>{e.enabled&&!t&&e.engine.suspend(),e.enabled=t,t&&e.engine.start()}),enableLayer:(e,t,n,r)=>D(e,r,e=>e.engine.enableLayer(t,n)),reset:(e,t)=>D(e,t,e=>{e.engine.destroy(),a.delete(e.owner+`/`+e.binding.id),b(e.owner,e.binding);let t=a.get(e.owner+`/`+e.binding.id);t?.enabled&&t.engine.start()}),snapshot:()=>[...a.values()].map(e=>({...e.engine.snapshot(),owner:e.owner,enabled:e.enabled})),inspect:()=>[...a.values()].map(e=>({...e.engine.inspect(),owner:e.owner,ownerName:e.owner?k(e.owner)?.name??e.owner:t.name,enabled:e.enabled,warnings:[...m.get(e.owner)?.values()??[]]})),destroy:()=>{g=!0;for(let e of a.values())e.engine.destroy();a.clear(),f.clear(),u.clear(),m.clear(),h.clear(),T()}};function k(e){return d.get(e)}return O},function l(e,t,n){let r=l,i=r.definitionPlans??=new WeakMap,a=i.get(e);(!a||a.stateSource!==e.states||a.transitionSource!==e.transitions||a.layerSource!==e.layers||a.stateCount!==e.states.length||a.transitionCount!==e.transitions.length)&&(a={stateSource:e.states,transitionSource:e.transitions,layerSource:e.layers,stateCount:e.states.length,transitionCount:e.transitions.length,states:new Map(e.states.map(e=>[e.id,e])),paths:new Map,leaves:new Map,from:new Map,candidates:new Map},i.set(e,a));let o=a,s=o.states,c=new Map(e.parameters.map(e=>[e.id,e])),u=new Map(e.parameters.map(e=>[e.key,e.id])),d=new Map,f=new Set,p=new Map(e.animationSlots.map(e=>[e.id,e.animationId])),m=new Map,h=!0,g=0,_=!1,v=[],y=[],b=0,x={transitionChecks:0,conditionChecks:0,updateFunctionCalls:0},S=()=>{x.transitionChecks=0,x.conditionChecks=0,x.updateFunctionCalls=0},C=(e,t)=>e.type===`number`?Number.isFinite(Number(t))?Number(t):0:e.type===`boolean`||e.type===`trigger`?t===!0||t===`true`:String(t??``);for(let n of e.parameters)d.set(n.id,C(n,t.parameters[n.id]??n.value));let w=e=>{let t=o.paths.get(e);if(t)return t;let n=e,r=[],i=new Set;for(;e&&!i.has(e);){i.add(e);let t=s.get(e);if(!t)break;r.unshift(t),e=t.parentId}return o.paths.set(n,r),r},T=e=>{let t=o.leaves.get(e);if(t!==void 0)return t;let n=e,r=new Set;for(;e&&!r.has(e);){r.add(e);let t=s.get(e);if(!t)break;let n=s.get(t.initialChildId);if(!n||n.parentId!==e)break;e=n.id}return o.leaves.set(n,e),e},E=(e,t)=>t.t.priority-e.t.priority||t.depth-e.depth||e.i-t.i;if(!o.from.size){for(let t of e.layers)o.from.set(t.id,new Map),o.candidates.set(t.id,new Map);e.transitions.forEach((e,t)=>{if(!e.enabled)return;let n=o.from.get(e.layerId);if(!n)return;let r=n.get(e.from);r||(r=[],n.set(e.from,r)),r.push({t:e,i:t,depth:e.from===`*`?-1:w(e.from).length-1})})}let D=(e,t,n)=>{let r=o.candidates.get(e),i=r?.get(t);if(i)return i;let a=o.from.get(e),s=[...a?.get(`*`)??[]];for(let e of n)s.push(...a?.get(e.id)??[]);return s.sort(E),r?.set(t,s),s},O=(t,r)=>{if(t&&h)try{n.run(t,()=>h&&(r?.active??!0))}catch(t){n.error(e.name+`: `+String(t))}},k=(e,t,n=!1,r=``,i=!1)=>{let a=m.get(e),o=s.get(T(t));if(!a||!o||o.layerId!==e)return!1;let c=a.stateId;if(c===o.id&&!n)return!1;let l=a.ancestry,u=w(o.id),d=0;for(;d<l.length&&d<u.length&&l[d].id===u[d].id;)d++;if(n){let e=u.findIndex(e=>e.id===t);e>=0&&(d=Math.min(d,e))}for(let e of l.slice(d).reverse()){let t=a.tokens.get(e.id);t&&(t.active=!1),a.tokens.delete(e.id),a.elapsed.delete(e.id),a.updates.delete(e.id),i||O(e.exitFunctionId)}a.stateId=o.id,a.ancestry=u,a.candidates=D(e,o.id,u);for(let e of u.slice(d)){let t={active:!0,generation:++g};a.tokens.set(e.id,t),a.elapsed.set(e.id,0),a.updates.set(e.id,0),i||O(e.enterFunctionId,t)}return c&&(y.push({layerId:e,from:c,to:o.id,transitionId:r,time:b}),y.length>64&&y.shift()),!0};for(let t of e.layers)m.set(t.id,{stateId:``,elapsed:new Map,updates:new Map,tokens:new Map,enabled:t.enabled,ancestry:[],candidates:[]});let A=()=>{for(let t of e.layers){let e=m.get(t.id);e.enabled&&!e.stateId&&k(t.id,t.initialStateId)}},j=(e,t,n)=>n===`eq`?e===t:n===`ne`?e!==t:n===`lt`?Number(e)<Number(t):n===`lte`?Number(e)<=Number(t):n===`gt`?Number(e)>Number(t):Number(e)>=Number(t),M=(e,t)=>{x.conditionChecks++;let r;if(e.source===`parameter`)r=d.get(u.get(e.key)??e.key);else if(e.source===`variable`)r=n.variable(e.key);else if(e.source===`property`)r=n.property(e.key,e.targetId);else if(e.source===`time`)r=t;else if(e.source===`key`)return e.compare===`ne`?!n.key(e.key,e.value):n.key(e.key,e.value);else r=f.has(e.key);if(r===void 0)return!1;let i=typeof r==`number`?Number(e.value):typeof r==`boolean`?e.value===`true`:e.value;return j(r,i,e.compare)},N={isEnabled:()=>h&&e.layers.some(e=>m.get(e.id)?.enabled??e.enabled),start:()=>{_=!0,A(),_=!1},update:t=>{if(S(),!h)return;_=!0,A();let n=Math.max(0,Math.min(1e3,Number.isFinite(t)?t:0));b+=n;let r=v;v=[];for(let e of r)k(e.layer,e.state,e.reenter);let i=new Set;for(let t of e.layers){let e=m.get(t.id);if(e.enabled){for(let t of e.elapsed.keys())e.elapsed.set(t,(e.elapsed.get(t)??0)+n);for(let{t:n}of e.candidates){x.transitionChecks++;let r=e.elapsed.get(n.from===`*`?e.stateId:n.from)??0;if(r<n.minTime)continue;let a=n.groups.length?n.groups.find(e=>e.every(e=>M(e,r))):[];if(a){if(e.stateId===T(n.to)&&!n.reenter){for(let e of a)if(e.source===`parameter`){let t=u.get(e.key)??e.key;c.get(t)?.type===`trigger`&&i.add(t)}break}if(k(t.id,n.to,n.reenter,n.id)){for(let e of a)if(e.source===`parameter`){let t=u.get(e.key)??e.key;c.get(t)?.type===`trigger`&&i.add(t)}O(n.functionId);break}}}for(let t of e.ancestry){let r=(e.updates.get(t.id)??0)+n;t.updateFunctionId&&r>=t.updateInterval?(e.updates.set(t.id,r%t.updateInterval),x.updateFunctionCalls++,O(t.updateFunctionId,e.tokens.get(t.id))):e.updates.set(t.id,r)}}}for(let e of i)d.set(e,!1);f.clear(),_=!1},get:e=>d.get(u.get(e)??e),set:(e,t)=>{let n=u.get(e)??e,r=c.get(n);return r?(d.set(n,C(r,t)),!0):!1},trigger:e=>c.get(u.get(e)??e)?.type===`trigger`&&N.set(e,!0),signal:e=>{e.length<=200&&f.add(e)},force:(t,n,r=!1)=>{let i=e.layers.find(e=>e.id===t||e.name===t),a=e.states.find(e=>(e.id===n||e.name===n)&&e.layerId===i?.id);return!i||!a?!1:_?(v.length<64&&v.push({layer:i.id,state:a.id,reenter:r}),!0):k(i.id,a.id,r)},enableLayer:(t,n)=>{let r=e.layers.find(e=>e.id===t||e.name===t),i=r&&m.get(r.id);if(!i||!r)return!1;if(!n){for(let e=i.ancestry.length-1;e>=0;e--){let t=i.ancestry[e],n=i.tokens.get(t.id);n&&(n.active=!1),O(t.exitFunctionId)}i.stateId=``,i.ancestry=[],i.candidates=[],i.tokens.clear(),i.elapsed.clear(),i.updates.clear()}return i.enabled=n,n&&!i.stateId&&k(r.id,r.initialStateId),!0},profiles:()=>{let n=new Map;for(let r of e.layers){let e=m.get(r.id);if(e.enabled)for(let r of e.ancestry)for(let i of r.effects){let a=i.targetId?t.targets[i.targetId]:``;if(i.targetId&&!a)continue;let o=n.get(a??``)??{profile:{},animationToken:``},s={...i.profile};for(let[e,t]of Object.entries(i.parameters??{}))if(d.has(t)){let n=d.get(t);if(typeof n==`number`){let t=e===`opacity`?1:e===`animationSpeed`?10:1e4,r=[`opacity`,`animationSpeed`,`jump`].includes(e)?0:-1e4;s[e]=Math.max(r,Math.min(t,n))}else(e!==`tint`||/^#[0-9a-fA-F]{6}$/.test(String(n)))&&(s[e]=n)}s.animationSlotId&&(s.animationId=t.animations[s.animationSlotId]??p.get(s.animationSlotId)??``);let c=s.animationMode!==void 0||!!s.animationId;n.set(a??``,{profile:{...o.profile,...s},effectToken:s.effectId?i.id+`:`+(e.tokens.get(r.id)?.generation??0):o.effectToken,animationToken:c?i.id+`:`+(e.tokens.get(r.id)?.generation??0):o.animationToken})}}return n},snapshot:()=>({machineId:e.id,bindingId:t.id,parameters:Object.fromEntries(d),layers:[...m].map(([e,t])=>({id:e,enabled:t.enabled,stateId:t.stateId,elapsed:Object.fromEntries(t.elapsed)}))}),restore:n=>{if(n.machineId!==e.id||n.bindingId!==t.id)return!1;for(let t of e.parameters)Object.hasOwn(n.parameters??{},t.id)&&d.set(t.id,C(t,n.parameters[t.id]));for(let t of e.layers){let e=m.get(t.id),r=n.layers?.find(e=>e.id===t.id);if(r){for(let t of e.tokens.values())t.active=!1;if(e.stateId=``,e.ancestry=[],e.candidates=[],e.tokens.clear(),e.elapsed.clear(),e.updates.clear(),e.enabled=r.enabled,e.enabled){let n=s.get(r.stateId);k(t.id,n?.layerId===t.id?n.id:t.initialStateId,!1,``,!0);for(let t of e.elapsed.keys()){let n=r.elapsed?.[t];Number.isFinite(n)&&n>=0&&e.elapsed.set(t,Math.min(n,864e5))}}}}return!0},inspect:()=>({machineId:e.id,bindingId:t.id,name:t.name||e.name,parameters:e.parameters.map(e=>({id:e.id,key:e.key,name:e.name,type:e.type,value:d.get(e.id)})),layers:e.layers.map(e=>{let t=m.get(e.id);return{...e,enabled:t.enabled,stateId:t.stateId,path:t.ancestry.map(e=>({id:e.id,name:e.name})),elapsed:t.elapsed.get(t.stateId)??0}}),history:[...y],stats:{...x,activeStates:[...m.values()].reduce((e,t)=>e+(t.enabled?t.ancestry.length:0),0),definedStates:s.size}}),suspend:()=>{S();for(let e of m.values())for(let[t,n]of e.tokens)n.active=!1,e.tokens.set(t,{active:!0,generation:++g});f.clear(),v=[]},destroy:()=>{if(h){for(let e of m.values())for(let t of e.tokens.values())t.active=!1;h=!1,S(),f.clear(),v=[]}}};return N},function yi(e,t,n){let r=null,i=``,a=``,o=1,s=!0,c=!1,l=new Set,u=new Map,d=new Map,f=e=>{let t=d.get(e);t&&clearInterval(t),d.delete(e)},p=e=>{l.delete(e)&&(f(e),u.delete(e),e.stop(),e.destroy())},m=(e,t,n,r)=>{f(e);let i=Number(e.volume)||0,a=Date.now();if(!n){e.setVolume(t),r?.();return}let o=setInterval(()=>{let o=Math.min(1,(Date.now()-a)/(n*1e3));e.setVolume(i+(t-i)*o),o===1&&(f(e),r?.())},20);d.set(e,o)},h={play:(d,f={})=>{if(c)return!1;let h=e.assets.find(e=>e.id===d&&e.type===`audio`);if(!h)return n(`배경음 리소스가 없습니다.`),!1;let g=h.audioSettings,_=Math.max(0,Math.min(1,f.volume??1)),v=_*(g?.volume??1);if(a=f.owner??a,o=_,s=f.loop??!0,r&&i===d&&(r.isPlaying||r.isPaused))return u.set(r,a),r.setLoop(s),f.rate&&r.setRate(f.rate),m(r,v,f.fade??0),!0;let y=r;for(let e of[...l])e!==y&&p(e);y&&m(y,0,f.fade??0,()=>p(y));try{let e=t.add(d);e.forgeMusicBus=!0,l.add(e),u.set(e,a),r=e,i=d;let n=g?.loopStart??0,o=g?.loopEnd??0,c=Math.max(0,o-n);c>0&&e.addMarker({name:`forge-loop`,start:n,duration:c,config:{loop:s}}),e.once?.(`complete`,()=>{r===e&&(r=null,i=``),p(e)});let h={volume:f.fade?0:v,loop:s,rate:f.rate??g?.rate??1,seek:Math.max(0,Math.min(c||1e7,f.seek??0))};return c>0?e.play(`forge-loop`,h):e.play(h),f.fade&&m(e,v,f.fade),!0}catch(e){return n(`배경음을 재생하지 못했습니다: `+String(e)),r=null,i=``,!1}},stop:(e=0,t)=>{let n=[...l].filter(e=>!t||u.get(e)===t);n.includes(r)&&(r=null,i=``,a=``);for(let t of n)m(t,0,e,()=>p(t))},pause:()=>r?.pause(),resume:()=>r?.resume(),volume:(t,n=0)=>{o=Math.max(0,Math.min(1,t)),r&&m(r,o*(e.assets.find(e=>e.id===i)?.audioSettings?.volume??1),n)},status:()=>({assetId:i,owner:a,volume:o,loop:s,seek:r?.seek??0,rate:r?.rate??1,playing:!!r?.isPlaying,paused:!!r?.isPaused}),restore:(e,t)=>{if(!e?.assetId)return!1;let n=h.play(e.assetId,{volume:e.volume,loop:e.loop,seek:e.seek,rate:e.rate,owner:t});return e.paused&&h.pause(),n},destroy:()=>{c=!0;for(let e of l)p(e);r=null}};return h},function ei(e,t,n,r){let i=new Map,a=new Map,o=new Map,s=new Map(t.visualEffects?.map(e=>[e.id,e])),c=new WeakMap,l=0,u=!1,d=e=>typeof e==`string`?n.objectMap?.get(e)??n.cameras.cameras.find(t=>t.name===e):e??n.cameras.main,f=e=>{if(e.type!==`Container`||e.filtersAutoFocus===!1||e.filtersFocusContext||!e.getBounds||!e.getWorldTransformMatrix)return;let t=e.getBounds(),n=e.getWorldTransformMatrix(),r=-e.width*e.originX,i=-e.height*e.originY,a=![r,i,e.width,e.height].every(Number.isFinite)||!(e.width>0&&e.height>0);t.width>0&&t.height>0&&(a||n.applyInverse)&&(a||[[t.x,t.y],[t.x+t.width,t.y],[t.x,t.y+t.height],[t.x+t.width,t.y+t.height]].some(([t,a])=>{let o=n.applyInverse(t,a,{});return o.x<r-.5||o.x>r+e.width+.5||o.y<i-.5||o.y>i+e.height+.5}))&&(o.has(e)||o.set(e,e.filtersFocusContext),e.filtersFocusContext=!0)},p=e=>{let t=i.get(e);if(t){i.delete(e),t.timer?.remove(!1);for(let e of t.timers)e.remove(!1);for(let e of t.children)p(e);for(let e of t.tweens)e.remove();for(let e of t.visuals)n.events.off(`update`,e.update),e.go.destroy();for(let e of t.filters)e.controller.camera&&e.list.remove(e.controller,!0);o.has(t.target)&&![...i.values()].some(e=>e.target===t.target&&e.filters.length)&&(t.target.filtersFocusContext=o.get(t.target),o.delete(t.target));for(let e of t.cameraEffects)[...i.values()].some(n=>n.target===t.target&&n.cameraEffects.has(e))||t.target[e]?.reset();for(let e of t.properties)if(![...i.values()].some(n=>n.target===t.target&&n.properties.has(e))){let n=a.get(t.target),r=n?.get(e);r!==void 0&&(t.target[e]=r,n.delete(e)),n?.size||a.delete(t.target)}}},m={upsert:e=>{s.set(e.id,e)},play:(o,h,g={})=>{let _=d(o),v=g.preset??s.get(h);if(!_||!v)return!1;let y=c.get(_);y||(y=`target_`+ ++l,c.set(_,y));let b=String(y)+`/`+(g.key??v.id);p(b);let x={target:_,presetId:h,filters:[],tweens:[],timer:null,timers:[],children:new Set,parent:g.parent,properties:new Set,cameraEffects:new Set,visuals:[]};i.set(b,x);let S=e=>{let t=a.get(_);t||(t=new Map,a.set(_,t)),t.has(e)||t.set(e,_[e]),x.properties.add(e)},C=e=>parseInt(String(e??`#ffffff`).replace(`#`,``),16);if(v.items.some(e=>e.enabled&&e.timing)){let e=v.items.filter(e=>e.enabled);for(let t of e){let e=(g.key??v.id)+`/item/`+t.id,r=()=>{if(i.get(b)!==x||_.active===!1)return;let n={...v,items:[{...t,timing:void 0}],duration:t.timing?.duration??0};x.children.add(String(y)+`/`+e),m.play(_,h,{key:e,scope:g.scope,values:g.values,preset:n,parent:b,origin:g.origin})};t.timing?.start?x.timers.push(n.time.delayedCall(t.timing.start,r)):r()}let t=e.every(e=>(e.timing?.duration??0)>0),r=g.duration??(v.duration||(t?Math.max(0,...e.map(e=>e.timing.start+e.timing.duration)):0));return r>0&&(x.timer=n.time.delayedCall(r,()=>p(b))),!0}try{for(let i of v.items){if(!i.enabled)continue;let o={...i.params,...g.values?.[i.id]},s=e=>Number(o[e]);if(i.type===`sprite`){let r=t.assets.find(e=>e.id===i.assetId&&e.type!==`audio`);if(!r)throw Error(`원화 애니메이션의 이미지 리소스를 연결하세요.`);let a=(e,t)=>Number.isFinite(Number(o[e]))?Number(o[e]):t,s=Math.max(0,Math.floor(a(`frameStart`,0))),c=Math.max(s,Math.floor(a(`frameEnd`,s))),l=r.atlas?.frames.length??(r.type===`image`?1:r.frameTotal??1),u=Math.max(1,Math.min(120,a(`fps`,24)));if(s>=l||c>=l)throw Error(`원화 애니메이션의 프레임 범위를 확인하세요.`);if(i.animation&&![`width`,`height`,`x`,`y`,`angle`,`opacity`].includes(i.animation.property))throw Error(`원화의 시간 변화 속성을 확인하세요.`);let d=e=>{let n=r.atlas?.frames[e];return{key:t.official?`forge-added-`+r.id:n?.pageId??r.id,frame:n?.pageId?`${r.id}:${e}`:n?.name??(r.type===`image`?void 0:e)}},f=d(s),m=n.add.sprite(0,0,f.key,f.frame),y=Math.max(1,a(`duration`,0)||(c-s+1)*1e3/u),S=Math.max(0,a(`fadeIn`,0)),C=Math.max(0,a(`fadeOut`,70)),w=r.atlas?.frames[s]?.sourceWidth??r.frameWidth??r.width,T=r.atlas?.frames[s]?.sourceHeight??r.frameHeight??r.height,E=Math.max(.01,g.origin?.scale??1),D=o.follow===`follow`;if(i.animation){let e=i.animation;o[e.property]=e.from,x.tweens.push(n.tweens.add({targets:o,[e.property]:e.to,duration:e.duration,delay:e.delay,repeat:e.repeat,yoyo:e.yoyo,ease:e.ease}))}let O=()=>{let e=Math.max(0,a(`width`,96))||w,t=Math.max(0,a(`height`,0))||T*e/Math.max(1,w);m.setDisplaySize(e*E,t*E)};m.setOrigin(a(`originX`,.5),o.orientation===`target`&&g.origin?.mirrorY===!0?1-a(`originY`,.5):a(`originY`,.5)).setFlipY(o.orientation===`target`&&g.origin?.mirrorY===!0).setBlendMode(e.BlendModes?.[String(o.blend??`NORMAL`)]??0),O(),m.setData?.(`forgeEffectSprite`,{presetId:h,itemId:i.id,assetId:r.id,start:s,end:c,fps:u}),m.cameraFilter=typeof _.setZoom==`function`?(n.cameras.cameras??[]).reduce((e,t)=>t===_?e:e|(t.id??0),0):_.cameraFilter??0,m.setScrollFactor(_.scrollFactorX??1,_.scrollFactorY??1);let k=()=>{let e=typeof _.setZoom==`function`,t=e?_.worldView?.centerX??_.scrollX+_.width/2:_.x??0,n=e?_.worldView?.centerY??_.scrollY+_.height/2:_.y??0,r=_.rotation??0;if(_.parentContainer&&_.getWorldTransformMatrix){let e=_.getWorldTransformMatrix();t=e.tx,n=e.ty,r=e.rotation??r}return{x:t,y:n,angle:r}},A=k(),j=()=>{let e=D?k():A,t=g.origin?g.origin.x+e.x-A.x:e.x,n=g.origin?g.origin.y+e.y-A.y:e.y,r=g.origin?.angle===void 0?e.angle:g.origin.angle+e.angle-A.angle,i=o.orientation===`target`?r:0,s=o.orientation===`target`&&g.origin?.mirrorY===!0?-1:1,c=a(`x`,0),l=a(`y`,0)*s;m.setPosition(t+c*Math.cos(i)-l*Math.sin(i),n+c*Math.sin(i)+l*Math.cos(i)),m.setRotation(i+a(`angle`,0)*Math.PI*s/180),m.setDepth((Number(_.depth)||0)+a(`depth`,1))},M=0,N=s,P=!1,F=()=>{P||(P=!0,n.events.off(`update`,I),m.destroy(),x.visuals=x.visuals.filter(e=>e.go!==m),!x.visuals.length&&v.items.every(e=>!e.enabled||e.type===`sprite`)&&p(b))},I=(e,t)=>{if(P)return;if(D&&(_.active===!1||!_.scene&&_.destroyed)||(M+=Math.max(0,t)*(n.time.timeScale??1),M>=y)){F();return}let r=Math.min(c,s+Math.floor(M/1e3*u));if(r!==N){let e=d(r);m.setTexture(e.key,e.frame),N=r}(D||i.animation&&[`x`,`y`,`angle`].includes(i.animation.property))&&j(),O(),m.setAlpha(Math.max(0,Math.min(1,a(`opacity`,1)))*(S?Math.min(1,M/S):1)*(C?Math.min(1,(y-M)/C):1))};j(),m.setAlpha(S?0:Math.max(0,Math.min(1,a(`opacity`,1)))),x.visuals.push({go:m,update:I}),n.events.on(`update`,I);continue}if(i.type===`tween`){let e=String(o.property)===`opacity`?`alpha`:String(o.property)===`rotation`?`angle`:String(o.property);if(e===`scale`){let e=typeof _.setZoom==`function`,t=e?`zoomX`:`scaleX`,r=e?`zoomY`:`scaleY`;S(t),S(r);let i=a.get(_).get(t),o=a.get(_).get(r);_[t]=i*s(`from`),_[r]=o*s(`from`),x.tweens.push(n.tweens.add({targets:_,[t]:i*s(`to`),[r]:o*s(`to`),duration:s(`duration`),repeat:s(`repeat`),yoyo:!!s(`yoyo`),ease:`Sine.InOut`}))}else[`alpha`,`angle`,`x`,`y`].includes(e)&&(S(e),_[e]=s(`from`),x.tweens.push(n.tweens.add({targets:_,[e]:s(`to`),duration:s(`duration`),repeat:s(`repeat`),yoyo:!!s(`yoyo`),ease:`Sine.InOut`})));continue}if([`pan`,`zoom`,`rotate`].includes(i.type)){if(typeof _.setZoom!=`function`){r(`카메라 이동·확대·회전은 카메라에 적용하세요.`);continue}if(i.type===`pan`){S(`scrollX`),S(`scrollY`),x.cameraEffects.add(`panEffect`);let t={x:_.scrollX+_.width/2,y:_.scrollY+_.height/2};_.pan(t.x+s(`x`),t.y+s(`y`),s(`duration`),e.Tweens.Builders.GetEaseFunction(String(o.ease)),!0)}else{let e={};i.type===`zoom`?(S(`zoomX`),S(`zoomY`),e.zoomX=_.zoomX*s(`amount`),e.zoomY=_.zoomY*s(`amount`)):(S(`rotation`),e.rotation=_.rotation+s(`angle`)*Math.PI/180),x.tweens.push(n.tweens.add({targets:_,...e,duration:s(`duration`),ease:String(o.ease),yoyo:!!Number(o.yoyo??0),repeat:Math.max(0,Math.min(100,Math.floor(Number(o.repeat)||0)))}))}continue}if([`shake`,`flash`,`fade`,`fadeIn`].includes(i.type)){if(!_.filters||_.enableFilters){r(`화면 흔들림·번쩍임·페이드는 카메라에 적용하세요.`);continue}if(x.cameraEffects.add(i.type===`fadeIn`?`fadeEffect`:i.type+`Effect`),i.type===`shake`)_.shake(s(`duration`),s(`amount`));else{let e=C(o.color),t=[s(`duration`),e>>16&255,e>>8&255,e&255];i.type===`flash`?_.flash(...t):i.type===`fadeIn`?_.fadeIn(...t):_.fadeOut(...t)}continue}if(!n.game.renderer.gl){u||=(r(`이 실행 환경은 WebGL 필터를 지원하지 않습니다.`),!0);continue}_.enableFilters?.();let c=_.filters?.[g.scope??`internal`];if(!c)continue;let l;if(i.type===`glow`)l=c.addGlow(C(o.color),s(`outerStrength`),s(`innerStrength`),s(`scale`),!1,s(`quality`),s(`distance`));else if(i.type===`shadow`)l=c.addShadow(s(`x`),s(`y`),s(`decay`),s(`power`),C(o.color),s(`samples`),s(`intensity`));else if(i.type===`blur`)l=c.addBlur(s(`quality`),s(`x`),s(`y`),s(`strength`),16777215,s(`steps`));else if(i.type===`bokeh`)l=c.addBokeh(s(`radius`),s(`amount`),s(`contrast`));else if(i.type===`tiltShift`)l=c.addTiltShift(s(`radius`),s(`amount`),s(`contrast`),s(`blurX`),s(`blurY`),s(`strength`));else if(i.type===`pixelate`)l=c.addPixelate(s(`amount`));else if(i.type===`barrel`)l=c.addBarrel(s(`amount`));else if(i.type===`vignette`)l=c.addVignette(s(`x`),s(`y`),s(`radius`),s(`strength`),C(o.color));else if(i.type===`color`){l=c.addColorMatrix();let e=String(o.mode);[`grayscale`,`sepia`,`negative`,`brightness`,`contrast`,`saturate`,`hue`,`night`,`lsd`].includes(e)&&l.colorMatrix[e](s(`amount`))}else if(i.type===`quantize`)l=c.addQuantize({steps:[s(`steps`),s(`steps`),s(`steps`),255],dither:!!s(`dither`)});else if(i.type===`threshold`)l=c.addThreshold(s(`edge1`),s(`edge2`));else if(i.type===`wipe`)l=c.addWipe(s(`width`),s(`direction`),s(`axis`)),l.progress=s(`progress`);else if(i.type===`displacement`||i.type===`blend`){let r=t.assets.find(e=>e.id===i.assetId),a=r?.atlas?.frames[0],u=r?n.textures.getFrame(t.official?`forge-added-`+r.id:a?.pageId??r.id,a?.pageId?`${r.id}:0`:a?.name??(r.type===`image`?void 0:0)):null;if(!u)throw Error(`효과에 사용할 이미지 리소스를 연결하세요.`);l=i.type===`displacement`?c.addDisplacement(u,s(`x`),s(`y`)):c.addBlend(u,e.BlendModes[String(o.mode)]??e.BlendModes.SCREEN,s(`amount`))}else if(i.type===`shader`){let t=2166136261;for(let e=0;e<i.fragment.length;e++)t=Math.imul(t^i.fragment.charCodeAt(e),16777619);let r=`ForgeFilter_`+(t>>>0).toString(16),a=i.fragment;if(!n.game.renderer.renderNodes.hasNode(r)){class t extends e.Renderer.WebGL.RenderNodes.BaseFilterShader{constructor(e){super(r,e,null,a)}setupUniforms(e,t){this.programManager.setUniform(`uTime`,(e.camera?.scene?.time?.now??0)/1e3),this.programManager.setUniform(`uResolution`,[t.width,t.height]);for(let[t,n]of Object.entries(e.values))this.programManager.setUniform(t,n)}}n.game.renderer.renderNodes.addNodeConstructor(r,t)}l=new e.Filters.Controller(c.camera,r),l.values=Object.fromEntries(i.uniforms.map(e=>[e.key,Number(o[e.key]??e.value)])),c.add(l)}if(l&&(l.setPaddingOverride?.(null),x.filters.push({list:c,controller:l}),f(_),i.animation)){let e=i.animation,t=i.type===`shader`?l.values:l;[`__proto__`,`constructor`,`prototype`].includes(e.property)||(t[e.property]=e.from,x.tweens.push(n.tweens.add({targets:t,[e.property]:e.to,duration:e.duration,delay:e.delay,repeat:e.repeat,yoyo:e.yoyo,ease:e.ease})))}}let i=g.duration??v.duration;return i>0&&(x.timer=n.time.delayedCall(i,()=>p(b))),!0}catch(e){return p(b),r(v.name+`: `+String(e)),!1}},bind:(e,t)=>{for(let n of t??[])n.enabled&&m.play(e,n.presetId,{key:n.id,scope:n.scope,values:n.values})},stop:(e,t,n)=>{let r=d(e);for(let[e,a]of i)a.target===r&&(!t||a.presetId===t)&&(!n||e.endsWith(`/`+n))&&p(e)},controls:e=>{let t=d(e),n=new Set,r=new Set;for(let e of i.values())if(e.target===t){r.add(e.presetId);for(let t of e.properties)n.add(t)}return{properties:[...n],presetIds:[...r]}},status:()=>[...i.values()].filter(e=>!e.parent).map(e=>({target:e.target.name??`카메라`,presetId:e.presetId,filters:e.filters.length+[...e.children].reduce((e,t)=>e+(i.get(t)?.filters.length??0),0),sprites:e.visuals.length+[...e.children].reduce((e,t)=>e+(i.get(t)?.visuals.length??0),0),activeItems:e.children.size?[...e.children].filter(e=>i.has(e)).length:void 0})),destroy:()=>{for(let e of[...i.keys()])p(e)}};return m},function pi(e,t,n){let r=new Map,i=0,a=4,o=-1/0,s=[],c=!1,l=!1,u=new Map,d=(e,t=0)=>Number.isFinite(Number(e))?Number(e):t,f=e=>e?.getData?.(`forgeAnchor`)??e,p=e=>{if(e=f(e),e.parentContainer&&e.getWorldTransformMatrix){let t=e.getWorldTransformMatrix();return{x:t.tx,y:t.ty}}return{x:d(e.x),y:d(e.y)}},m=(e,t)=>Math.hypot(e.x-t.x,e.y-t.y),h=e=>e.def.gameplay?.agent,g=e=>e.def.gameplay?.combat,_=e=>n.factions?.()?.team(e.def.id)??e.def.gameplay?.faction??g(e)?.team??``,v=(e,t)=>n.factions?.()?.relation(_(e),_(t))??(_(e)===_(t)?`friendly`:`hostile`),y=(e,t)=>{let n=v(e,t),r=g(e);return n===`hostile`||n===`friendly`&&!!r?.friendlyFire||n===`neutral`&&!!r?.attackNeutral},b=e=>[`topdown`,`platformer`].includes(e.def.behavior)||_(e)===`player`,x=(e,t,n,r=!1)=>(n.targetMode??`team`)===`team`?r||_(t)===n.targetTeam:n.targetMode===`player`?b(t):v(e,t)===n.targetMode,S=(e,t,n)=>e.go.setData?.(t,n),C=(t,r,i,a=!1)=>{for(let o of t.def.stateMachines??[]){let s=e.stateMachines?.find(e=>e.id===o.machineId);s?.parameters.some(e=>e.key===r||e.id===r)&&(a?n.states()?.trigger(t.def.id,r,s.id):n.states()?.set(t.def.id,r,i,s.id))}},w=(e,t,r={})=>{e&&n.run(e,r,t.def.id)},T=t=>{let r=g(t),i={maxHp:r?.maxHp??100,attack:r?.attack??0,defense:r?.defense??0,maxEnergy:r?.maxEnergy??0},a=e.definitions?.find(e=>e.id===r?.definitionId);for(let e of a?.fields??[])e.type===`number`&&e.key in i&&(i[e.key]=Math.max(0,d(e.value,i[e.key])));if(r?.useEquipment){let e=n.equipment?.()??{};for(let t of Object.keys(i))i[t]+=d(e[t]);i.attack+=d(e.공격력),i.defense+=d(e.방어력),i.maxHp+=d(e[`최대 체력`])}return i.maxHp=Math.max(1,i.maxHp),i.maxEnergy=Math.max(0,i.maxEnergy),i};function E(e){let t=T(e);e.hp=Math.max(0,Math.min(t.maxHp,e.hp)),e.energy=Math.max(0,Math.min(t.maxEnergy,e.energy)),S(e,`hp`,e.hp),S(e,`maxHp`,t.maxHp),S(e,`energy`,e.energy),S(e,`combatStatus`,e.effects.map(e=>({id:e.id,name:e.name,remaining:e.remaining,stacks:e.stacks}))),S(e,`aiState`,e.ai),S(e,`aiTarget`,e.target),S(e,`gameplayBlocked`,e.hp<=0||e.effects.some(e=>e.kind===`stun`)),C(e,`hp`,e.hp),C(e,`energy`,e.energy),C(e,`aiState`,e.ai);let r=g(e),i=h(e);if(r?.healthVariableId&&n.write?.(r.healthVariableId,e.hp),r?.energyVariableId&&n.write?.(r.energyVariableId,e.energy),i?.stateVariableId&&n.write?.(i.stateVariableId,e.ai),!i||!e.enabled){let t=f(e.go).body?.velocity;t&&(C(e,`moving`,Math.hypot(t.x,t.y)>.5),Math.abs(t.x)>.5&&C(e,`facing`,t.x<0?`left`:`right`))}}function D(){let e=new Set,t=n.actors(),i=new Set(t.map(e=>e.def.gameplay?.agent?.targetId).filter(Boolean)),a=t.some(e=>e.def.gameplay?.agent?.targetMode===`player`);for(let e of r.values())e.forcedTarget&&i.add(e.forcedTarget);for(let n of t){if(!n.go?.active||!n.def.gameplay&&!i.has(n.def.id)&&!(a&&b(n))||n.go.getData?.(`forgeUiTransient`)||(e.add(n.def.id),r.get(n.def.id)?.go===n.go))continue;let t={...n,home:p(n.go),hp:100,energy:0,cooldowns:{},effects:[],invulnerable:0,ai:`idle`,enabled:n.def.gameplay?.agent?.enabled??!1,target:``,lostFor:0,wait:0,waypoint:0,route:[],repath:0,facing:{x:1,y:0},blocked:!1,seen:``,decisionAt:0,decisionRevision:-1,decisions:0},o=T(t);t.hp=o.maxHp,t.energy=o.maxEnergy,r.set(n.def.id,t),E(t)}for(let t of r.keys())e.has(t)||r.delete(t)}function O(){if(i-o<200)return s;o=i,s=[];for(let{def:e,go:t}of n.actors())if(t?.active&&e.physics===`static`&&!e.fixed){if(e.kind===`tilemap`&&t.layer?.data)for(let n of t.layer.data)for(let r of n)r.collides&&s.push({id:e.id,rect:{x:t.x+r.pixelX*t.scaleX,y:t.y+r.pixelY*t.scaleY,width:r.width*t.scaleX,height:r.height*t.scaleY}});else{let n=f(t).body,r=n?{x:n.x,y:n.y,width:n.width,height:n.height}:t.getBounds?.();r?.width>0&&r.height>0&&s.push({id:e.id,rect:r})}}return s}let k=(e,t,n)=>{let r=0,i=1;for(let[a,o,s,c]of[[e.x,t.x,n.x,n.x+n.width],[e.y,t.y,n.y,n.y+n.height]]){let e=o-a;if(Math.abs(e)<1e-9){if(a<s||a>c)return!1;continue}let t=(s-a)/e,n=(c-a)/e;if(r=Math.max(r,Math.min(t,n)),i=Math.min(i,Math.max(t,n)),r>i)return!1}return!0},A=(e,t,n=``,r=``)=>!O().some(i=>i.id!==n&&i.id!==r&&k(e,t,i.rect));function j(r,i,a){let o=a.cellSize,s=Math.max(1,Math.ceil((t.worldWidth||e.width)/o)),c=Math.max(1,Math.ceil((t.worldHeight||e.height)/o));if(s*c>262144)return n.error(`이동 격자가 너무 큽니다. AI의 경로 칸 크기를 늘리세요.`),null;let l=Math.max(0,Math.min(s-1,Math.floor(p(r.go).x/o))),u=Math.max(0,Math.min(c-1,Math.floor(p(r.go).y/o))),d=Math.max(0,Math.min(s-1,Math.floor(i.x/o))),f=Math.max(0,Math.min(c-1,Math.floor(i.y/o))),m=new Uint8Array(s*c),h=a.radius;for(let e of O())if(e.id!==r.def.id&&e.id!==r.target){let t=Math.max(0,Math.ceil((e.rect.x-h)/o-.5)),n=Math.min(s-1,Math.floor((e.rect.x+e.rect.width+h)/o-.5)),r=Math.max(0,Math.ceil((e.rect.y-h)/o-.5)),i=Math.min(c-1,Math.floor((e.rect.y+e.rect.height+h)/o-.5));for(let e=r;e<=i;e++)for(let r=t;r<=n;r++)m[e*s+r]=1}if(m[f*s+d]){let e=1/0,t;for(let n=Math.max(0,f-4);n<=Math.min(c-1,f+4);n++)for(let r=Math.max(0,d-4);r<=Math.min(s-1,d+4);r++){let i=Math.hypot(r-d,n-f);!m[n*s+r]&&i<e&&(t={x:r,y:n},e=i)}if(!t)return null;d=t.x,f=t.y}let g=u*s+l,_=f*s+d,v=new Float64Array(s*c);v.fill(1/0),v[g]=0;let y=new Int32Array(s*c);y.fill(-1);let b=new Uint8Array(s*c),x=[],S=(e,t)=>{let n=x.length;for(x.push({key:e,score:t});n;){let e=n-1>>1;if(x[e].score<=t)break;x[n]=x[e],n=e}x[n]={key:e,score:t}},C=()=>{let e=x[0],t=x.pop();if(x.length){let e=0;for(;e*2+1<x.length;){let n=e*2+1;if(n+1<x.length&&x[n+1].score<x[n].score&&n++,x[n].score>=t.score)break;x[e]=x[n],e=n}x[e]=t}return e.key};S(g,0);let w=0;for(;x.length&&w++<12e3;){let e=C();if(b[e])continue;if(e===_){let t=[],n=e;for(;n!==g;)if(t.push({x:(n%s+.5)*o,y:(Math.floor(n/s)+.5)*o}),n=y[n],n<0)return null;return t.reverse(),t.length||t.push({...i}),t}b[e]=1;let t=e%s,n=Math.floor(e/s);for(let[r,i]of[[t-1,n],[t+1,n],[t,n-1],[t,n+1]]){if(r<0||r>=s||i<0||i>=c)continue;let t=i*s+r,n=v[e]+1;m[t]||b[t]||n>=v[t]||(v[t]=n,y[t]=e,S(t,n+Math.abs(r-d)+Math.abs(i-f)))}}return null}let M=e=>e.effects.some(e=>e.kind===`stun`);function N(e,t,n,r){let i=f(e.go),a=Math.hypot(t.x,t.y),o=a?t.x/a*n:0,s=a?t.y/a*n:0;if(i.body?.setVelocity)i.body.setVelocity(o,s);else{let e=p(i),t={x:e.x+o*r/1e3,y:e.y+s*r/1e3};if(i.parentContainer?.getWorldTransformMatrix){let e=i.parentContainer.getWorldTransformMatrix().applyInverse(t.x,t.y);i.x=e.x,i.y=e.y}else i.x=t.x,i.y=t.y}a&&(e.facing={x:t.x/a,y:t.y/a}),C(e,`moving`,n>0&&a>0),Math.abs(o)>.01&&C(e,`facing`,o<0?`left`:`right`)}let P=e=>({id:`basic`,name:`기본 공격`,power:0,attackScale:1,defenseScale:1,element:`physical`,range:e.range,cost:0,castMs:e.castMs,cooldownMs:e.cooldownMs,statusId:``,onHit:``});function F(e,t,n=``,r=!1){if(!g(e)?.enabled||e.hp<=0||t<0&&e.invulnerable>0&&!r)return 0;let i=e.hp;return e.hp=Math.max(0,Math.min(T(e).maxHp,e.hp+t)),e.hp<i&&(r||(e.invulnerable=g(e).invulnerableMs),C(e,`hurt`,!0,!0),w(g(e)?.onHurt,e,{sourceId:n,damage:i-e.hp,hp:e.hp})),e.hp===0&&(e.ai=`dead`,e.cast=void 0,N(e,{x:0,y:0},0,0),w(g(e)?.onDeath,e,{sourceId:n})),E(e),Math.abs(e.hp-i)}function I(e,t,n=``){let i=r.get(e);if(!i||i.hp<=0)return!1;let a=i.effects.find(e=>e.id===t.id);return a?t.stacking===`replace`?Object.assign(a,t,{remaining:t.duration,tick:0,stacks:1,source:n}):(a.remaining=t.duration,t.stacking===`stack`&&(a.stacks=Math.min(t.maxStacks,a.stacks+1))):i.effects.push({...t,remaining:t.duration,tick:0,stacks:1,source:n}),t.kind===`stun`&&(i.cast=void 0),E(i),!0}function L(e,t,n){if(e.hp<=0||t.hp<=0||!t.go.active||!y(e,t)||m(p(e.go),p(t.go))>n.range||!A(p(e.go),p(t.go),e.def.id,t.def.id))return!1;let r=T(e),i=T(t),a=g(t)?.resistances[n.element]??0,o=Math.random()<(g(e)?.criticalChance??0);if(a>=1)return!1;let s=F(t,-Math.max(1,Math.round(Math.max(1,r.attack*n.attackScale+n.power-i.defense*n.defenseScale)*(1-a)*(o?g(e).criticalScale:1))),e.def.id);if(!s)return!1;let c=g(e)?.statuses.find(e=>e.id===n.statusId);return c&&t.hp>0&&I(t.def.id,c,e.def.id),w(n.onHit||g(e)?.onHit,e,{targetId:t.def.id,damage:s,critical:o}),!0}function R(e,t,i=`basic`){l||D();let a=r.get(e),o=a&&g(a);if(!a||!o?.enabled||a.hp<=0||a.cast||M(a))return!1;let s=i===`basic`?P(o):o.skills.find(e=>e.id===i);if(!s||(a.cooldowns[s.id]??0)>0||a.energy<s.cost||n.skillAllowed&&!n.skillAllowed(s,e))return!1;let c=r.get(t||a.target);return c||=[...r.values()].filter(e=>e!==a&&g(e)?.enabled&&y(a,e)&&e.hp>0).sort((e,t)=>m(p(a.go),p(e.go))-m(p(a.go),p(t.go)))[0],!c||!g(c)?.enabled||c===a||!y(a,c)||m(p(a.go),p(c.go))>s.range||!A(p(a.go),p(c.go),e,c.def.id)?!1:(a.energy-=s.cost,a.cooldowns[s.id]=s.cooldownMs,C(a,`attack`,!0,!0),s.castMs>0?a.cast={target:c.def.id,skill:{...s},remaining:s.castMs}:L(a,c,s),E(a),!0)}function z(e,t){let o=h(e);if(!o||!e.enabled)return;if(e.hp<=0||M(e)){N(e,{x:0,y:0},0,t);return}let s=p(e.go),c=[],l=e.forcedTarget??o.targetId,d=r.get(e.target);d&&!x(e,d,o,!!l)&&(w(o.onLost,e,{targetId:e.target}),e.target=``,e.lastSeen=void 0,e.lostFor=0,e.route=[],e.pathGoal=void 0,e.seen=``,e.decisionAt=0);let f=n.factions?.()?.revision??0;if(i>=e.decisionAt||e.decisionRevision!==f){if(l){let e=r.get(l);e&&c.push(e)}else{let t=Math.ceil(o.detectionRange/128),n=Math.floor(s.x/128),i=Math.floor(s.y/128);if(t>16)c.push(...[...r.values()].filter(t=>t!==e&&x(e,t,o)));else for(let e=i-t;e<=i+t;e++)for(let r=n-t;r<=n+t;r++)c.push(...u.get(r+`:`+e)??[])}let t=t=>{if(t===e||!t.go.active||t.hp<=0||t.go.visible===!1||!x(e,t,o,!!l))return!1;let n=p(t.go),r=m(s,n);return r>o.detectionRange||o.fieldOfView<360&&r>.001&&(e.facing.x*(n.x-s.x)+e.facing.y*(n.y-s.y))/r<Math.cos(o.fieldOfView*Math.PI/360)?!1:!o.lineOfSight||A(s,n,e.def.id,t.def.id)},n,a=1/0;for(let e of c)if(t(e)){let t=m(s,p(e.go));t<a&&(n=e,a=t)}e.seen=n?.def.id??``,e.decisionRevision=f;let d=o.decisionIntervalMs??100;if(e.decisions===0){let t=0;for(let n=0;n<e.def.id.length;n++)t=t*31+e.def.id.charCodeAt(n)>>>0;e.decisionAt=i+Math.max(16,t%d)}else e.decisionAt=i+d;e.decisions++}let _=r.get(e.seen);_&&(!_.go.active||_.hp<=0||_.go.visible===!1||!x(e,_,o,!!l)||m(s,p(_.go))>o.detectionRange)&&(_=void 0,e.seen=``);let v,y=o.stopDistance;if(e.forcedHome||o.leashRange>0&&m(s,e.home)>o.leashRange?(e.forcedHome=!0,e.target=``,e.lastSeen=void 0,e.ai=`return`,v=e.home,y=5,m(s,e.home)<=y&&(e.forcedHome=!1)):_?(e.target!==_.def.id&&w(o.onDetect,e,{targetId:_.def.id}),e.target=_.def.id,e.lastSeen=p(_.go),e.lostFor=0,e.wait=0,e.ai=`chase`,v=e.lastSeen,o.autoAttack&&g(e)?.enabled&&R(e.def.id,_.def.id,o.autoAttackSkillId||`basic`)&&(e.ai=`attack`)):e.lastSeen?(e.lostFor===0&&w(o.onLost,e,{targetId:e.target}),e.lostFor+=t,e.ai=`search`,v=e.lastSeen,y=5,e.lostFor>o.memoryMs+o.searchMs&&(e.lastSeen=void 0,e.target=``,e.route=[],v=e.home,e.ai=`return`)):o.mode===`follow`&&l&&r.get(l)?.go.active&&x(e,r.get(l),o,!0)?v=p(r.get(l).go):o.mode===`patrol`&&o.waypoints.length?(e.ai=`patrol`,v=o.waypoints[e.waypoint%o.waypoints.length],y=5,m(s,v)<=y&&(e.wait+=t,e.wait>=o.patrolWaitMs&&(e.waypoint=(e.waypoint+1)%o.waypoints.length,e.wait=0,e.route=[]))):(v=e.home,y=5,e.ai=m(s,e.home)>y?`return`:`idle`),!v||m(s,v)<=y||e.cast){e.route=[],N(e,{x:0,y:0},0,t),E(e);return}if(e.repath-=t,(e.repath<=0||!e.pathGoal||m(v,e.pathGoal)>o.cellSize)&&a>0){a--;let t=j(e,v,o);e.repath=o.repathMs,e.pathGoal={...v},t?(e.blocked=!1,e.route=t):(e.blocked||w(o.onPathFailed,e,{targetId:e.target}),e.blocked=!0,e.route=[],e.ai=`blocked`)}for(;e.route.length&&m(s,e.route[0])<Math.max(2,o.speed*t/1e3);)e.route.shift();let b=e.route[0],S=e.effects.filter(e=>e.kind===`slow`).reduce((e,t)=>Math.min(e,Math.max(.05,1-t.power*t.stacks/100)),1);e.blocked&&!b&&(e.ai=`blocked`),N(e,b?{x:b.x-s.x,y:b.y-s.y}:{x:0,y:0},b?o.speed*S:0,t),E(e)}let B=n.scene.add?.graphics?.();B&&(B.setDepth?.(9998),B.setName?.(`AI 경로·시야`));function V(e){if(!c){e=Math.max(0,Math.min(250,d(e))),i+=e,a=4,D(),l=!0,u.clear();for(let e of r.values()){let t=p(e.go),n=Math.floor(t.x/128)+`:`+Math.floor(t.y/128),r=u.get(n)??[];r.push(e),u.set(n,r)}for(let t of r.values()){let n=g(t);t.invulnerable=Math.max(0,t.invulnerable-e);for(let n of Object.keys(t.cooldowns))t.cooldowns[n]=Math.max(0,t.cooldowns[n]-e);n?.enabled&&t.hp>0&&(t.energy=Math.min(T(t).maxEnergy,t.energy+n.energyRegen*e/1e3));for(let r of t.effects){let i=Math.min(e,r.remaining);for(r.remaining-=e,r.tick+=i;r.tick>=r.tickMs&&t.hp>0;){r.tick-=r.tickMs;let e=r.power*r.stacks;r.kind===`regen`?F(t,e,r.source,!0):(r.kind===`poison`||r.kind===`burn`)&&F(t,-e*(1-(n?.resistances[r.kind===`burn`?`fire`:`poison`]??0)),r.source,!0)}}t.effects=t.effects.filter(e=>e.remaining>0)}for(let t of r.values()){if(t.cast&&(t.cast.remaining-=e,t.cast.remaining<=0)){let e=t.cast;t.cast=void 0;let n=r.get(e.target);n&&L(t,n,e.skill)}z(t,e),E(t)}if(l=!1,B){B.clear();for(let e of r.values())if(h(e)?.debug){let t=p(e.go);B.lineStyle(1,8302561,.5),B.strokeCircle(t.x,t.y,h(e).detectionRange),B.lineStyle(2,e.blocked?15628151:11782639,.85),B.beginPath(),B.moveTo(t.x,t.y);for(let t of e.route)B.lineTo(t.x,t.y);B.strokePath()}}}}return D(),{update:V,attack:R,damage:(e,t,n=``)=>{D();let i=r.get(e);return i?F(i,-Math.max(0,d(t)),n):0},heal:(e,t)=>{D();let n=r.get(e);return n?F(n,Math.max(0,d(t))):0},revive:e=>{D();let t=r.get(e);return t?(t.hp=T(t).maxHp,t.energy=T(t).maxEnergy,t.effects=[],t.cooldowns={},t.cast=void 0,t.invulnerable=0,t.ai=`idle`,n.states()?.reset(e),E(t),!0):!1},status:(e,t,n=e)=>{D();let i=r.get(n),a=i&&g(i)?.statuses.find(e=>e.id===t);return a?I(e,a,n):!1},clearStatus:(e,t=``)=>{let n=r.get(e);n&&(n.effects=n.effects.filter(e=>t&&e.id!==t),E(n))},agent:(e,t,i=``)=>{D();let a=r.get(e);return a?.def.gameplay?.agent?t===`enable`&&a.go.getData?.(`forgeMotionPath`)?(n.error(`이동 경로를 제어 중인 오브젝트에는 AI 이동을 함께 켤 수 없습니다.`),!1):(t===`enable`||t===`disable`?(a.enabled=t===`enable`,a.decisionAt=0,a.enabled||N(a,{x:0,y:0},0,0)):t===`target`?(a.forcedTarget=i,a.target=i,a.seen=``,a.decisionAt=0,a.repath=0):t===`return`&&(a.lastSeen=void 0,a.target=``,a.seen=``,a.decisionAt=0,a.forcedHome=!0,a.route=[],a.repath=0),!0):!1},inspect:()=>[...r.values()].map(e=>({id:e.def.id,name:e.def.name,team:_(e),targetRelation:r.has(e.target)?v(e,r.get(e.target)):``,ai:e.ai,target:e.target,decisions:e.decisions,hp:e.hp,maxHp:T(e).maxHp,energy:e.energy,path:e.route.map(e=>({...e})),cooldowns:{...e.cooldowns},statuses:e.effects.map(e=>({...e}))})),snapshot:()=>[...r.values()].map(e=>({id:e.def.id,hp:e.hp,energy:e.energy,cooldowns:{...e.cooldowns},effects:e.effects.map(e=>({...e})),invulnerable:e.invulnerable,cast:e.cast?JSON.parse(JSON.stringify(e.cast)):void 0,ai:e.ai,enabled:e.enabled,target:e.target,forcedTarget:e.forcedTarget,forcedHome:e.forcedHome,home:{...e.home},lastSeen:e.lastSeen?{...e.lastSeen}:void 0,lostFor:e.lostFor,waypoint:e.waypoint,wait:e.wait})),restore:e=>{if(D(),!Array.isArray(e))return;let t=e=>e&&Number.isFinite(e.x)&&Number.isFinite(e.y)?{x:Math.max(-32768,Math.min(32768,e.x)),y:Math.max(-32768,Math.min(32768,e.y))}:void 0;for(let i of e.slice(0,5e3)){let e=r.get(i?.id),a=e&&g(e);if(!e||!Number.isFinite(i.hp)||!Number.isFinite(i.energy))continue;e.hp=i.hp,e.energy=i.energy;let o=a?[P(a),...a.skills]:[];e.cooldowns=Object.fromEntries(o.map(e=>[e.id,Math.max(0,Math.min(6e5,d(i.cooldowns?.[e.id])))])),e.effects=(Array.isArray(i.effects)?i.effects:[]).slice(0,64).flatMap(e=>{if(!e||![`poison`,`burn`,`regen`,`stun`,`slow`].includes(e.kind)||typeof e.id!=`string`||!Number.isFinite(e.power)||e.power<0||!Number.isFinite(e.remaining)||e.remaining<=0||!Number.isFinite(e.tickMs)||e.tickMs<50)return[];let t=Math.min(6e4,e.tickMs),n=Math.max(1,Math.min(100,Math.floor(d(e.maxStacks,1))));return[{id:e.id.slice(0,200),name:String(e.name??``).slice(0,200),kind:e.kind,power:Math.min(1e6,e.power),duration:Math.min(36e5,Math.max(1,d(e.duration,e.remaining))),tickMs:t,maxStacks:n,stacking:[`refresh`,`stack`,`replace`].includes(e.stacking)?e.stacking:`refresh`,remaining:Math.min(36e5,e.remaining),tick:Math.max(0,d(e.tick))%t,stacks:Math.max(1,Math.min(n,Math.floor(d(e.stacks,1)))),source:typeof e.source==`string`?e.source.slice(0,200):``}]}),e.invulnerable=Math.max(0,Math.min(6e4,d(i.invulnerable)));let s=o.find(e=>e.id===i.cast?.skill?.id);e.cast=s&&r.has(i.cast?.target)&&Number.isFinite(i.cast.remaining)?{target:i.cast.target,skill:{...s},remaining:Math.max(0,Math.min(s.castMs,i.cast.remaining))}:void 0,e.enabled=typeof i.enabled==`boolean`?i.enabled:e.enabled,e.target=typeof i.target==`string`&&r.has(i.target)?i.target:``,e.forcedTarget=typeof i.forcedTarget==`string`&&n.objects.has(i.forcedTarget)?i.forcedTarget:void 0,e.forcedHome=i.forcedHome===!0,e.home=t(i.home)??e.home,e.lastSeen=t(i.lastSeen),e.ai=[`idle`,`patrol`,`chase`,`search`,`return`,`blocked`,`attack`,`dead`].includes(i.ai)?i.ai:`idle`,e.lostFor=Math.max(0,Math.min(12e5,d(i.lostFor))),e.waypoint=Math.max(0,Math.floor(d(i.waypoint))),e.wait=Math.max(0,Math.min(6e4,d(i.wait))),e.route=[],e.repath=0,e.seen=``,e.decisionAt=0,e.decisionRevision=-1,E(e)}},destroy:()=>{c=!0,B?.destroy(),r.clear()}}},function mi(e,t,n){let r=new Map(t.objects.map(e=>[e.id,e])),i=new Map(e.assets.map(e=>[e.id,e])),a=new Map,o=new Map,s=new Set,c=new Set,l=new Map,u=new Map,d=new Set,f=new WeakMap,p=new Map,m=``,h=!1,g=!1,_=-1/0,v=new Set,y=[],b=-1,x=!1,S=(e,t=0)=>Number.isFinite(Number(e))?Number(e):t,C=e=>{if(e.atlas)return e.atlas.frames.length;if(e.frameTotal)return e.frameTotal;if(e.pixelRuns)return e.pixelRuns.frames.length;if(e.type!==`spritesheet`)return 1;if(e.spriteDocument)return e.spriteDocument.frames.length;if(e.composition&&!e.compositionDirty)return e.composition.frames;let t=e.grid?.margin??0,n=e.grid?.spacing??0;return Math.max(1,Math.floor((e.width-2*t+n)/(e.frameWidth+n))*Math.floor((e.height-2*t+n)/(e.frameHeight+n)))},w=(e,t)=>{if(!t)return e;for(let n of t.replace(/\[(\d+)\]/g,`.$1`).split(`.`).filter(Boolean)){if([`__proto__`,`constructor`,`prototype`].includes(n)||typeof e!=`object`||!e)return;e=Object.prototype.hasOwnProperty.call(e,n)?e[n]:void 0}return e},T=e=>{if(typeof e!=`string`)return e;try{return JSON.parse(e)}catch{return e}},E=(t,r,i=0)=>{let a;if(t.source===`item`)a=t.path===`$index`?i:r;else if(t.source===`variable`)a=T(n.variable(t.variableId));else if(t.source===`inventory`)a=n.inventory?.()??[];else{let n=e.definitions?.find(e=>e.id===t.definitionId||e.key===t.definitionId),r=n?.fields.find(e=>e.id===t.fieldId||e.key===t.fieldId);a=n?.published&&r?.published?T(r.value):void 0}return t.source===`item`&&t.path===`$index`?a:w(a,t.path)},D=(e,t)=>{d.has(e)||(d.add(e),n.error(t))},O=e=>!!e.def.gameUi?.buttonFrames?.isDisabled||!!(e.def.gameUi?.buttonFrames?.disabledVariableId&&T(n.variable(e.def.gameUi.buttonFrames.disabledVariableId)))||!!(e.def.gameUi?.buttonColors?.enabled&&(e.def.gameUi.buttonColors.isDisabled||e.def.gameUi.buttonColors.disabledVariableId&&T(n.variable(e.def.gameUi.buttonColors.disabledVariableId)))),k=()=>{let e=a.get(m);e&&(e.go.setData?.(`forgeUiFocused`,!1),n.focus?.(e.go,!1)),m=``},A=(e,t=`keyboard`)=>{let r=a.get(e);if(!r||!r.visible||!r.def.gameUi?.navigation.enabled||O(r))return!1;if(h=t!==`pointer`,m===e)return!0;k(),m=e,r.go.setData?.(`forgeUiFocused`,!0);let i=r.def.gameUi?.buttonColors?.enabled&&typeof r.go.setFillStyle==`function`&&typeof r.go.setStrokeStyle==`function`&&!(r.def.gameUi.buttonFrames?.enabled&&typeof r.go.setTexture==`function`);return n.focus?.(r.go,!i),!0},j=e=>{if(!e.visible||e.go.active===!1)return!1;for(let t=e.go.parentContainer;t;t=t.parentContainer)if(t.visible===!1)return!1;return!0},M=()=>[...a.values()].filter(e=>!O(e)&&e.def.gameUi?.navigation.enabled&&j(e)&&!c.has(e.def.id)).sort((e,t)=>S(e.def.gameUi?.navigation.order)-S(t.def.gameUi?.navigation.order)||e.index-t.index),N=e=>{let t=e.def.gameUi?.navigation.functionId;if(!e.visible||!t||!e.def.gameUi?.navigation.enabled||O(e))return!1;let r=e.item,i={index:e.index,item:typeof r==`object`?JSON.stringify(r):r??``,value:r??``};if(r&&typeof r==`object`&&!Array.isArray(r))for(let[e,t]of Object.entries(r))[`index`,`item`,`value`,`__proto__`,`constructor`,`prototype`].includes(e)||(i[e]=t);return n.run(t,i,e.def.id),!0},P=(t,r,i,c=!1)=>{if(!r||!t.gameUi?.enabled&&!t.gameUi?.buttonFrames?.enabled&&!t.gameUi?.buttonColors?.enabled)return;let l={def:t,go:r,item:i?.item,index:i?.index??0,offsetX:i?.offsetX??0,offsetY:i?.offsetY??0,transient:c,visible:t.visible!==!1};if(a.set(t.id,l),o.set(r,l),b=-1,t.gameUi.enabled&&(r.setScrollFactor?.(0),r.setData?.(`forgeGameUi`,!0),r.body&&(r.body.enable=!1)),c&&(s.add(t.id),r.setData?.(`forgeUiTransient`,!0)),t.gameUi.enabled&&t.gameUi.control&&typeof document<`u`){let i=t.gameUi.control,a=document.createElement(`input`),o=i.kind;a.type=o===`slider`?`range`:o===`input`?`text`:`checkbox`,a.setAttribute(`aria-label`,t.name),o===`toggle`&&a.setAttribute(`role`,`switch`),a.min=String(i.minimum),a.max=String(i.maximum),a.step=String(i.step),a.maxLength=i.maxLength,a.placeholder=i.placeholder,Object.assign(a.style,{position:`fixed`,zIndex:`50`,margin:`0`,boxSizing:`border-box`,accentColor:`#91abc8`,background:`#1b2736`,color:`#e1ebf5`,border:`1px solid #61758e`,borderRadius:o===`toggle`?`18px`:`4px`,padding:o===`input`?`5px 9px`:`0`,fontFamily:`sans-serif`,pointerEvents:`auto`,display:`none`}),document.body.append(a);let s=()=>{if(a.disabled||!j(l))return;let r=e.variables.find(e=>e.id===i.variableId),s=o===`input`?a.value.slice(0,i.maxLength):o===`slider`?Number(a.value):a.checked,c=o===`input`?`string`:o===`slider`?`number`:`boolean`;o===`slider`&&(!Number.isFinite(s)||Number(s)<i.minimum||Number(s)>i.maximum)||Object.is(n.variable(i.variableId),s)||(r?.type!==c||!n.writeVariable?.(i.variableId,s)?D(t.id+`.control`,`UI 입력의 연결 변수를 확인하세요.`):t.gameUi?.navigation.enabled&&t.gameUi.navigation.functionId&&n.run(t.gameUi.navigation.functionId,{value:s},t.id))},c=()=>s(),u=e=>{e.stopPropagation(),e.key===`Escape`?(e.preventDefault(),a.blur()):e.key===`Enter`&&o===`input`&&(e.preventDefault(),s(),a.blur())},d=e=>e.stopPropagation(),f=()=>{a.style.display=`none`,document.activeElement===a&&a.blur()};a.addEventListener(o===`slider`?`input`:`change`,c),a.addEventListener(`keydown`,u);for(let e of[`pointerdown`,`pointerup`,`click`,`keyup`,`wheel`])a.addEventListener(e,d);r.scene?.events?.on?.(`sleep`,f);let m=()=>{r.scene?.events?.off?.(`sleep`,f),a.remove()};p.set(t.id,{element:a,entry:l,remove:m}),r.once?.(`destroy`,()=>{m(),p.delete(t.id)})}if(t.gameUi.navigation.enabled||t.gameUi.buttonFrames?.enabled||t.gameUi.buttonColors?.enabled){r.setInteractive?.({useHandCursor:!0});let e=()=>{h=!1,l.hovered=!0,O(l)||A(t.id,`pointer`)},n=()=>{l.hovered=!1,l.pressed=!1,m===t.id&&k()},i=()=>{l.pressed=!1},a=()=>{h=!1,!O(l)&&(l.pressed=!0,A(t.id,`pointer`),N(l))};r.on?.(`pointerover`,e),r.on?.(`pointerdown`,a),r.on?.(`pointerout`,n),r.on?.(`pointerup`,i),u.set(t.id,()=>{r.off?.(`pointerover`,e),r.off?.(`pointerdown`,a),r.off?.(`pointerout`,n),r.off?.(`pointerup`,i)})}},F=e=>{let t=new Set([e]);for(let e=-1;e!==t.size;){e=t.size;for(let e of r.values())e.parentId&&t.has(e.parentId)&&t.add(e.id)}return[...t].map(e=>r.get(e)).filter(Boolean)};for(let e of t.objects)if((e.gameUi?.enabled||e.gameUi?.buttonFrames?.enabled||e.gameUi?.buttonColors?.enabled)&&(P(e,n.objects.get(e.id)),e.gameUi.repeat.enabled)){let t=F(e.id).map(e=>e.id);l.set(e.id,{source:e,instances:new Map,hidden:t}),t.forEach(e=>{c.add(e);let t=n.objects.get(e);t?.setVisible?.(!1),t?.body&&(t.body.enable=!1)})}let I=e=>{e.ids.includes(m)&&k();for(let t of e.ids){p.get(t)?.remove(),p.delete(t),u.get(t)?.(),u.delete(t);let e=n.objects.get(t);e?.destroy?.(),o.delete(e),n.objects.delete(t),a.delete(t),s.delete(t),b=-1}},L=()=>{for(let{source:e,instances:t}of l.values()){let r=e.gameUi.repeat,i=E(r.binding),o=Array.isArray(i)?i:[];!Array.isArray(i)&&i!=null&&D(e.id+`.array`,`UI '${e.name}': 반복 자료가 배열이 아닙니다.`);let c=F(e.id),l=new Set,u=new Map;for(let i=0;i<o.length;i++){let d=o[i],f=w(d,r.keyPath),p=String(f??i),m=u.get(p)??0;u.set(p,m+1);let h=`${p.length}:${p}:${m}`;l.add(h);let g=t.get(h),_=r.direction===`row`?i:r.direction===`grid`?i%r.columns:0,v=r.direction===`column`?i:r.direction===`grid`?Math.floor(i/r.columns):0,y=_*((r.itemWidth||e.width)+r.gapX),b=v*((r.itemHeight||e.height)+r.gapY);if(!g){if(n.objects.size+c.length>5e3){D(e.id+`.limit`,`UI '${e.name}': 반복 항목을 포함한 씬 노드는 5,000개 이내로 구성하세요.`);break}let r=new Map(c.map(e=>[e.id,`ui.`+crypto.randomUUID()])),a=c.map(e=>{let t=JSON.parse(JSON.stringify(e));return t.id=r.get(e.id),t.parentId=r.get(e.parentId??``)??e.parentId,t.fixed=!0,t.physics=`none`,t.behavior=`none`,t.stateMachines=[],t.events=t.events?.map(e=>({...e,id:crypto.randomUUID(),otherObjectId:r.get(e.otherObjectId??``)??e.otherObjectId,args:Object.fromEntries(Object.entries(e.args).map(([e,t])=>[e,t.replace(/\{\{(index|item(?:\.[\w.]+)?)\}\}/g,(e,t)=>String(t===`index`?i:w(d,t===`item`?``:t.slice(5))??``))]))})),t.gameUi&&(t.gameUi.repeat.enabled=!1),t}),o=n.create(a);g={ids:[...r.values()],root:r.get(e.id)},t.set(h,g);for(let e=0;e<a.length;e++){let t=a[e],r=o.get(t.id)??n.objects.get(t.id);r&&(r.setData?.(`forgeUiTransient`,!0),s.add(t.id),P(t,r,{item:d,index:i,offsetX:e===0?y:0,offsetY:e===0?b:0},!0))}}for(let e of g.ids){let t=a.get(e);t&&(t.item=d,t.index=i,e===g.root&&(t.offsetX=y,t.offsetY=b))}}for(let[e,n]of t)l.has(e)||(I(n),t.delete(e))}},R=()=>{let e=n.viewport();if(b!==a.size){let e=e=>{let t=0;for(let n=e.go.parentContainer;n;n=n.parentContainer)t++;return t};y=[...a.values()].sort((t,n)=>e(t)-e(n)),b=a.size}for(let t of y){let n=t.def.id,r=t.def.gameUi,a=t.go,s=!!r.buttonFrames?.enabled&&typeof a.setTexture==`function`;if(r.buttonColors?.enabled&&!s&&typeof a.setFillStyle==`function`&&typeof a.setStrokeStyle==`function`){let e=r.buttonColors,i=O(t)?`disabled`:t.pressed||(t.pressedUntil??0)>Date.now()?`pressed`:t.hovered?`hover`:m===n?`focused`:`normal`,o=e[i],s=i===`focused`?e.focusStrokeWidth:e.strokeWidth,c=JSON.stringify([i,o.fill,o.stroke,s]);t.basePaint||={fillColor:a.fillColor,fillAlpha:a.fillAlpha,strokeColor:a.strokeColor,strokeAlpha:a.strokeAlpha,lineWidth:a.lineWidth,isFilled:!!a.isFilled,isStroked:!!a.isStroked},t.paintSignature!==c&&(a.setFillStyle(parseInt(o.fill.slice(1),16),1),a.setStrokeStyle(s,parseInt(o.stroke.slice(1),16),1),a.setData?.(`forgeUiButtonState`,i),t.paintSignature=c)}else if(t.basePaint){let e=t.basePaint;a.setFillStyle?.(e.fillColor,e.fillAlpha),a.setStrokeStyle?.(e.lineWidth,e.strokeColor,e.strokeAlpha),a.isFilled=e.isFilled,a.isStroked=e.isStroked,a.setData?.(`forgeUiButtonState`,``),t.basePaint=void 0,t.paintSignature=void 0}if(r.buttonFrames?.enabled&&typeof a.setTexture==`function`){let e=r.buttonFrames,o=O(t)?`disabled`:t.pressed||(t.pressedUntil??0)>Date.now()?`pressed`:t.hovered||m===t.def.id?`hover`:`normal`,s=e[o],c=e[`${o}AssetId`]||t.def.assetId,l=i.get(c),u=l?C(l):0;if(!l||l.type===`audio`)c&&D(`button-image:`+n+`:`+o,t.def.name+`: 버튼 상태의 이미지 리소스를 확인하세요.`);else if(!Number.isInteger(s)||s<0||s>=u)D(`button-frame:`+n+`:`+o,t.def.name+`: 버튼 상태의 프레임 번호를 확인하세요.`);else{let e=l.atlas?.frames[s],n=e?.pageId??l.id,r=e?e.pageId?`${l.id}:${s}`:e.name:l.type===`image`?`__BASE`:s,i=JSON.stringify([n,r]);if(t.texture!==i){let e=!!a.getData?.(`forgeNineSlice`),o=e?a.width:a.displayWidth,s=e?a.height:a.displayHeight,c=a.scaleX,l=a.scaleY,u=a.getData?.(`forgeScaleX`),d=a.getData?.(`forgeScaleY`),f=a.width,p=a.height;if(a.setTexture(n,r),Number.isFinite(o)&&Number.isFinite(s)&&(e?a.setNineSliceSize?.(o,s):(a.setDisplaySize?.(o,s),c<0&&a.scaleX>0&&(a.scaleX*=-1),l<0&&a.scaleY>0&&(a.scaleY*=-1))),!e){Number.isFinite(u)&&Number.isFinite(f)&&a.width>0&&a.setData?.(`forgeScaleX`,u*f/a.width),Number.isFinite(d)&&Number.isFinite(p)&&a.height>0&&a.setData?.(`forgeScaleY`,d*p/a.height);let e=a.input?.hitArea;e&&!a.input.customHitArea&&Number.isFinite(e.width)&&Number.isFinite(e.height)&&(e.x=0,e.y=0,e.width=a.width,e.height=a.height)}t.texture=i}a.setData?.(`forgeUiButtonState`,o)}}if(!r.enabled)continue;if(c.has(n)){a.setVisible?.(!1),t.visible=!1;continue}let l=a.parentContainer,u=l&&o.get(l)?{width:S(l.width),height:S(l.height),x:-S(l.width)/2,y:-S(l.height)/2}:e,d=r.relativeWidth?u.width*r.relativeWidth:t.def.width,f=r.relativeHeight?u.height*r.relativeHeight:t.def.height,p=`${d}/${f}/${t.def.kind===`text`?r.text.align??`center`:``}`;if(a.setPosition?.(S(u.x)+u.width*r.anchorX+r.offsetX+t.offsetX+(S(a.originX,.5)-r.anchorX)*d,S(u.y)+u.height*r.anchorY+r.offsetY+t.offsetY+(S(a.originY,.5)-r.anchorY)*f),(r.relativeWidth||r.relativeHeight||t.def.kind===`text`)&&p!==t.size){if(typeof a.setText==`function`){a.setAlign?.(r.text.align??`center`),a.setWordWrapWidth?.(d),a.setFixedSize?.(d,f);let e=S(a.lineSpacing),n=S(a.style?.metrics?.fontSize,t.def.fontSize*1.2)+S(a.style?.strokeThickness),i=f-S(a.padding?.top)-S(a.padding?.bottom);a.setMaxLines?.(Math.max(1,Math.floor((i+e)/Math.max(1,n+e))))}else t.def.kind===`group`?a.setSize?.(d,f):a.setDisplaySize?.(d,f);t.size=p}let h=t.def.visible!==!1;if(r.visibility.enabled){let e=E(r.visibility.binding,t.item,t.index),n=r.visibility.compare,i=T(r.visibility.value);h&&=n===`truthy`?!!e:n===`eq`?String(e)===String(i):n===`ne`?String(e)!==String(i):n===`gt`?Number(e)>Number(i):n===`gte`?Number(e)>=Number(i):n===`lt`?Number(e)<Number(i):Number(e)<=Number(i)}if(r.image?.enabled&&typeof a.setTexture==`function`){let e=E(r.image.binding,t.item,t.index),n=typeof e==`string`?e:String(w(e,r.image.assetPath)??w(e,`assetId`)??``),o=Math.max(0,Math.floor(S(w(e,r.image.framePath)??w(e,`frame`)))),s=i.get(n);if(!s||s.type===`audio`)h=!1;else{let e=s.atlas?.frames[o],n=e?.pageId??s.id,r=e?e.pageId?`${s.id}:${o}`:e.name:s.type===`image`?`__BASE`:o,i=JSON.stringify([n,r]);t.texture!==i&&(a.setTexture(n,r),a.setDisplaySize?.(d,f),t.texture=i)}}if(r.progress?.enabled&&typeof a.setDisplaySize==`function`&&t.def.kind!==`group`&&t.def.kind!==`text`){let e=r.progress,n=e.useMaximumBinding?S(E(e.maximumBinding,t.item,t.index),e.maximum):e.maximum,i=Math.max(0,Math.min(1,S(E(e.binding,t.item,t.index))/Math.max(1e-6,n))),o=S(a.originX,.5),s=S(a.originY,.5);e.direction===`horizontal`?(a.setDisplaySize(d*i,f),a.x+=d*(1-i)*(e.inverted?1-o:-o)):(a.setDisplaySize(d,f*i),a.y+=f*(1-i)*(e.inverted?-s:1-s)),h&&=i>0}if(t.visible=h,a.setVisible?.(h),r.text.enabled&&typeof a.setText==`function`){let e=E(r.text.binding,t.item,t.index),n=typeof e==`number`?e.toFixed(r.text.decimals):e==null?``:typeof e==`object`?JSON.stringify(e):String(e),i=r.text.prefix+n+r.text.suffix;i!==t.text&&(a.setText(i),t.text=i)}}let t=a.get(m);t&&(!j(t)||O(t))&&k()},z=(e,t=!1,n=!1)=>{let r=M();if(!r.length)return!1;let i=a.get(m);if(!i||!r.includes(i))return A(r[0].def.id);if(t||(r=r.filter(e=>e.def.gameUi.navigation.group===i.def.gameUi.navigation.group)),t){let e=(r.indexOf(i)+(n?-1:1)+r.length)%r.length;return A(r[e].def.id)}let o=e===`left`||e===`right`,s=e===`left`||e===`up`?-1:1,c=e=>{let t=e.go.getWorldTransformMatrix?.();return t?{x:t.tx,y:t.ty}:{x:S(e.go.x),y:S(e.go.y)}},l=c(i),u=r.filter(e=>e!==i).map(e=>{let t=c(e),n=(o?t.x-l.x:t.y-l.y)*s;return{entry:e,major:n,score:n+Math.abs(o?t.y-l.y:t.x-l.x)*3}}).filter(e=>e.major>.01).sort((e,t)=>e.score-t.score);return u[0]?A(u[0].entry.def.id):!1},B=e=>{let t=f.get(e);if(t!==void 0)return t;if(g||!M().length)return!1;let n={ArrowLeft:`left`,ArrowRight:`right`,ArrowUp:`up`,ArrowDown:`down`},r=!1,i=a.get(m),o=!!i&&(h||i.def.gameUi.navigation.captureInput!==!1||i.def.gameUi.navigation.autoFocus);if(e.key===`Tab`)r=z(`down`,!0,e.shiftKey),h=r,x=!1;else if(e.key===`Escape`&&m&&o)k(),h=!1,x=!0,r=!0;else if(n[e.key]&&m&&o)z(n[e.key]),r=!0;else if((e.key===`Enter`||e.key===` `)&&o){let t=a.get(m);t&&(r=!0,e.repeat||(t.pressedUntil=Date.now()+130,N(t)))}return r&&e.preventDefault?.(),f.set(e,r),r},V=()=>{let e=new Set,t=[];try{t=n.gamepads?.()??(typeof navigator<`u`?[...navigator.getGamepads?.()??[]].filter(Boolean):[])}catch{return}for(let n of t){let t=n?.buttons??[],r=n?.axes??[],i=e=>!!t[e]?.pressed;(i(12)||S(r[1])<-.55)&&e.add(`ArrowUp`),(i(13)||S(r[1])>.55)&&e.add(`ArrowDown`),(i(14)||S(r[0])<-.55)&&e.add(`ArrowLeft`),(i(15)||S(r[0])>.55)&&e.add(`ArrowRight`),i(0)&&e.add(`Enter`)}for(let t of e)if(!v.has(t)){h=!0;let e=!!m;e||z(`down`),(e||t===`Enter`)&&B({key:t})}v=e};return{update(t,r=0){if(g)return;(t-_>=80||!Number.isFinite(_))&&(L(),_=t),R();for(let{element:t,entry:r}of p.values()){let i=r.go.getBounds?.(),a=r.go.scene?.game?.canvas?.getBoundingClientRect?.(),o=r.def.gameUi?.control,s=r.go.scene?.cameras?.cameras?.find(e=>e.name===`?? UI`);if(!(s?.visible!==!1&&j(r)&&r.go.visible!==!1&&!c.has(r.def.id)&&i&&a)||!o){t.style.display=`none`,document.activeElement===t&&t.blur();continue}let l=r.go.scene.game,u=a.width/l.scale.width,d=a.height/l.scale.height,f=n.variable(o.variableId);Object.assign(t.style,{display:`block`,left:a.left+((s?.x??0)+i.x)*u+`px`,top:a.top+((s?.y??0)+i.y)*d+`px`,width:Math.max(1,i.width*u)+`px`,height:Math.max(1,i.height*d)+`px`,fontSize:Math.max(8,Math.min(18,i.height*.45)*d)+`px`}),t.disabled=O(r)||!n.writeVariable;let p=e.variables.find(e=>e.id===o.variableId),m=o.kind===`slider`?`number`:o.kind===`input`?`string`:`boolean`;t.disabled||=p?.type!==m||o.kind===`slider`&&o.minimum>=o.maximum,o.kind===`toggle`&&(t.style.appearance=`none`,t.style.background=`radial-gradient(circle at `+(f===!0?`75%`:`25%`)+` 50%,#d3dfed 0 9px,transparent 10px),`+(f===!0?`#567493`:`#26384c`)),document.activeElement!==t&&(o.kind===`checkbox`||o.kind===`toggle`?t.checked=f===!0:t.value=String(f??``))}let i=M().filter(e=>e.def.gameUi.navigation.autoFocus);i.length?!m&&!x&&A(i[0].def.id,`auto`):x=!1,V()},keyDown:B,focus:A,isDisabled(e){let t=a.get(e);return!!t&&O(t)},blur(){k(),h=!1,x=!0},hasFocus(){let e=a.get(m);return!!e&&j(e)},capturesInput(){if(typeof document<`u`&&[...p.values()].some(e=>e.element===document.activeElement))return!0;let e=a.get(m);return!!e&&j(e)&&(e.def.gameUi.navigation.captureInput!==!1||h||e.def.gameUi.navigation.autoFocus)},capturesPoint(e,t){if(g||!Number.isFinite(e)||!Number.isFinite(t))return!1;for(let n of a.values()){if(!n.def.gameUi?.navigation.enabled&&!n.def.gameUi?.control||!j(n))continue;let r=n.go.getBounds?.();if(r&&e>=r.x&&e<=r.x+r.width&&t>=r.y&&t<=r.y+r.height)return!0}return!1},get focusedId(){return m},get transientIds(){return[...s]},destroy(){if(!g){g=!0;for(let e of p.values())e.remove();p.clear(),k();for(let e of l.values())for(let t of e.instances.values())I(t);for(let e of u.values())e();u.clear(),a.clear(),o.clear(),l.clear(),s.clear()}}}},(function(runtime,meshFactory,attachmentFactory){return function(project,scene,hooks){return runtime(project,scene,hooks,meshFactory,attachmentFactory);};})(function _i(e,t,n,r=Ue,i=He){let a,o=()=>a??=r(),s,c=()=>s??=i(),l,u=0,d=e=>{if(!e.visible||e.alpha===0)return!1;for(let t=e.parentContainer;t;t=t.parentContainer)if(!t.visible||t.alpha===0)return!1;let n=t.cameras?.cameras;if(!n?.length)return!0;let r=e.getBounds?.();return n.some(t=>{if(t.visible===!1||t.alpha===0||e.willRender&&!e.willRender(t))return!1;let n=t.worldView;return!r||!n||r.right>=n.x&&r.x<=n.right&&r.bottom>=n.y&&r.y<=n.bottom})},f=Math.PI/180,p=[`x`,`y`,`rotation`,`length`,`opacity`],m=(e,t)=>{let n=e.lengthScale?t/e.lengthScale.reference:1;return{x:e.scaleX*(e.stretchWithBone?t:1)*(e.lengthScale?.axis===`x`?n:1),y:e.scaleY*(e.lengthScale?.axis===`y`?n:1),bone:e.lengthScale?.axis===`bone`?n:1}},h=(e,t,n)=>Math.max(t,Math.min(n,e)),g=e=>((e+180)%360+360)%360-180,_=(e,t,n)=>e+g(t-e)*n,v=(e,t,n,r,i=1)=>n>0?e+Math.sign(t-e)*Math.min(Math.abs(t-e),r/n*i):t,y=new Map(e.assets.map(e=>[e.id,e])),b=new Map,x=new Map,S=new Map,C=new WeakMap,w=new Set,T=0,E=!1,D=e=>{w.has(e)||(w.add(e),n.error?.(e))},O=e=>{if(!e?.variableId)return!0;let t=n.variable(e.variableId),r=e.value,i=typeof t==`number`?Number(r):typeof t==`boolean`?r===`true`||r===`1`:r;switch(e.compare){case`eq`:return t===i;case`ne`:return t!==i;case`lt`:return Number(t)<Number(i);case`lte`:return Number(t)<=Number(i);case`gt`:return Number(t)>Number(i);case`gte`:return Number(t)>=Number(i);default:return!!t}},k=(e,t,n)=>{let r={},i=t?Math.max(0,t.loop?n%t.duration:Math.min(n,t.duration)):0,a=t&&C.get(t);t&&!a&&(a=new Map(t.tracks.map(e=>[e.boneId,Object.fromEntries(p.map(t=>[t,e.keys.filter(e=>e[t]!==void 0)]))])),C.set(t,a));for(let t of e.bones){let e=a?.get(t.id),n={};for(let r of p){let a=e?.[r]??[];if(!a.length){n[r]=t[r];continue}let o=0;for(;o<a.length&&a[o].time<=i;)o++;if(!o)n[r]=a[0][r];else if(o===a.length)n[r]=a[o-1][r];else{let e=a[o-1],t=a[o],s=(i-e.time)/Math.max(.001,t.time-e.time);e.interpolation===`step`?s=0:e.interpolation===`smooth`&&(s=s*s*(3-2*s)),n[r]=e[r]+(t[r]-e[r])*s}}n.rotation=h(n.rotation,t.minAngle,t.maxAngle),r[t.id]=n}return r},A=(e,t)=>{let n={},r=new Map(e.bones.map(e=>[e.id,e])),i=new Set,a=o=>{if(n[o])return n[o];if(i.has(o)){D(e.name+`: 뼈 연결이 순환합니다.`);return}let s=r.get(o);if(!s)return;i.add(o);let c=t[o]??s,l=s.parentId?a(s.parentId):void 0,{x:u,y:d,opacity:p,length:m}=c,g=h(c.rotation,s.minAngle,s.maxAngle);if(l){let e=l.rotation*f,t=u+l.length*s.anchor;u=l.x+Math.cos(e)*t-Math.sin(e)*d,d=l.y+Math.sin(e)*t+Math.cos(e)*d,g+=l.rotation,p*=l.opacity}if(s.aimAt){let e=a(s.aimAt.boneId);if(e){let t=e.rotation*f,n=e.x+Math.cos(t)*s.aimAt.offsetX-Math.sin(t)*s.aimAt.offsetY-u,r=e.y+Math.sin(t)*s.aimAt.offsetX+Math.cos(t)*s.aimAt.offsetY-d;m=Math.max(.01,Math.hypot(n,r)),m>.010001&&(g=Math.atan2(r,n)/f)}}return n[o]={x:u,y:d,rotation:g,length:m,opacity:p,endX:u+Math.cos(g*f)*m,endY:d+Math.sin(g*f)*m},i.delete(o),n[o]};return e.bones.forEach(e=>a(e.id)),n},j=(e,t,n)=>({x:e.x+(t.x-e.x)*n,y:e.y+(t.y-e.y)*n,rotation:_(e.rotation,t.rotation,n),length:e.length+(t.length-e.length)*n,opacity:e.opacity+(t.opacity-e.opacity)*n}),M=e=>Object.fromEntries(Object.entries(e).map(([e,t])=>[e,{...t}])),N=(e,t,n,r,i=!0)=>{let a=e.getWorldTransformMatrix().applyInverse(t,n),o=e.displayOriginX??e.width*(e.originX??.5),s=e.displayOriginY??e.height*(e.originY??.5),c=a.x+o,l=a.y+s;return i&&e.flipX&&(c=r.width-c),i&&e.flipY&&(l=r.height-l),{x:c,y:l}},P=()=>{let e=t.input?.activePointer;if(e)return e.positionToCamera?.(t.cameras.main)??{x:e.worldX??e.x,y:e.worldY??e.y}},F=e=>{if(e.source===`pointer`)return P();if(e.source!==`object`)return;let t=n.objects.get(e.targetId);if(!t?.active)return;let r=t.getWorldTransformMatrix?.();return r?{x:r.tx,y:r.ty}:{x:t.x,y:t.y}},I=(e,r,i,a=!1)=>{let o=n.texture(e,r),s=i.paletteMapping;if(!a&&(!s||!Object.keys(s).length)&&!i.sampling)return o;if(!a&&(!s||!Object.keys(s).length)&&i.sampling){let e=t.textures.getFrame(o.key,o.frame);if(!e||e.source.scaleMode===(i.sampling===`linear`?0:1))return o;let n=`page:`+o.key+`:`+e.sourceIndex+`:`+i.sampling,r=x.get(n),a=r?t.textures.get(r):void 0;if(!a){r=`__forge_rig_palette_${t.sys.settings.key}_${++T}`;let o=e.source.image;a=t.textures.createCanvas(r,e.source.width,e.source.height),a.context.drawImage(o,0,0),a.refresh(),a.setFilter(i.sampling===`linear`?0:1),x.set(n,r)}if(!a.has(e.name)){let t=e.clone();t.texture=a,t.sourceIndex=0,t.source=a.source[0],t.u0=e.u0,t.v0=e.v0,t.u1=e.u1,t.v1=e.v1,a.frames[e.name]=t,a.frameTotal++}return{key:r,frame:e.name}}let c=(a?`mesh:`:``)+e.id+`:`+r+`:`+JSON.stringify(s??{})+`:`+(i.sampling??``),l=x.get(c);if(l)return{key:l,frame:`__BASE`};let u=t.textures.getFrame(o.key,o.frame);if(!u)return o;let d=`__forge_rig_palette_${t.sys.settings.key}_${++T}`,f=t.textures.createCanvas(d,u.realWidth,u.realHeight),p=f.context,m=u.data.spriteSourceSize;if(p.save(),p.translate(m.x,m.y),p.scale(m.w/(u.rotated?u.cutHeight:u.cutWidth),m.h/(u.rotated?u.cutWidth:u.cutHeight)),u.rotated&&(p.translate(0,u.cutWidth),p.rotate(-Math.PI/2)),p.drawImage(u.source.image,u.cutX,u.cutY,u.cutWidth,u.cutHeight,0,0,u.cutWidth,u.cutHeight),p.restore(),s&&Object.keys(s).length){let e=p.getImageData(0,0,u.realWidth,u.realHeight),t=new Map;for(let[e,n]of Object.entries(s??{})){let r=e=>[1,3,5,7].map((t,n)=>n===3&&e.length<9?255:parseInt(e.slice(t,t+2),16)),i=r(e),a=r(n);t.set((i[0]<<24|i[1]<<16|i[2]<<8|i[3])>>>0,a)}for(let n=0;n<e.data.length;n+=4){let r=e.data,i=t.get((r[n]<<24|r[n+1]<<16|r[n+2]<<8|r[n+3])>>>0);i&&r.set(i,n)}p.putImageData(e,0,0)}return f.refresh(),i.sampling&&f.setFilter(i.sampling===`linear`?0:1),x.set(c,d),{key:d,frame:`__BASE`}},L=(e,t,n)=>{for(let[r,i]of[[`forgeScaleX`,t],[`forgeScaleY`,n]]){let t=e.getData?.(r);typeof t==`number`&&e.setData(r,t*i)}let r=e.body;r&&Number.isFinite(r.sourceWidth)&&Number.isFinite(r.sourceHeight)&&(r.sourceWidth/=t,r.sourceHeight/=n,r.radius&&(r.radius/=Math.abs(t)),r.offset&&(r.offset.x/=t,r.offset.y/=n),r.updateBounds?.())},R=(e,r=!1)=>{for(let t of e.parts)t.container&&(t.container.remove(t.image),t.container.destroy()),t.image.destroy();if(e.animation&&e.animation.setCurrentFrame===e.wrappedFrame&&(e.animation.setCurrentFrame=e.originalFrame),r&&e.go.active){let t=y.get(e.def.assetId);if(t){let r=n.texture(t,e.def.frame);e.go.setTexture(r.key,r.frame)}e.go.setScale(e.go.scaleX/e.scaleX,e.go.scaleY/e.scaleY),L(e.go,1/e.scaleX,1/e.scaleY)}e.go.active&&e.go.setData(`forgeLiveRig`,!1),t.textures.remove(e.key),b.delete(e.def.id)},z=(e,r,i,a)=>{let s=a.rigDocument,c=0,l=0,u=0,d;for(let e of s.attachments){if(!e.visible||!e.mesh?.enabled&&!s.clips.some(t=>t.attachmentTracks?.some(t=>t.attachmentId===e.id)))continue;let r=[e];for(let t of s.clips)for(let n of t.attachmentTracks??[])if(n.attachmentId===e.id)for(let e of n.keys)r.push(e);e.mesh?.enabled&&(l++,c+=e.mesh.columns*e.mesh.rows);let i=0,a=0;for(let o of r){let r=y.get(o.assetId);if(!r||r.type===`audio`||o!==e&&r.rigDocument)throw Error(e.name+`: 그림 키의 원본 이미지가 없습니다.`);let s=n.texture(r,o.frame),c=t.textures.getFrame(s.key,s.frame);if(!c)throw Error(e.name+`: 그림 키의 프레임이 없습니다.`);if(!e.mesh?.enabled)continue;if(!i)i=c.realWidth,a=c.realHeight;else if(i!==c.realWidth||a!==c.realHeight)throw Error(e.name+`: 변형 파츠의 그림 키는 같은 논리 프레임 크기를 사용하세요.`);let l=c.realWidth*c.realHeight,f=o.assetId+`:`+o.frame;if(l>1048576)throw Error(e.name+`: 변형 파츠의 논리 프레임은 100만 픽셀 이내로 맞추세요.`);d??=new Set,d.has(f)||(d.add(f),u+=l)}}if(l>32||c>512||u>8388608)throw Error(`격자 변형은 리그당 32파츠·512칸·원본 전체 800만 픽셀 이내로 맞추세요.`);let p=S.get(a.id);p||(p={...s,clips:s.clips.map(e=>({...e,tracks:e.tracks.map(e=>({...e,keys:[...e.keys].sort((e,t)=>e.time-t.time)}))}))},S.set(a.id,p));let h=`__forge_live_rig_${t.sys.settings.key}_${++T}`,g=t.textures.addDynamicTexture(h,p.width,p.height);if(!g){D(e.name+`: 리그 출력 텍스처를 만들 수 없습니다.`);return}p.sampling&&g.setFilter?.(p.sampling===`linear`?0:1);let _=[];for(let n of[...p.attachments].sort((e,t)=>e.order-t.order)){let r=y.get(n.assetId);if(!r||!n.visible)continue;let i=n.mesh?.enabled,a=I(r,n.frame,p,!!i);if(!t.textures.exists(a.key)||!t.textures.get(a.key).has(a.frame)){D(e.name+` / `+n.name+`: 파츠 프레임을 찾을 수 없습니다.`);continue}let s=i?o().geometry(n.mesh):void 0,c=s?t.textures.getFrame(a.key,a.frame):void 0,l=!g.context,u=s&&l?t.make.mesh2d({key:a.key,vertices:()=>s.vertices,indices:()=>s.indices,add:!1}):t.make.image({key:a.key,frame:a.frame,add:!1});s&&l?(u.setSize(c.realWidth,c.realHeight).setOrigin(0,0),u.flipV=!0,u.setRenderAsTriangles(!0)):u.setOrigin(n.pivotX/u.frame.realWidth,n.pivotY/u.frame.realHeight);let d={attachment:n,image:u,container:n.lengthScale?.axis===`bone`?t.make.container({children:[u],add:!1}):void 0};if(p.clips.some(e=>e.attachmentTracks?.some(e=>e.attachmentId===n.id))){d.variants=new Map([[n.assetId+`:`+n.frame,a]]),d.variant=n.assetId+`:`+n.frame;for(let e of p.clips)for(let t of e.attachmentTracks??[])if(t.attachmentId===n.id)for(let e of t.keys){let t=e.assetId+`:`+e.frame;d.variants.has(t)||d.variants.set(t,I(y.get(e.assetId),e.frame,p,!!i))}}s&&(d.mesh={...s,width:c.realWidth,height:c.realHeight,values:new Float32Array(n.mesh.points.length*2),layer:new Float32Array(n.mesh.points.length*2),source:c.source.image,canvas:!l},l||(d.canvasDraw=()=>{let e=g.context,t=C.world[n.boneId];if(!t)return;let r=m(n,t.length),i=t.rotation*f,a=n.rotation*f,s=Math.cos(a),c=Math.sin(a);e.save(),e.globalAlpha=n.opacity*t.opacity,e.imageSmoothingEnabled=p.sampling===`linear`,e.translate(t.x,t.y),e.rotate(i),e.transform(r.bone*s*r.x,c*r.x,-r.bone*c*r.y,s*r.y,r.bone*n.offsetX,n.offsetY),o().draw(e,d.mesh.source,d.mesh.width,d.mesh.height,d.mesh.vertices,d.mesh.indices),e.restore()})),_.push(d)}let v=(r.width||p.width)/p.width,x=(r.height||p.height)/p.height;r.setTexture(h),r.setScale(r.scaleX*v,r.scaleY*x),L(r,v,x);let C={def:e,go:r,settings:i,sourceId:a.id,doc:p,parts:_,texture:g,key:h,time:0,clipId:``,local:{},world:{},aims:new Map,layers:new Map,paused:!1,manualClip:``,aimOverride:new Map,elapsed:0,transition:i.transition,scaleX:v,scaleY:x,meshCells:c,meshParts:l,meshPixels:u};return r.anims?.setCurrentFrame&&(C.animation=r.anims,C.originalFrame=r.anims.setCurrentFrame,C.wrappedFrame=function(...e){let n=C.originalFrame.apply(this,e);return r.active&&t.textures.exists(h)&&r.setTexture(h),n},r.anims.setCurrentFrame=C.wrappedFrame),b.set(e.id,C),C},B=(e,t,n)=>{let r=e.clips.find(e=>e.id===t);if(r)return r;let i=n?.human?.linkedMotions[t]?.motionId,a=n?.clips.find(e=>e.id===t),o=e=>[[`idle`,/idle|대기/],[`walk`,/walk|걷기|보행/],[`run`,/run|달리기|질주/],[`attack`,/attack|action|공격/],[`hurt`,/hurt|피격/],[`death`,/death|쓰러짐|사망/],[`cast`,/cast|시전/],[`jump`,/jump|점프/]].find(([,t])=>t.test(e.toLowerCase()))?.[0];return e.clips.find(n=>i&&e.human?.linkedMotions[n.id]?.motionId===i||a&&n.name===a.name||o(t)&&o(n.id+` `+n.name)===o(t))??e.clips.find(e=>/idle|대기/.test(e.id+` `+e.name))??e.clips[0]},V=(e,t,n,r)=>{let i=n.directions,a=r?.direction??i?.initial??`right`;if(!i?.enabled)return{source:y.get(n.assetId),direction:a,flip:void 0,fallback:!1};let o=t.body?.velocity?.x??0,s=t.body?.velocity?.y??0,c=Math.hypot(o,s)>1,l=P(),u=i.priority===`pointer`&&l?(()=>{let e=(t.getWorldTransformMatrix?.())?.transformPoint(0,0)??t;return{x:l.x-e.x,y:l.y-e.y}})():c?{x:o,y:s}:void 0;u&&Math.hypot(u.x,u.y)>1&&(a=Math.abs(u.x)>Math.abs(u.y)*(a===`up`||a===`down`?1.12:.88)?u.x<0?`left`:`right`:u.y<0?`up`:`down`);let d=y.get(i.assets[a]),f=y.get(n.assetId);if(d?.rigDocument)return{source:d,direction:a,flip:!1,fallback:!1};if(a===`right`||a===`left`){if(i.mirrorHorizontal){let e=y.get(i.assets[a===`left`?`right`:`left`]);if(e?.rigDocument)return{source:e,direction:a,flip:!0,fallback:!1}}return{source:f,direction:a,flip:i.mirrorHorizontal&&a===`left`,fallback:a===`left`&&!i.mirrorHorizontal}}return{source:f,direction:a,flip:!1,fallback:!0}},H=t=>{let{settings:n,doc:r,go:i}=t;if(t.manualClip)return B(r,t.manualClip,y.get(n.assetId)?.rigDocument)?.id;let a=i.anims?.currentAnim?.key;if(n.followAnimation&&a){let t=n.animationMap.find(e=>e.animationId===a);if(t&&r.clips.some(e=>e.id===t.clipId))return t.clipId;let i=e.animations.find(e=>e.id===a);if(i){let e=e=>[[`idle`,/\bidle\b|대기|서있기/i],[`walk`,/\bwalk\b|걷기|보행/i],[`run`,/\brun\b|달리기|질주/i],[`action`,/\baction\b|\battack\b|직업 동작|공격|베기/i],[`hurt`,/\bhurt\b|피격|경직/i],[`death`,/\bdeath\b|쓰러짐|사망|죽음/i],[`jump`,/\bjump\b|점프|도약/i],[`cast`,/\bcast\b|시전/i]].find(([,t])=>t.test(e))?.[0],t=(i.action||i.id.split(/[.\/:]/).reverse().find(e=>/idle|walk|run|attack|hurt|death|jump|cast|action/i.test(e))||i.name||``).toLowerCase(),n=e(t),a=r.clips.find(r=>r.id.toLowerCase()===t||r.name.toLowerCase()===t||r.id.toLowerCase().endsWith(`.`+t)||n&&e(r.id+` `+r.name)===n);if(a)return a.id}}if(n.locomotion?.enabled&&i.body?.velocity){let e=Math.hypot(i.body.velocity.x??0,i.body.velocity.y??0),t=e>n.locomotion.runSpeed?n.locomotion.runClipId:e>1?n.locomotion.walkClipId:n.locomotion.idleClipId;return B(r,t,y.get(n.assetId)?.rigDocument)?.id}return B(r,n.clipId)?.id},U=(e,t,r,i,a)=>{let{go:o,doc:s}=e,c=s.bones.find(e=>e.id===t.boneId);if(!c||c.aimAt||!a[c.id])return;let l=e.aims.get(t.id);l||(l={weight:0,heading:a[c.id].rotation},e.aims.set(t.id,l));let u=O(t.condition)&&(e.aimOverride.get(t.id)??e.aimOverride.get(``)??!0),d;if(t.source===`angle`||t.source===`variable`){let e=t.source===`angle`?t.angle:Number(n.variable(t.variableId));if(Number.isFinite(e)){let n=o.getWorldTransformMatrix().transformPoint(0,0),r=N(o,n.x+Math.cos(e*f)*1e3,n.y+Math.sin(e*f)*1e3,s),i=N(o,n.x,n.y,s);d=Math.atan2(r.y-i.y,r.x-i.x)/f+t.angleOffset}else u=!1}else{let e=F(t);if(e&&Number.isFinite(e.x)&&Number.isFinite(e.y)){let n=N(o,e.x,e.y,s),r=a[c.id];Math.hypot(n.x-r.x,n.y-r.y)>.01?d=Math.atan2(n.y-r.y,n.x-r.x)/f+t.angleOffset:u=!1}else u=!1}let p=u&&Number.isFinite(d)?t.weight:0;if(p>0&&(l.weight<.001&&(l.heading=a[c.id].rotation),l.heading=_(l.heading,d,t.smoothing>0?1-Math.exp(-r/t.smoothing):1)),l.weight=v(l.weight,p,p?t.smoothing:t.returnTime,r,t.weight||1),l.weight<1e-4)return;let m=c.parentId?a[c.parentId]:void 0,y=i[c.id].rotation,b=l.heading-(m?.rotation??0);b=y+h(g(b-y),t.minAngle,t.maxAngle);let x=s.bones.find(e=>e.id===c.parentId),S=s.ik.find(e=>e.lowerBoneId===c.parentId)?c:x,C=S&&s.bones.find(e=>e.id===S.parentId),w=C&&s.bones.find(e=>e.id===C.parentId),T=C&&w&&s.ik.find(e=>e.upperBoneId===w.id&&e.lowerBoneId===C.id),E=S&&C&&w&&/hand|손/i.test(S.id+` `+S.name)&&/arm|팔/i.test(C.id+` `+C.name)&&/arm|팔/i.test(w.id+` `+w.name);if(t.followArm&&S&&C&&w&&(T||E)&&S.anchor===1&&C.anchor===1&&Math.abs(S.x)+Math.abs(S.y)+Math.abs(C.x)+Math.abs(C.y)<.01){let e=a[w.id],n=a[C.id],r=a[S.id],o=e.length,u=n.length,d=h(Math.hypot(r.x-e.x,r.y-e.y),Math.abs(o-u)+.1,(o+u)*.94),p=Math.sin(i[C.id].rotation*f),g=Math.abs(p)<.001?T?.bend??-1:p<0?-1:1,v=(m?.rotation??0)+b,x=(v-t.angleOffset)*f,E=Math.acos(h((d*d-o*o-u*u)/(2*o*u),-1,1))*g,D=x-Math.atan2(u*Math.sin(E),o+u*Math.cos(E)),O=w.parentId?a[w.parentId]?.rotation??0:0,k=h(D/f-O,w.minAngle,w.maxAngle);i[w.id].rotation=_(i[w.id].rotation,k,l.weight),i[C.id].rotation=_(i[C.id].rotation,h(E/f,C.minAngle,C.maxAngle),l.weight);let j=A(s,i)[C.id];i[S.id].rotation=_(i[S.id].rotation,h(v-(c.id===S.id?0:y)-j.rotation,S.minAngle,S.maxAngle),l.weight)}else i[c.id].rotation=_(y,h(b,c.minAngle,c.maxAngle),l.weight)},ee=(n,r)=>{let{doc:i,go:a,settings:s}=n;a.texture.key!==n.key&&a.setTexture(n.key);let l=H(n),u=i.clips.find(e=>e.id===l)??i.clips[0];if(u.id!==n.clipId){if(n.meshParts)for(let e of n.parts)e.mesh&&(e.mesh.from=e.mesh.ready?e.mesh.values.slice():void 0);n.from=Object.keys(n.local).length?M(n.local):void 0,n.clipId=u.id,n.time=0,n.elapsed=0,n.fade=n.transition??s.transition,n.transition=void 0}if(!n.paused){let e=r*s.speed,t=i.human?.linkedMotions?.[u.id],o=a.body?.velocity;if(s.movementSync&&t?.travel>0&&o){let n=Math.hypot(o.x??0,o.y??0),i=a.getWorldTransformMatrix?.(),s=i&&Number.isFinite(i.a)&&Number.isFinite(i.b)?Math.hypot(i.a,i.b):Math.abs(a.scaleX??1);n>1&&s>1e-5&&(e=r*n/(t.travel*s)*u.duration/1e3)}n.time+=e,n.elapsed+=r}let p=k(i,u,n.time);if(n.from&&n.fade>0&&n.elapsed<n.fade)for(let e of i.bones)p[e.id]=j(n.from[e.id]??p[e.id],p[e.id],h(n.elapsed/n.fade,0,1));else n.from=void 0;for(let e of s.layers){let t=i.clips.find(t=>t.id===e.clipId);if(!t)continue;let a=n.layers.get(e.id);a||(a={weight:0,time:0,active:!1},n.layers.set(e.id,a));let o=O(e.condition);if(o&&!a.active&&(a.time=0),a.active=o,n.paused||(a.time+=r*e.speed,a.weight=v(a.weight,o?e.weight:0,e.fade,r,e.weight||1)),a.weight>1e-4){let n=k(i,t,a.time);for(let t of e.boneIds)p[t]&&n[t]&&(p[t]=j(p[t],n[t],a.weight))}}if(s.directions?.enabled)a.setFlipX(!!n.directionFlip);else if(s.facing===`animation`){let t=e.animations.find(e=>e.id===a.anims?.currentAnim?.key);t?.direction===`left`||/[.\/:]left$/.test(t?.id??``)?a.setFlipX(!0):(t?.direction===`right`||/[.\/:]right$/.test(t?.id??``))&&a.setFlipX(!1)}else if(s.facing===`pointer`){let e=P();if(e){let t=N(a,e.x,e.y,i,!1);Math.abs(t.x-i.width*(a.originX??.5))>.5&&a.setFlipX(t.x<i.width*(a.originX??.5))}}else if(s.facing===`movement`){let e=a.body?.velocity?.x;Math.abs(e??0)>1&&a.setFlipX(e<0)}let g=A(i,p);if(n.paused)n.local&&Object.keys(n.local).length&&(Object.assign(p,M(n.local)),g=A(i,p));else for(let e of s.aims)U(n,e,r,p,g),g=A(i,p);n.local=p,n.world=g;let _=!n.meshParts||d(a);for(let e of n.parts){let r=e.attachment,a=g[r.boneId];if(!a){e.image.setVisible(!1);continue}if(e.variants){let a=c().sample(r,u,n.time);for(let e of s.layers){let t=n.layers.get(e.id),o=i.clips.find(t=>t.id===e.clipId);t?.weight>=.5&&e.boneIds.includes(r.boneId)&&o?.attachmentTracks?.some(e=>e.attachmentId===r.id)&&(a=c().sample(r,o,t.time))}let o=a.assetId+`:`+a.frame;if(o!==e.variant){let n=e.variants.get(o);if(!n)throw Error(r.name+`: 그림 키의 준비된 프레임이 없습니다.`);if(e.image.setTexture(n.key,n.frame),e.variant=o,e.mesh){let r=t.textures.getFrame(n.key,n.frame);e.mesh.source=r.source.image}else e.image.setOrigin(r.pivotX/e.image.frame.realWidth,r.pivotY/e.image.frame.realHeight)}}if(e.mesh&&_){let t=e.mesh;if(o().sample(r,u,n.time,!0,t.values),t.from&&n.from&&n.fade>0&&n.elapsed<n.fade){let e=h(n.elapsed/n.fade,0,1);for(let n=0;n<t.values.length;n++)t.values[n]=t.from[n]+(t.values[n]-t.from[n])*e}else t.from=void 0;for(let e of s.layers){let a=n.layers.get(e.id),s=i.clips.find(t=>t.id===e.clipId);if(!(!a||a.weight<1e-4||!e.boneIds.includes(r.boneId)||!s?.meshTracks?.some(e=>e.attachmentId===r.id))){o().sample(r,s,a.time,!0,t.layer);for(let e=0;e<t.values.length;e++)t.values[e]+=(t.layer[e]-t.values[e])*a.weight}}o().write(t.vertices,t.values,t.width,t.height,r.pivotX,r.pivotY),t.ready=!0}let l=a.rotation*f,d=m(r,a.length);e.container?(e.container.setPosition(a.x,a.y).setAngle(a.rotation).setScale(d.bone,1),e.image.setVisible(!0).setPosition(r.offsetX,r.offsetY).setAngle(r.rotation).setScale(d.x,d.y).setAlpha(r.opacity*a.opacity)):e.image.setVisible(!0).setPosition(a.x+Math.cos(l)*r.offsetX-Math.sin(l)*r.offsetY,a.y+Math.sin(l)*r.offsetX+Math.cos(l)*r.offsetY).setAngle(a.rotation+r.rotation).setScale(d.x,d.y).setAlpha(r.opacity*a.opacity)}if(!a.visible||a.alpha===0||!_)n.rendered=!1;else if(!n.paused||!n.rendered){n.texture.clear();let e=n.texture.renderer?.renderNodes,t=``;for(let r of n.parts){if(!r.image.visible)continue;if(r.mesh?.canvas){n.texture.callback(r.canvasDraw);continue}let i=r.image.texture.key;t&&t!==i&&e?.finishBatch&&n.texture.callback&&n.texture.callback(()=>e.finishBatch()),n.texture.draw(r.container??r.image),t=i}n.texture.render(),n.rendered=!0}a.texture.key!==n.key&&a.setTexture(n.key),a.setData(`forgeLiveRig`,!0)},te=e=>{if(E)return;let t=new Set,r=h(Number.isFinite(e)?e:0,0,250);u=0;for(let{def:e,go:i}of n.actors()){if(!i?.active||e.kind!==`sprite`)continue;let n=b.get(e.id),a=e.rigPlayback,o=a?.enabled?V(e,i,a,n):void 0,s=o?.source;if(!a?.enabled||!s?.rigDocument)n&&R(n,!0);else{t.add(e.id),n&&n.go!==i&&(R(n,!0),n=void 0);try{if(n&&n.sourceId!==s.id){let t=n,r=t.doc.clips.find(e=>e.id===t.clipId),o=r?t.time/r.duration:0;if(R(t,!0),n=z(e,i,a,s),n){let e=B(n.doc,t.clipId,t.doc);n.clipId=e?.id??``,n.time=o*(e?.duration??1e3),n.elapsed=t.elapsed,n.paused=t.paused,n.manualClip=t.manualClip,n.aimOverride=t.aimOverride,n.aims=t.aims,n.layers=t.layers,n.from=void 0,n.fade=0}}n??=z(e,i,a,s),n&&(n.settings=a,n.direction=o.direction,n.directionFlip=o.flip,n.directionFallback=o.fallback,n.meshCells&&d(i)&&(u+=n.meshCells),ee(n,r))}catch(t){D(e.name+`: 실시간 리그를 재생할 수 없습니다. `+String(t)),n&&R(n,!0)}}}for(let[e,n]of b)(!t.has(e)||!n.go.active)&&R(n,!1);if(u>4096){let e=`화면의 변형 격자가 권장 4,096칸을 넘었습니다. 현재 `+u+`칸입니다.`;l??=new Set,l.has(`visible-cells`)||(l.add(`visible-cells`),n.warning?n.warning(e):console.warn(e))}},W=e=>(!b.has(e)&&!E&&te(0),b.get(e));return{update:te,play:(e,t,n)=>{let r=W(e);return!r||![r.doc,y.get(r.settings.assetId)?.rigDocument].some(e=>e?.clips.some(e=>e.id===t))?!1:(r.manualClip=t,r.clipId=``,r.transition=n===void 0?r.settings.transition:h(n,0,5e3),r.paused=!1,!0)},auto:e=>{let t=W(e);return t?(t.manualClip=``,!0):!1},aim:(e,t,n=``)=>{let r=W(e);return r?(r.aimOverride.set(n,t),!0):!1},pause:(e,t=!0)=>{let n=W(e);return n?(n.paused=t,!0):!1},reset:e=>{let t=W(e);return t?(t.manualClip=``,t.clipId=``,t.time=0,t.paused=!1,t.aims.clear(),t.layers.clear(),t.aimOverride.clear(),!0):!1},status:e=>{let t=b.get(e);return t?{clipId:t.clipId,time:t.time,paused:t.paused,flipX:!!t.go.flipX,assetId:t.sourceId,direction:t.direction,directionFallback:!!t.directionFallback,...t.meshParts?{mesh:{parts:t.meshParts,cells:t.meshCells,vertices:t.parts.reduce((e,t)=>e+(t.mesh?.vertices.length??0)/4,0),sourcePixels:t.meshPixels,sceneVisibleCells:u,offscreen:!d(t.go)}}:{},local:M(t.local),world:M(t.world),aims:Object.fromEntries([...t.aims].map(([e,t])=>[e,{weight:t.weight,heading:t.heading}]))}:void 0},snapshot:()=>[...b.values()].map(e=>({id:e.def.id,clipId:e.clipId,manualClip:e.manualClip,time:e.time,elapsed:e.elapsed,paused:e.paused,direction:e.direction,local:M(e.local),from:e.from?M(e.from):void 0,...e.meshParts?{meshFrom:Object.fromEntries(e.parts.filter(e=>e.mesh?.from).map(e=>[e.attachment.id,Array.from(e.mesh.from)]))}:{},fade:e.fade,aims:Object.fromEntries([...e.aims].map(([e,t])=>[e,{...t}])),layers:Object.fromEntries([...e.layers].map(([e,t])=>[e,{...t}])),aimOverride:Object.fromEntries(e.aimOverride)})),restore:e=>{if(Array.isArray(e))for(let t of e.slice(0,5e3)){if(!t||typeof t.id!=`string`)continue;let e=W(t.id);if(!e||[`right`,`left`,`up`,`down`].includes(t.direction)&&(e.direction=t.direction,te(0),e=b.get(t.id),!e))continue;let n=(e,t,n=0xe8d4a51000)=>typeof e==`number`&&Number.isFinite(e)?h(e,0,n):t;e.doc.clips.some(e=>e.id===t.clipId)&&(e.clipId=t.clipId),e.manualClip=e.doc.clips.some(e=>e.id===t.manualClip)?t.manualClip:``,e.time=n(t.time,0),e.elapsed=n(t.elapsed,0),e.paused=t.paused===!0,e.fade=n(t.fade,0,5e3);let r=t=>{if(!t||typeof t!=`object`)return;let n={};for(let r of e.doc.bones){let e=t[r.id];if(!e||!p.every(t=>typeof e[t]==`number`&&Number.isFinite(e[t])&&Math.abs(e[t])<=1e5))return;n[r.id]=Object.fromEntries(p.map(t=>[t,e[t]]))}return n};if(e.local=r(t.local)??e.local,e.from=r(t.from),e.meshParts)for(let n of e.parts){let e=t.meshFrom?.[n.attachment.id];n.mesh&&Array.isArray(e)&&e.length===n.mesh.values.length&&e.every(e=>Number.isFinite(e)&&Math.abs(e)<=2)&&(n.mesh.from=new Float32Array(e))}for(let n of e.settings.aims){let r=t.aims?.[n.id];r&&Number.isFinite(r.heading)&&Number.isFinite(r.weight)&&e.aims.set(n.id,{heading:r.heading,weight:h(r.weight,0,1)})}for(let r of e.settings.layers){let i=t.layers?.[r.id];i&&e.layers.set(r.id,{time:n(i.time,0),weight:n(i.weight,0,1),active:i.active===!0})}for(let n of[``,...e.settings.aims.map(e=>e.id)])typeof t.aimOverride?.[n]==`boolean`&&e.aimOverride.set(n,t.aimOverride[n]);e.rendered=!1,ee(e,0)}},destroy:()=>{E=!0;for(let e of[...b.values()])R(e,!0);for(let e of x.values())t.textures.remove(e);x.clear(),S.clear()}}},function n(){let e=new WeakMap;return{zero:(e=2,t=2)=>({enabled:!0,columns:e,rows:t,points:Array.from({length:(e+1)*(t+1)},()=>({x:0,y:0}))}),sample:(t,n,r,i=!0,a)=>{let o=t.mesh;if(!o?.enabled)return;let s=a??new Float32Array(o.points.length*2),c=n?.meshTracks?.find(e=>e.attachmentId===t.id),l=c&&e.get(c.keys);c&&!l&&(l=[...c.keys].sort((e,t)=>e.time-t.time),e.set(c.keys,l));let u,d,f=0;if(l?.length){let e=Math.max(0,n.loop&&i?r%n.duration:Math.min(r,n.duration)),t=0,a=l.length;for(;t<a;){let n=t+a>>>1;l[n].time<=e?t=n+1:a=n}u=l[Math.max(0,t-1)],d=l[Math.min(l.length-1,t)],f=u===d?0:(e-u.time)/(d.time-u.time),u.interpolation===`step`?f=0:u.interpolation===`smooth`&&(f=f*f*(3-2*f))}for(let e=0;e<o.points.length;e++){let t=u?.points[e]??o.points[e],n=d?.points[e]??t;s[e*2]=t.x+(n.x-t.x)*f,s[e*2+1]=t.y+(n.y-t.y)*f}return s},geometry:e=>{let t=Array((e.columns+1)*(e.rows+1)*4).fill(0),n=[];for(let n=0;n<=e.rows;n++)for(let r=0;r<=e.columns;r++){let i=(n*(e.columns+1)+r)*4;t[i+2]=r/e.columns,t[i+3]=n/e.rows}for(let t=0;t<e.rows;t++)for(let r=0;r<e.columns;r++){let i=t*(e.columns+1)+r,a=i+1,o=i+e.columns+1,s=o+1;n.push(i,a,o,0,a,o,s,0)}return{vertices:t,indices:n}},write:(e,t,n,r,i=0,a=0)=>{for(let o=0;o<e.length;o+=4)e[o]=(e[o+2]+t[o/2])*n-i,e[o+1]=(e[o+3]+t[o/2+1])*r-a},draw:(e,t,n,r,i,a)=>{for(let o=0;o<a.length;o+=4){let s=a[o]*4,c=a[o+1]*4,l=a[o+2]*4,u=i[s],d=i[s+1],f=i[c],p=i[c+1],m=i[l],h=i[l+1];if(Math.abs((f-u)*(h-d)-(m-u)*(p-d))<1e-8)continue;let g=i[s+2]*n,_=i[s+3]*r,v=i[c+2]*n-g,y=i[c+3]*r-_,b=i[l+2]*n-g,x=i[l+3]*r-_,S=v*x-b*y;if(Math.abs(S)<1e-8)continue;let C=((f-u)*x-(m-u)*y)/S,w=((p-d)*x-(h-d)*y)/S,T=((m-u)*v-(f-u)*b)/S,E=((h-d)*v-(p-d)*b)/S;e.save(),e.beginPath(),e.moveTo(u,d),e.lineTo(f,p),e.lineTo(m,h),e.closePath(),e.clip(),e.transform(C,w,T,E,u-C*g-T*_,d-w*g-E*_),e.drawImage(t,0,0),e.restore()}},resample:(e,t,n,r)=>{let i=[];for(let a=0;a<=r;a++)for(let o=0;o<=n;o++){let s=o/n*e.columns,c=a/r*e.rows,l=Math.min(e.columns-1,Math.floor(s)),u=Math.min(e.rows-1,Math.floor(c)),d=s-l,f=c-u,p=t[u*(e.columns+1)+l],m=t[u*(e.columns+1)+l+1],h=t[(u+1)*(e.columns+1)+l],g=t[(u+1)*(e.columns+1)+l+1];i.push({x:(p.x*(1-d)+m.x*d)*(1-f)+(h.x*(1-d)+g.x*d)*f,y:(p.y*(1-d)+m.y*d)*(1-f)+(h.y*(1-d)+g.y*d)*f})}return i}}},function c(){let e=new WeakMap;return{sample:(t,n,r,i=!0)=>{let a=n?.attachmentTracks?.find(e=>e.attachmentId===t.id);if(!a?.keys.length)return t;let o=e.get(a.keys);o||(o=[...a.keys].sort((e,t)=>e.time-t.time),e.set(a.keys,o));let s=Math.max(0,n.loop&&i?r%n.duration:Math.min(r,n.duration)),c=0,l=o.length;for(;c<l;){let e=c+l>>>1;o[e].time<=s?c=e+1:l=e}return c?o[c-1]:t}}}),function gi(e,t,n,r,i,a,o){let s=e.add.container(0,0),c=[],l=t,u=n,d=.5,f=.5,p=!1,m=!1,h,g;Object.defineProperties(s,{originX:{get:()=>d,configurable:!0},originY:{get:()=>f,configurable:!0}});let _=s.getBounds().constructor;s.getBounds=e=>{let t=e??new _,n=s.getWorldTransformMatrix(),a=n.transformPoint((.5-d)*r,(.5-f)*i),o=Math.abs(n.a)*r+Math.abs(n.c)*i,c=Math.abs(n.b)*r+Math.abs(n.d)*i;return t.setTo(a.x-o/2,a.y-c/2,o,c)};let v=()=>{let e=s.input;e?.hitArea&&!e.customHitArea&&(e.hitArea.x=(.5-d)*r,e.hitArea.y=(.5-f)*i,e.hitArea.width=r,e.hitArea.height=i)},y=s.setInteractive.bind(s);s.setInteractive=(...e)=>(y(...e),v(),s),s.setData(`forgeNineSlice`,!0);let b=()=>{let t=e.textures.get(l),n=t?.get(u);if(!n)return;let _=a.regions?.[String(u)]??a.region,y=Math.max(0,_.x),b=Math.max(0,_.y),x=o(_.width||n.realWidth,_.height||n.realHeight,r,i,a);r=x.width,i=x.height,s.setSize(r,i);let S=n.x??0,C=n.y??0,w=n.cutWidth,T=n.cutHeight;for(;c.length<9;){let t=e.make.image({key:l,frame:u,add:!1}).setOrigin(0,0);s.add(t),c.push(t)}c.forEach(e=>e.setVisible(!1));for(let[e,a]of x.cells.entries()){let o=Math.max(y+a.sx,S),s=Math.max(b+a.sy,C),_=Math.min(y+a.sx+a.sw,S+w),v=Math.min(b+a.sy+a.sh,C+T);if(_<=o||v<=s)continue;let x=`__forge-nine:`+JSON.stringify([u,o,s,_,v]);t.has(x)||t.add(x,n.sourceIndex,n.cutX+o-S,n.cutY+s-C,_-o,v-s);let E=(_-o)*a.dw/a.sw,D=(v-s)*a.dh/a.sh,O=a.dx+(o-y-a.sx)*a.dw/a.sw,k=a.dy+(s-b-a.sy)*a.dh/a.sh,A=c[e].setTexture(l,x).setVisible(!0).setDisplaySize(E,D).setPosition((p?r-O-E:O)-d*r,(m?i-k-D:k)-f*i).setFlip(p,m);h!==void 0&&A.setTint(h),g!==void 0&&A.setBlendMode(g)}v()};s.setOrigin=(e,t=e)=>(d=e,f=t,b(),s),s.setFlip=(e,t)=>((p!==e||m!==t)&&(p=e,m=t,b()),s),s.setTint=e=>(h=e,c.forEach(t=>t.setTint(e)),s),s.clearTint=()=>(h=void 0,c.forEach(e=>e.clearTint()),s);let x=s.setBlendMode?.bind(s);return s.setBlendMode=e=>(g=e,x?.(e),c.forEach(t=>t.setBlendMode(e)),s),s.setNineSliceSize=(e,t)=>((r!==e||i!==t)&&(r=e,i=t,b()),s),s.setDisplaySize=(e,t)=>s.setNineSliceSize(e,t),s.setTexture=(e,t)=>((l!==e||u!==t)&&(l=e,u=t,b()),s),s.setFrame=e=>s.setTexture(l,e),b(),s},function hi(e,t,n,r,i){let a=Math.max(0,Math.min(i.left,e-1)),o=Math.max(0,Math.min(i.right,e-a-1)),s=Math.max(0,Math.min(i.top,t-1)),c=Math.max(0,Math.min(i.bottom,t-s-1));n=Math.max(a+o+1,n),r=Math.max(s+c+1,r);let l=[0,a,e-o,e],u=[0,s,t-c,t],d=[0,a,n-o,n],f=[0,s,r-c,r];return{width:n,height:r,cells:Array.from({length:9},(e,t)=>{let n=t%3,r=Math.floor(t/3);return{sx:l[n],sy:u[r],sw:l[n+1]-l[n],sh:u[r+1]-u[r],dx:d[n],dy:f[r],dw:d[n+1]-d[n],dh:f[r+1]-f[r]}}).filter(e=>e.sw>0&&e.sh>0&&e.dw>0&&e.dh>0)}},function Fa(e,t){let n=e.framework,r=!!n?.enabled,i=new Map,a=new Map(e.variables.map(e=>[e.id,e])),o=e=>JSON.parse(JSON.stringify(e)),s=n?.settings??{masterVolume:.8,musicVolume:.7,effectsVolume:.8,muted:!1,pixelated:!1,controls:{up:`ArrowUp`,down:`ArrowDown`,left:`ArrowLeft`,right:`ArrowRight`,jump:`Space`,action:`KeyZ`,menu:`Escape`}},c=o(s),l=!1,u=``,d=!1,f=!1,p=null,m=``,h=``,g=0,_=0,v=new Set,y,b,x,S,C,w,T,E=n?.storagePrefix??`framework`,D=e=>E+`.slot.`+e,O=E+`.slots`,k=E+`.settings`,A=n?.dialogueOptions?.presentation===`novel`,j,M=e=>{if(e.enabledVariableId&&!se(e.enabledVariableId))return!1;try{return j?.({dialogueId:m,nodeId:h,choiceId:e.id})!==!1}catch(e){return ue(e),!1}},N=()=>{if(u!==`dialogue`||!C)return;let e=Ee();if(e)for(let t of C.querySelectorAll(`.fgf-dialogue-options button[data-choice]`)){let n=e.choices.find(e=>e.id===t.dataset.choice);n&&(t.disabled=!M(n))}},P={textSpeed:n?.dialogueOptions?.textSpeed??0,autoDelay:n?.dialogueOptions?.autoDelay??2500,auto:!1,skipRead:!1},F=!1,I=0,L,R=0,z=!1,B,V,H=new Set,U=[],ee=()=>{let e=Ee()?.text??``,t=2166136261;for(let n=0;n<e.length;n++)t=Math.imul(t^e.charCodeAt(n),16777619);return m+`/`+h+`/`+(t>>>0).toString(36)},te,W,ne,re=!1,ie=()=>{clearTimeout(ne),ne=void 0,re&&(re=!1,t.storage.save(E+`.read-lines`,[...H].slice(-6e4)).catch(ue))},ae=()=>{re=!0,clearTimeout(ne),ne=setTimeout(ie,250)},oe=()=>{V?.remove(),V=void 0,z||te?.()},G=()=>{R++,K(I),I=0,clearTimeout(L),L=void 0,z=!1,B=void 0,te=void 0,W=void 0,V?.remove(),V=void 0},K=e=>{typeof cancelAnimationFrame==`function`&&cancelAnimationFrame(e)},se=e=>t.vars[a.get(e)?.name??``],q=(e,n)=>{let r=a.get(e);r&&(t.vars[r.name]=r.type===`number`?Number(n)||0:r.type===`boolean`?!!n:String(n??``))},ce=e=>{T&&(T.textContent=e,T.hidden=!1,clearTimeout(y),y=setTimeout(()=>{T&&(T.hidden=!0)},3500))},le=(e,r={})=>{for(let n of i.get(e)??[])try{n(r)}catch(e){t.error(String(e))}let a=e===`dialogueNodeChanged`?void 0:n?.hooks[e];a&&t.run(a,r)},ue=e=>{let n=String(e instanceof Error?e.message:e);return ce(n),t.error(n),!1},de=e=>{let t=o(c);if(!e||typeof e!=`object`)return t;for(let n of[`masterVolume`,`musicVolume`,`effectsVolume`])Number.isFinite(e[n])&&(t[n]=Math.max(0,Math.min(1,e[n])));for(let n of[`muted`,`pixelated`])typeof e[n]==`boolean`&&(t[n]=e[n]);for(let n of Object.keys(t.controls))typeof e.controls?.[n]==`string`&&/^[A-Za-z0-9]{1,40}$/.test(e.controls[n])&&(t.controls[n]=e.controls[n]);return t},J=async(e,n=!0)=>{if(l)return!1;try{let r=de(e);return c=r,await t.applySettings(r),n&&await t.storage.save(k,o(c)),le(`settingsChanged`,{settings:o(c)}),!0}catch(e){return ue(e)}},fe=r&&n?.modules.settings?t.storage.load(k).then(e=>{if(!l)return J(e??s,!1)}).catch(ue):Promise.resolve(),pe=A?Promise.all([t.storage.load(E+`.reading`),t.storage.load(E+`.read-lines`)]).then(([e,t])=>{l||(e&&typeof e==`object`&&(Number.isFinite(e.textSpeed)&&(P.textSpeed=Math.max(0,Math.min(150,e.textSpeed))),Number.isFinite(e.autoDelay)&&(P.autoDelay=Math.max(500,Math.min(15e3,e.autoDelay)))),Array.isArray(t)&&t.slice(-6e4).forEach(e=>{typeof e==`string`&&e.length<700&&H.add(e)}))}).catch(ue):Promise.resolve(),me=async()=>{let e=await t.storage.load(O,[]);return Array.isArray(e)?e.filter(e=>e&&typeof e.id==`string`&&/^[1-9][0-9]?$/.test(e.id)&&Number(e.id)<=Number(n?.saveSlots??3)&&typeof e.savedAt==`string`&&typeof e.name==`string`).map(e=>({id:e.id,name:e.name.slice(0,100),sceneId:String(e.sceneId??``),sceneName:String(e.sceneName??``),savedAt:e.savedAt})):[]},he=e=>{if(!/^[1-9][0-9]?$/.test(e)||Number(e)>Number(n?.saveSlots??3))throw Error(`저장 슬롯을 확인하세요.`)},ge=async(e=`1`,i=``)=>{if(!r||!n?.modules.save||d)return!1;d=!0;try{he(e);let r=t.scene();if(!r)throw Error(`저장할 게임 씬이 없습니다.`);let a=se(n.variables.menuOpen),o=se(n.variables.dialogueId),s;q(n.variables.menuOpen,!1),q(n.variables.dialogueId,``);try{s=await t.progress(`save`,D(e))}finally{q(n.variables.menuOpen,a),q(n.variables.dialogueId,o)}if(s===!1)throw Error(`게임을 저장하지 못했습니다.`);let c=await me(),l={id:e,name:i.trim().slice(0,100)||`저장 `+e,sceneId:r.id,sceneName:r.name,savedAt:new Date().toISOString()};return await t.storage.save(O,[...c.filter(t=>t.id!==e),l]),q(n.variables.lastSlot,e),le(`saved`,{slotId:e,slotName:l.name}),ce(l.name+` 저장 완료`),!0}catch(e){return ue(e)}finally{d=!1}},_e=(e=!0)=>{if(l)return;let r=u===`dialogue`,i=m;G(),u=``,m=``,h=``,x&&(x.hidden=!0),f&&(f=!1,t.pause(!1)),n&&(q(n.variables.menuOpen,!1),r&&q(n.variables.dialogueId,``)),K(_),_=0,v.clear(),p?.focus?.(),r&&e&&le(`dialogueFinished`,{dialogueId:i,cancelled:!0})},Y=async(e=`1`)=>{if(!r||!n?.modules.save||d)return!1;d=!0;try{if(he(e),!(await me()).some(t=>t.id===e))return ce(`비어 있는 저장 슬롯입니다.`),!1;if(_e(),await t.progress(`load`,D(e))===!1)throw Error(`저장된 게임을 읽지 못했습니다.`);return q(n.variables.lastSlot,e),le(`loaded`,{slotId:e}),ce(`불러오기 완료`),!0}catch(e){return ue(e)}finally{d=!1}},ve=async e=>{if(!r||!n?.modules.save||d)return!1;d=!0;try{return he(e),await t.progress(`remove`,D(e)),await t.storage.save(O,(await me()).filter(t=>t.id!==e)),ce(`저장을 삭제했습니다.`),!0}catch(e){return ue(e)}finally{d=!1}},X=(e,t=``,n)=>{let r=document.createElement(e);return r.textContent=t,n?.append(r),r},Z=(e,t,n=C)=>{let r=X(`button`,e,n);return r.type=`button`,r.addEventListener(`click`,()=>{Promise.resolve().then(t).catch(ue)}),r},ye=()=>S?[...S.querySelectorAll(`button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]`)].filter(e=>!e.hidden&&e.getClientRects().length):[],be=e=>{let t=ye();t[(t.indexOf(document.activeElement)+e+t.length)%t.length]?.focus()},xe=()=>{if(l||!u)return;let e=[...navigator.getGamepads?.()??[]].find(Boolean),t=new Set;if(e){e.buttons.forEach((e,n)=>{e.pressed&&t.add(n)}),e.axes[1]<-.55&&t.add(12),e.axes[1]>.55&&t.add(13),e.axes[0]<-.55&&t.add(14),e.axes[0]>.55&&t.add(15);for(let e of t)if(!v.has(e)){let t=document.activeElement;e===12||e===13?be(e===12?-1:1):(e===14||e===15)&&t instanceof HTMLInputElement&&t.type===`range`?(e===14?t.stepDown():t.stepUp(),t.dispatchEvent(new Event(`input`,{bubbles:!0}))):e===0&&t instanceof HTMLElement?t.click():e===1&&_e()}}v=t,_=requestAnimationFrame(xe)},Se=(e,r)=>!b||!x||!C||!w||l?!1:(G(),x.dataset.view=e,u||(p=document.activeElement),u=e,w.textContent=r,C.replaceChildren(),x.hidden=!1,f||(f=!0,t.pause(!0)),n&&q(n.variables.menuOpen,!0),K(_),_=requestAnimationFrame(xe),!0),Ce=()=>{queueMicrotask(()=>{((u===`dialogue`?C?.querySelector(`.fgf-dialogue-options button:not(:disabled)`):null)??ye()[0])?.focus({preventScroll:!0})})},we=async e=>{if(!n?.modules.save||!Se(e,e===`save`?`게임 저장`:`게임 불러오기`))return!1;let t=u,r=await me().catch(e=>(ue(e),[]));if(u!==t||l)return!1;for(let t=1;t<=n.saveSlots;t++){let n=String(t),i=r.find(e=>e.id===n),a=X(`div`,``,C);a.className=`fgf-slot`;let o=X(`div`,``,a);X(`strong`,i?.name??`슬롯 `+n,o),X(`small`,i?i.sceneName+` · `+new Date(i.savedAt).toLocaleString(`ko-KR`):`비어 있음`,o);let s=Z(e===`save`?`여기에 저장`:`불러오기`,async()=>{e===`save`?await ge(n)&&we(e):await Y(n)},a);s.disabled=e===`load`&&!i,i&&Z(`삭제`,async()=>{await ve(n)&&we(e)},a)}return Ce(),!0},Te=async()=>{if(await fe,!n?.modules.settings||!Se(`settings`,`게임 설정`))return!1;let e={masterVolume:`전체 음량`,musicVolume:`배경음`,effectsVolume:`효과음`};for(let t of Object.keys(e)){let n=X(`label`,e[t],C),r=X(`output`,Math.round(c[t]*100)+`%`,n),i=X(`input`,``,n);i.type=`range`,i.min=`0`,i.max=`100`,i.value=String(Math.round(c[t]*100)),i.setAttribute(`aria-label`,e[t]),i.addEventListener(`input`,()=>{r.textContent=i.value+`%`,J({[t]:Number(i.value)/100},!1)})}for(let[e,t]of[[`muted`,`모든 소리 끄기`],[`pixelated`,`픽셀 경계 선명하게`]]){let n=X(`label`,t,C),r=X(`input`,``,n);r.type=`checkbox`,r.checked=c[e],r.addEventListener(`change`,()=>{J({[e]:r.checked},!1)})}t.fullscreen&&Z(document.fullscreenElement?`전체 화면 끝내기`:`전체 화면`,()=>t.fullscreen(!document.fullscreenElement));let r=X(`details`,``,C);X(`summary`,`키보드 조작`,r);for(let[e,t]of[[`up`,`위`],[`down`,`아래`],[`left`,`왼쪽`],[`right`,`오른쪽`],[`jump`,`점프`],[`action`,`행동`],[`menu`,`메뉴`]]){let n=X(`label`,t,r),i=X(`input`,``,n);i.readOnly=!0,i.value=c.controls[e],i.setAttribute(`aria-label`,t+` 조작 키`),i.addEventListener(`keydown`,t=>{[`Tab`,`Shift`,`Control`,`Alt`,`Meta`].includes(t.key)||(t.preventDefault(),t.stopPropagation(),Object.entries(c.controls).some(([n,r])=>n!==e&&r===t.code)?ce(`다른 조작에 쓰는 키입니다.`):(i.value=t.code,J({controls:{...c.controls,[e]:t.code}},!1)))})}let i=X(`div`,``,C);return i.className=`fgf-actions`,Z(`기본값`,async()=>{await J(s,!0),Te()},i),Z(`설정 저장`,async()=>{await J(c,!0)&&(ce(`설정을 저장했습니다.`),_e())},i),Ce(),!0},Ee=()=>n?.dialogues.find(e=>e.id===m)?.nodes.find(e=>e.id===h),De=()=>{let r=Ee();if(!r||!C||!w)return _e(!1),!1;w.textContent=r.speaker||(A?``:`대화`),G();let i=R,a=ee(),o=H.has(a);P.skipRead&&!o&&(P.skipRead=!1),C.replaceChildren();let s=A?X(`div`,``,C):C;if(A&&(s.className=`fgf-dialogue-copy`,s.tabIndex=0,s.setAttribute(`aria-label`,`대사 본문`),s.addEventListener(`keydown`,e=>{[`ArrowUp`,`ArrowDown`,`PageUp`,`PageDown`,`Home`,`End`].includes(e.key)&&e.stopPropagation()})),r.portraitAssetId&&(!A||n?.dialogueOptions?.portraitMode!==`hidden`)){let t=e.assets.find(e=>e.id===r.portraitAssetId);if(t&&t.type!==`audio`){let n=r.portraitFrame,i=t.grid?.margin??0,a=t.grid?.spacing??0,o=t.type===`spritesheet`?t.frameWidth:t.width,l=t.type===`spritesheet`?t.frameHeight:t.height,u=Math.max(1,Math.floor((t.width-i*2+a)/(o+a))),d=t.atlas?.frames[n]??{x:t.type===`spritesheet`?i+n%u*(o+a):0,y:t.type===`spritesheet`?i+Math.floor(n/u)*(l+a):0,width:o,height:l,sourceWidth:o,sourceHeight:l,offsetX:0,offsetY:0,rotated:!1},f=X(`canvas`,``,s);f.className=`fgf-portrait`,f.width=d.sourceWidth,f.height=d.sourceHeight,f.setAttribute(`role`,`img`),f.setAttribute(`aria-label`,r.speaker);let p=new Image;p.onload=()=>{if(!f.isConnected)return;let e=f.getContext(`2d`);e&&(e.imageSmoothingEnabled=!c.pixelated,e.translate(d.offsetX,d.offsetY),e.scale(((`displayWidth`in d?Number(d.displayWidth):0)||(d.rotated?d.height:d.width))/(d.rotated?d.height:d.width),((`displayHeight`in d?Number(d.displayHeight):0)||(d.rotated?d.width:d.height))/(d.rotated?d.width:d.height)),d.rotated&&(e.translate(0,d.width),e.rotate(-Math.PI/2)),e.drawImage(p,d.x,d.y,d.width,d.height,0,0,d.width,d.height))},p.onerror=()=>f.remove(),p.src=(`pageId`in d&&d.pageId?e.atlasPages?.find(e=>e.id===d.pageId)?.data:void 0)??t.data}}let d=X(`p`,r.text.replace(/\{\{([A-Za-z_$][\w$]*)\}\}/g,(e,n)=>String(t.vars[n]??``)),s);d.className=`fgf-dialogue-text`,d.setAttribute(`aria-live`,A?`off`:`polite`);let f=d.textContent??``,p={dialogueId:m,nodeId:h,speaker:r.speaker,text:f},g=U.at(-1);(!g||g.dialogueId!==m||g.nodeId!==h||g.text!==f)&&(U.push(p),U.length>2e4&&U.shift());let _=X(`div`,``,C);if(_.className=`fgf-dialogue-options`,r.choices.length)for(let e of r.choices){let t=Z(e.text,()=>je(e.id),_);t.dataset.choice=e.id,t.disabled=!M(e)}else{let e=Z(`▸`,Ae,_);e.className=`fgf-dialogue-advance`,e.setAttribute(`aria-label`,r.nextNodeId?`대사 넘기기`:`대화 마치기`)}let v=()=>{if(clearTimeout(L),!A||r.choices.length||!P.auto&&!P.skipRead)return;let e=P.skipRead&&o?70:P.autoDelay;L=setTimeout(()=>{l||i!==R||u!==`dialogue`||(document.hidden||F||V?v():Ae())},e)};te=v;let y=()=>{i===R&&(d.textContent=f,z=!1,B=void 0,H.has(a)||(H.add(a),A&&ae()),W?.(),v())};if(A){let e=X(`div`,``,C);e.className=`fgf-reading-controls`;let n=Z(P.auto?`자동 진행 켜짐`:`자동 진행`,()=>{P.auto=!P.auto,W?.(),z||v()},e),r=Z(`읽은 내용 넘기기`,()=>{H.has(a)?(P.skipRead=!P.skipRead,r.textContent=P.skipRead?`넘기기 중단`:`읽은 내용 넘기기`,z||v()):ce(`처음 읽는 대사는 건너뛰지 않습니다.`)},e),c=Z(`대화 기록`,()=>{clearTimeout(L),V?.remove(),V=X(`section`,``,x),V.className=`fgf-reading-log`,V.setAttribute(`role`,`dialog`),V.setAttribute(`aria-modal`,`true`),V.setAttribute(`aria-label`,`대화 기록`),X(`h2`,`대화 기록`,V);let e=X(`input`,``,V);e.type=`search`,e.placeholder=`대사 검색`,e.setAttribute(`aria-label`,`대화 기록 검색`);let t=X(`div`,``,V);t.className=`fgf-reading-log-rows`;let n=!1,r=()=>{t.replaceChildren();let r=e.value.trim().toLocaleLowerCase(),i=U.filter(e=>!r||(e.speaker+` `+e.text+` `+(e.choice??``)).toLocaleLowerCase().includes(r));for(let e of n||r?i:i.slice(-250)){let n=X(`article`,``,t);X(`strong`,e.speaker||`나레이션`,n),X(`p`,e.text,n),e.choice&&X(`small`,`선택 · `+e.choice,n)}t.scrollTop=r?0:t.scrollHeight};e.addEventListener(`input`,r),Z(`전체 기록`,()=>{n=!0,r()},V),Z(`돌아가기`,()=>{oe(),c.focus()},V),r(),e.focus()},e),p=X(`label`,`글자 속도`,e),m=X(`input`,``,p);if(m.type=`range`,m.min=`0`,m.max=`100`,m.value=String(P.textSpeed),m.setAttribute(`aria-label`,`대사 글자 속도`),m.addEventListener(`input`,()=>{P.textSpeed=Number(m.value),P.textSpeed||B?.(),t.storage.save(E+`.reading`,P).catch(ue)}),W=()=>{n.textContent=P.auto?`자동 진행 켜짐`:`자동 진행`,n.setAttribute(`aria-pressed`,String(P.auto)),r.textContent=P.skipRead?`넘기기 중단`:`읽은 내용 넘기기`,r.setAttribute(`aria-pressed`,String(P.skipRead)),m.value=String(P.textSpeed)},W(),P.textSpeed>0&&!(P.skipRead&&o)){d.textContent=``,z=!0;let e=0,t=performance.now(),n=Array.from(f);B=()=>{K(I),y()};let r=a=>{if(l||i!==R||u!==`dialogue`)return;let o=Math.min(100,Math.max(0,a-t));if(t=a,!document.hidden&&!F&&!V){e+=o*P.textSpeed/1e3;let t=s.scrollTop+s.clientHeight>=s.scrollHeight-8;if(d.textContent=n.slice(0,Math.floor(e)).join(``),A&&t&&(s.scrollTop=s.scrollHeight),e>=n.length||!P.textSpeed){y();return}}I=requestAnimationFrame(r)};I=requestAnimationFrame(r)}else y()}else y();return le(`dialogueNodeChanged`,{dialogueId:m,nodeId:h,speaker:r.speaker,text:f,read:o}),r.onEnterFunctionId&&t.run(r.onEnterFunctionId,{dialogueId:m,nodeId:h}),Ce(),!0},Oe=e=>++g>1e3?(ue(`대화가 같은 노드를 너무 많이 거쳤습니다.`),_e(!1),!1):(h=e,De()),ke=()=>{let e=m;return _e(!1),n&&q(n.variables.dialogueId,``),le(`dialogueFinished`,{dialogueId:e,cancelled:!1}),!0};function Ae(){if(V||F)return!1;if(z)return B?.(),!0;let e=Ee();return e?.choices.length?!1:e?.nextNodeId?Oe(e.nextNodeId):ke()}function je(e){if(V||F)return!1;if(z)return B?.(),!1;let r=Ee()?.choices.find(t=>t.id===e);return!r||!M(r)?!1:(n&&q(n.variables.lastChoice,e),U.length&&(U[U.length-1].choice=r.text),le(`choiceSelected`,{dialogueId:m,nodeId:h,choiceId:e}),r.functionId&&t.run(r.functionId,{dialogueId:m,nodeId:h,choiceId:e}),r.nextNodeId?Oe(r.nextNodeId):ke())}let Me=(e,t)=>{let r=n?.dialogues.find(t=>t.id===e);return!n?.modules.dialogue||!r||!Se(`dialogue`,r.name)?!1:(m=e,h=t&&r.nodes.some(e=>e.id===t)?t:r.startNodeId,g=0,q(n.variables.dialogueId,e),le(`dialogueStarted`,{dialogueId:e}),De())},Ne=()=>{if(!n)return!1;_e(!1),t.reset?.();for(let n of e.variables)t.vars[n.name]=n.type===`number`?Number(n.value)||0:n.type===`boolean`?n.value===`true`:n.value;return le(`newGame`),t.navigate(n.startSceneId||e.startSceneId),!0},Pe=()=>n?.titleSceneId?(_e(!1),t.navigate(n.titleSceneId),!0):!1,Fe=()=>!n?.modules.menu||!Se(`menu`,`일시정지`)?!1:(Z(`계속하기`,()=>_e()),n.modules.save&&(Z(`게임 저장`,()=>we(`save`)),Z(`불러오기`,()=>we(`load`))),n.modules.settings&&Z(`게임 설정`,Te),n.titleSceneId&&Z(`타이틀로`,Pe),Ce(),!0),Ie=e=>{if(l||u!==`dialogue`||V||F||e.defaultPrevented||e.button!==0)return;let t=e.target instanceof Element?e.target:void 0;t?.closest(`button,input,select,textarea,a,label,[role="button"],[data-dialogue-ignore]`)||t instanceof HTMLElement&&t.isContentEditable||window.getSelection()?.toString()||(e.preventDefault(),e.stopImmediatePropagation(),Ae())},Le=e=>{if(!(l||e.isComposing||e.defaultPrevented)){if(u===`dialogue`&&[`Enter`,` `].includes(e.key)&&e.repeat)e.preventDefault(),e.stopPropagation();else if(u){if(u===`dialogue`&&A&&V&&e.key===`Escape`){e.preventDefault(),e.stopPropagation(),oe();return}if(u===`dialogue`&&[`Enter`,` `].includes(e.key)&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&!(e.target instanceof HTMLButtonElement||e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target instanceof HTMLElement&&e.target.isContentEditable)){e.preventDefault(),e.stopPropagation(),e.repeat||Ae();return}if(e.key===`Escape`&&!(e.target instanceof HTMLInputElement))e.preventDefault(),_e();else if(e.key===`Tab`){let t=V?[...V.querySelectorAll(`button:not(:disabled),input,select,[tabindex="0"]`)]:ye(),n=t.indexOf(document.activeElement);e.shiftKey&&n<=0?(e.preventDefault(),t.at(-1)?.focus()):!e.shiftKey&&n===t.length-1&&(e.preventDefault(),t[0]?.focus())}else[`ArrowUp`,`ArrowDown`].includes(e.key)&&!(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement)&&(e.preventDefault(),be(e.key===`ArrowUp`?-1:1));e.stopPropagation()}else n?.modules.menu&&e.code===c.controls.menu&&!e.repeat&&!(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement)&&(e.preventDefault(),e.stopPropagation(),Fe())}};if(r&&typeof document<`u`){b=X(`div`),b.className=`forge-framework`,A&&b.classList.add(`fgf-novel`),b.style.setProperty(`--fgf-panel`,n.theme.panel),b.style.setProperty(`--fgf-text`,n.theme.text),b.style.setProperty(`--fgf-accent`,n.theme.accent),b.style.setProperty(`--fgf-radius`,n.theme.radius+`px`),b.style.setProperty(`--fgf-font`,n.theme.fontSize+`px`),b.style.setProperty(`--fgf-dialogue-width`,(n.dialogueOptions?.panelWidth??1140)+`px`),b.style.setProperty(`--fgf-dialogue-height`,(n.dialogueOptions?.panelHeight??280)+`px`);let e=X(`style`,``,b);if(e.textContent=`.forge-framework{position:fixed;inset:0;z-index:40;pointer-events:none;color:var(--fgf-text);font:var(--fgf-font)/1.5 system-ui,sans-serif}.forge-framework *{box-sizing:border-box}.forge-framework button,.forge-framework input,.forge-framework select{font:inherit}.forge-framework button{background:#34465f;color:var(--fgf-text);border:1px solid #64748b;border-radius:6px;min-height:44px;padding:8px 16px;cursor:pointer;touch-action:manipulation}.forge-framework button:hover{background:var(--fgf-accent)}.forge-framework button:disabled{opacity:.45;cursor:default}.forge-framework :focus-visible{outline:3px solid #d3e5ff;outline-offset:3px}.forge-framework .fgf-toggle{position:absolute;right:14px;top:14px;pointer-events:auto}.forge-framework .fgf-overlay{position:absolute;inset:0;background:#0a101cb8;pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:clamp(12px,4vw,40px)}.forge-framework [hidden]{display:none!important}.forge-framework .fgf-panel{width:min(620px,100%);max-height:100%;display:flex;flex-direction:column;background:var(--fgf-panel);border:1px solid #64748b;border-radius:var(--fgf-radius);box-shadow:0 16px 60px #0008;overflow:hidden}.forge-framework .fgf-header{display:flex;gap:20px;align-items:center;padding:14px 20px;border-bottom:1px solid #64748b}.forge-framework h2{font-size:1.12em;margin:0;flex:1}.forge-framework .fgf-body{display:flex;flex-direction:column;gap:12px;overflow:auto;padding:20px;overscroll-behavior:contain;scrollbar-width:auto}.forge-framework .fgf-slot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;border:1px solid #64748b;border-radius:6px}.forge-framework .fgf-slot>div{flex:1;min-width:150px}.forge-framework small{display:block;opacity:.8}.forge-framework label{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}.forge-framework input[type=range]{width:100%;accent-color:var(--fgf-accent)}.forge-framework input[type=checkbox]{width:22px;height:22px}.forge-framework input[readonly]{width:140px;background:#152031;color:var(--fgf-text);border:1px solid #64748b;padding:8px}.forge-framework .fgf-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px}.forge-framework .fgf-dialogue-text{white-space:pre-wrap;margin:0;padding:4px 0 12px}.forge-framework .fgf-portrait{max-height:200px;max-width:180px;object-fit:contain;align-self:flex-start}.forge-framework .fgf-status{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);max-width:90%;padding:10px 18px;background:#132034f0;border:1px solid #64748b;border-radius:6px;pointer-events:none}`,e.textContent+=`
+const game=window.forgeGame=(function launchGame(Phaser, project, options = {}, logicFactory, inventoryFactory, definitionFactory, timelineFactory, stateFactory, machineFactory, musicFactory, effectFactory, gameplayFactory, gameUiFactory, rigFactory, nineSliceFactory, nineSliceLayout, frameworkFactory, observatoryFactory, lightingFactory, requirementsFactory, interactionFactory, particleFactory, motionPathFactory, collisionFactory, factionFactory, connectionFactory, ropePhysicsFactory, projectileGuidanceFactory, textureLookupFactory, scriptFactory) {
+	let observatory;
+	let framework;
+	let frameworkPaused = false;
+	let frameworkPausedScenes = [];
+	let frameworkSettings = project.framework?.enabled ? project.framework.settings : undefined;
+	const setMasterVolume = (value) => {
+		game.sound.volume = value;
+		const context = game.sound.context;
+		// 일시정지·불러오기 뒤의 음량 변경은 현재 오디오 시간에 적용합니다.
+		if (context) game.sound.masterVolumeNode?.gain.setValueAtTime(value, context.currentTime);
+	};
+	const applyFrameworkKeys = (scene) => {
+		if (!frameworkSettings || !project.framework?.modules.settings || !scene.keys || !scene.input.keyboard) return;
+		const code = (key) => /^Key[A-Z]$/.test(key) ? key.charCodeAt(3) : /^Digit[0-9]$/.test(key) ? key.charCodeAt(5) : Phaser.Input.Keyboard.KeyCodes[key.replace(/^Arrow/, "").toUpperCase()];
+		const controls = frameworkSettings.controls;
+		for (const [name, control] of [
+			["left", "left"],
+			["right", "right"],
+			["up", "up"],
+			["down", "down"],
+			["space", "jump"]
+		]) {
+			const keyCode = code(controls[control]);
+			if (typeof keyCode === "number") scene.keys[name] = scene.input.keyboard.addKey(keyCode);
+		};
+		scene.keys.a = scene.keys.left;
+		scene.keys.d = scene.keys.right;
+		scene.keys.w = scene.keys.up;
+		scene.keys.s = scene.keys.down;
+		const action = code(controls.action);
+		if (typeof action === "number") scene.keys.action = scene.input.keyboard.addKey(action);
+	};
+	let musicRuntime;
+	const music = () => musicRuntime ??= musicFactory?.(project, game.sound, (message) => report("error", message));
+	let activeItemScene = null;
+	let requirementsRuntime;
+	const inventory = inventoryFactory?.(project, (id) => activeItemScene?.ctx?.run(id), (id) => requirementsRuntime?.check(id, "use").passed ?? !project.items?.find((item) => item.id === id)?.requirements?.use);
+	let pendingCheckpoint = null;
+	let factions;
+	const assetById = new Map(project.assets.map((a) => [a.id, a]));
+	const textureLookup = textureLookupFactory?.(project);
+	let generatedId = 0;
+	let bloodMode = project.runtimeSettings?.bloodEffects ?? "full";
+	const applyBloodPresentation = (go, definition) => {
+		if (definition.customProperties?.bloodEffect !== true) return;
+		go.setData?.("forgeBloodBaseAlpha", definition.opacity);
+		go.alpha = definition.opacity * (bloodMode === "off" ? 0 : bloodMode === "reduced" ? .35 : 1);
+	};
+	const runtimeId = () => globalThis.crypto?.randomUUID?.() ?? `forge_${Date.now().toString(36)}_${++generatedId}`;
+	const sourceFor = (asset, frame = 0) => {
+		if (textureLookup) return textureLookup.source(asset, frame);
+		// Preserve the previous serialized-launch API for callers which do not
+		// inject the optional lookup factory. Preview/export inject the full
+		// shared-page aliases explicitly, without an outer-module dependency.
+		const named = typeof frame === "string" ? asset.atlas?.frames.findIndex((value) => value.name === frame) : -1;
+		const index = named !== undefined && named >= 0 ? named : frame === "__BASE" ? 0 : Number(frame);
+		const area = asset.atlas?.frames[index];
+		return {
+			key: area?.pageId ?? asset.id,
+			frame: area ? area.pageId ? `${asset.id}:${index}` : area.name : asset.type === "image" ? "__BASE" : frame
+		};
+	};
+	const atlasData = (a) => ({ frames: Object.fromEntries((a.atlas?.frames ?? []).map((f) => [f.name, {
+		frame: {
+			x: f.x,
+			y: f.y,
+			w: f.width,
+			h: f.height
+		},
+		rotated: f.rotated,
+		trimmed: true,
+		spriteSourceSize: {
+			x: f.offsetX,
+			y: f.offsetY,
+			w: f.displayWidth ?? (f.rotated ? f.height : f.width),
+			h: f.displayHeight ?? (f.rotated ? f.width : f.height)
+		},
+		sourceSize: {
+			w: f.sourceWidth,
+			h: f.sourceHeight
+		}
+	}])) });
+	const report = (level, message) => {
+		const text = String(message);
+		if (window.parent !== window) window.parent.postMessage({
+			source: "phaser-forge-runtime",
+			level,
+			message: text
+		}, "*");
+		if (level === "error") console.error(text);
+	};
+	window.addEventListener("error", (e) => report("error", e.message));
+	window.addEventListener("unhandledrejection", (e) => report("error", e.reason));
+	window.addEventListener("keydown", (e) => {
+		if (framework?.capturesInput() || project.framework?.modules.menu && framework && e.code === framework.settings().controls.menu) return;
+		if (e.key === "Escape" && game?.scene.getScenes(true).some((s) => s.gameUi?.hasFocus())) return;
+		const normalized = [
+			...e.ctrlKey || e.metaKey ? ["Ctrl"] : [],
+			...e.altKey ? ["Alt"] : [],
+			...e.shiftKey ? ["Shift"] : [],
+			e.key === " " ? "Space" : e.key.length === 1 ? e.key.toUpperCase() : e.key
+		].join("+");
+		if ((normalized === (options.stopShortcut ?? "F5") || e.key === "Escape" && project.runtimeSettings?.stopOnEscape !== false) && window.parent !== window) {
+			e.preventDefault();
+			window.parent.postMessage({
+				source: "phaser-forge-runtime",
+				level: "stop"
+			}, "*");
+		}
+	});
+	const vars = Object.fromEntries(project.variables.map((v) => [v.name, v.type === "number" ? Number(v.value) || 0 : v.type === "boolean" ? v.value === "true" : v.value]));
+	const overlayParents = new Map();
+	requirementsRuntime = requirementsFactory?.(project, {
+		variable: (id) => {
+			const variable = project.variables.find((variable) => variable.id === id);
+			return variable ? vars[variable.name] : undefined;
+		},
+		itemCount: (id) => inventory?.count(id) ?? 0
+	});
+	const storageRequests = new Map();
+	window.addEventListener("message", (event) => {
+		if (event.source !== window.parent || event.data?.source !== "phaser-forge-storage") return;
+		const request = storageRequests.get(event.data.id);
+		if (!request) return;
+		clearTimeout(request.timer);
+		storageRequests.delete(event.data.id);
+		if (event.data.error) request.reject(new Error(event.data.error));
+		else request.resolve(event.data.value);
+	});
+	const storage = (action, key, value) => {
+		if (!/^[a-zA-Z0-9._-]{1,80}$/.test(key)) return Promise.reject(new Error("저장 키는 영문·숫자·._- 1~80자여야 합니다."));
+		if (action === "save") try {
+			if (new Blob([JSON.stringify(value)]).size > 1024 * 1024) return Promise.reject(new Error("게임 저장 데이터는 슬롯당 1MB 이하여야 합니다."));
+		} catch (error) {
+			return Promise.reject(error);
+		};
+		if (window.parent !== window) return new Promise((resolve, reject) => {
+			const id = String(Date.now()) + Math.random().toString(36).slice(2);
+			const timer = setTimeout(() => {
+				storageRequests.delete(id);
+				reject(new Error("게임 저장 응답 시간이 초과됐습니다."));
+			}, 8e3);
+			storageRequests.set(id, {
+				resolve,
+				reject,
+				timer
+			});
+			window.parent.postMessage({
+				source: "phaser-forge-runtime",
+				level: "storage",
+				id,
+				action,
+				key,
+				value
+			}, "*");
+		});
+		try {
+			const name = "forge-game:" + project.id + ":" + key;
+			if (action === "load") return Promise.resolve(JSON.parse(localStorage.getItem(name) ?? "null"));
+			if (action === "save") localStorage.setItem(name, JSON.stringify(value));
+			if (action === "remove") localStorage.removeItem(name);
+			return Promise.resolve(null);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	};
+	const scenes = project.scenes.map((def) => {
+		return class ForgeScene extends Phaser.Scene {
+			objectMap = new Map();
+			actors = [];
+			hooks = {};
+			ctx;
+			keys;
+			scoreText;
+			startupData = {};
+			loadingDisplay;
+			logic;
+			timeline;
+			effects;
+			lighting;
+			interaction;
+			particles;
+			motionPaths;
+			collision;
+			connections;
+			projectiles;
+			states;
+			gameplay;
+			gameUi;
+			rigs;
+			syncUiCameras;
+			actorListDirty = false;
+			pruneActors;
+			updateUiFrame;
+			progress;
+			runToken = { active: true };
+			fired = new Set();
+			variableEvents = new Map();
+			touching = new Map();
+			constructor() {
+				super({ key: def.id });
+			}
+			init(data) {
+				this.startupData = data ?? {};
+			}
+			preload() {
+				if (project.assets.some((a) => a.type === "audio" ? !this.cache.audio.exists(a.id) : !this.textures.exists(a.id))) {
+					this.loadingDisplay = this.add.text(this.scale.width / 2, this.scale.height / 2, "리소스 로딩 0%", {
+						fontFamily: "system-ui",
+						fontSize: "24px",
+						color: "#bcc9da"
+					}).setOrigin(.5);
+					this.load.on("progress", (progress) => this.loadingDisplay?.setText("리소스 로딩 " + Math.round(progress * 100) + "%"));
+				};
+				for (const page of project.atlasPages ?? []) if (!this.textures.exists(page.id)) this.load.atlas(page.id, page.data, { frames: page.frames });
+				project.assets.forEach((a) => {
+					if (a.atlas?.frames[0]?.pageId) return;
+					if (a.type === "audio") {
+						if (!this.cache.audio.exists(a.id)) this.load.audio(a.id, a.data);
+					} else if (!this.textures.exists(a.id)) {
+						if (a.atlas) this.load.atlas(a.id, a.data, atlasData(a));
+						else if (a.type === "spritesheet") this.load.spritesheet(a.id, a.data, {
+							frameWidth: a.frameWidth,
+							frameHeight: a.frameHeight,
+							margin: a.grid?.margin ?? 0,
+							spacing: a.grid?.spacing ?? 0
+						});
+						else this.load.image(a.id, a.data);
+					}
+				});
+				this.load.on("loaderror", (file) => report("error", `리소스 로드 실패: ${project.assets.find((a) => a.id === file.key)?.name ?? file.key}`));
+			}
+			create() {
+				textureLookup?.register(this.textures);
+				activeItemScene = this;
+				this.loadingDisplay?.destroy();
+				this.loadingDisplay = null;
+				this.objectMap = new Map();
+				this.runToken = { active: true };
+				const runToken = this.runToken;
+				const observationSession = runtimeId();
+				this.events.once("shutdown", () => {
+					runToken.active = false;
+					this.logic?.cancelObservations();
+					this.states?.destroy();
+					this.gameplay?.destroy();
+					this.gameUi?.destroy();
+					this.rigs?.destroy();
+					this.effects?.destroy();
+					this.interaction?.dispose();
+					this.particles?.dispose();
+					this.motionPaths?.dispose();
+					this.collision?.dispose();
+					this.connections?.dispose();
+					this.projectiles?.dispose();
+					factions?.refresh();
+					musicRuntime?.stop(def.music?.fadeOut ?? 0, def.id);
+				});
+				this.states = undefined;
+				this.gameplay = undefined;
+				this.gameUi = undefined;
+				this.rigs = undefined;
+				this.syncUiCameras = undefined;
+				this.updateUiFrame = undefined;
+				this.effects = undefined;
+				this.actors = [];
+				this.interaction = undefined;
+				this.motionPaths = undefined;
+				this.connections = undefined;
+				this.projectiles = undefined;
+				this.particles = particleFactory?.(Phaser);
+				this.collision = collisionFactory?.(project, () => this.actors, (message) => report("error", message));
+				this.hooks = {};
+				this.fired = new Set();
+				this.variableEvents = new Map();
+				this.touching = new Map();
+				this.logic = logicFactory?.(project, vars, {
+					script: (id, name, args, target) => {
+						const script = project.scripts.find((row) => row.id === id);
+						if (!script) throw Error("호출할 공통 코드가 없습니다: " + id);
+						const exports = script.modulePath ? this.ctx.modules?.require(script.modulePath) : this.ctx.utils;
+						const fn = exports?.[name];
+						if (typeof fn !== "function") throw Error("공통 코드의 함수를 찾을 수 없습니다: " + script.name + " / " + name);
+						return fn(this.ctx, args, target);
+					},
+					requirement: (step, value) => {
+						if (!requirementsRuntime) return {
+							passed: false,
+							reasons: ["조건 판정기를 사용할 수 없습니다."]
+						};
+						const id = step.targetId ?? "", command = step.property ?? (step.kind === "requirements" ? "use" : "learn");
+						if (step.kind === "requirements") return requirementsRuntime.check(id, command);
+						if (command === "learn") return requirementsRuntime.progression.learn(id);
+						if (!["string", "number"].includes(typeof value) || String(value).trim() === "" || !Number.isFinite(Number(value))) throw Error("진행 설정에는 유효한 숫자가 필요합니다.");
+						const number = Number(value), progress = requirementsRuntime.progression;
+						if (command === "setLevel") progress.setLevel(number);
+						else if (command === "setPoints") progress.setPoints(number);
+						else if (command === "addPoints") progress.addPoints(number);
+						else if (command === "setRank") progress.setRank(id, number);
+						else throw Error("지원하지 않는 진행 설정입니다.");
+						return {
+							passed: true,
+							reasons: []
+						};
+					},
+					scene: (id, command) => command === "overlay" ? this.ctx?.openOverlay(id) : command === "close" ? this.ctx?.closeOverlay() : this.ctx?.goto(id),
+					sound: (id) => {
+						if (this.cache.audio.exists(id)) this.sound.play(id);
+					},
+					message: (text) => this.ctx?.notify(text),
+					animation: (id, target) => {
+						const go = this.objectMap.get(target ?? "");
+						if (go?.play && this.anims.exists(id)) go.play(id);
+					},
+					error: (message) => report("error", message),
+					observing: (id, stack) => observatory?.watching(id, stack, def.id) ?? false,
+					observe: (entry) => observatory?.observe({
+						...entry,
+						callId: observationSession + ":" + entry.callId,
+						parentCallId: entry.parentCallId ? observationSession + ":" + entry.parentCallId : undefined
+					}, def.id),
+					variableChanged: (id, before, after, cause) => observatory?.variableChanged(id, before, after, cause),
+					wait: (duration, callback) => {
+						this.time.delayedCall(duration, () => {
+							if (runToken.active) callback();
+						});
+					},
+					storage: this.progress = async (operation, key) => {
+						const parent = overlayParents.get(def.id);
+						if (parent && operation !== "remove") {
+							const scene = this.scene.get(parent);
+							if (!scene?.progress) throw Error("저장할 게임 씬을 찾지 못했습니다.");
+							return scene.progress(operation, key);
+						};
+						if (operation === "save") {
+							const transientIds = new Set(), children = new Map();
+							for (const { def: object } of this.actors) {
+								if (object.customProperties?.gameEffectTransient === true) transientIds.add(object.id);
+								if (object.parentId) {
+									const list = children.get(object.parentId) ?? [];
+									list.push(object.id);
+									children.set(object.parentId, list);
+								}
+							};
+							const transientQueue = [...transientIds];
+							for (let i = 0; i < transientQueue.length; i++) for (const id of children.get(transientQueue[i]) ?? []) if (!transientIds.has(id)) {
+								transientIds.add(id);
+								transientQueue.push(id);
+							};
+							const objects = [...this.objectMap].filter(([id, o]) => !o.isDestroyed && !o.getData?.("forgeUiTransient") && !transientIds.has(id)).map(([id, o]) => {
+								const g = o.getData?.("forgeAnchor") ?? o;
+								return {
+									id,
+									active: o.active,
+									pickupAmounts: o.getData?.("forgePickupAmounts"),
+									x: g.x,
+									y: g.y,
+									angle: g.angle,
+									alpha: g.alpha,
+									visible: g.visible,
+									scaleX: g.scaleX,
+									scaleY: g.scaleY,
+									frame: o.getData?.("forgeLiveRig") ? undefined : o.frame?.name,
+									tilePositionX: o.tilePositionX,
+									tilePositionY: o.tilePositionY,
+									velocityX: o.body?.velocity?.x,
+									velocityY: o.body?.velocity?.y,
+									accelerationX: o.body?.acceleration?.x,
+									accelerationY: o.body?.acceleration?.y
+								};
+							});
+							await storage("save", key, {
+								version: 1,
+								sceneId: def.id,
+								variables: { ...vars },
+								inventory: inventory?.serialize(),
+								progression: requirementsRuntime?.progression.snapshot(),
+								objects,
+								cameras: this.cameras.cameras.filter((camera) => camera.forgeCameraId).map((camera) => ({
+									id: camera.forgeCameraId,
+									scrollX: camera.scrollX,
+									scrollY: camera.scrollY,
+									zoom: camera.zoom,
+									rotation: camera.rotation,
+									alpha: camera.alpha,
+									visible: camera.visible,
+									useBounds: camera.useBounds,
+									bounds: camera.useBounds ? {
+										x: camera._bounds.x,
+										y: camera._bounds.y,
+										width: camera._bounds.width,
+										height: camera._bounds.height
+									} : undefined
+								})),
+								removed: def.objects.filter((o) => transientIds.has(o.id) || !this.objectMap.has(o.id) || this.objectMap.get(o.id)?.isDestroyed).map((o) => o.id),
+								fired: [...this.fired],
+								timelines: this.timeline?.status(),
+								states: this.states?.snapshot().filter((state) => !transientIds.has(state.owner)),
+								gameplay: this.gameplay?.snapshot(),
+								rigs: this.rigs?.snapshot(),
+								lighting: this.lighting?.snapshot(),
+								interaction: this.interaction?.snapshot(),
+								particles: this.particles?.snapshot(),
+								motionPaths: this.motionPaths?.snapshot(),
+								collision: this.collision?.snapshot(),
+								factions: factions?.snapshot(),
+								connections: this.connections?.snapshot(),
+								music: musicRuntime?.status(),
+								projectiles: this.projectiles?.snapshot(),
+								spawned: this.actors.filter((a) => !a.go.isDestroyed && !transientIds.has(a.def.id) && !def.objects.some((o) => o.id === a.def.id) && !a.go.getData?.("forgeUiTransient")).map((a) => a.def)
+							});
+							return runToken.active ? true : undefined;
+						};
+						if (operation === "remove") {
+							await storage("remove", key);
+							return runToken.active ? true : undefined;
+						};
+						const data = await storage("load", key);
+						if (!runToken.active) return;
+						if (!data) return false;
+						if (data.version !== 1 || !project.scenes.some((s) => s.id === data.sceneId) || !data.variables || !Array.isArray(data.objects)) throw new Error("이 프로젝트에서 읽을 수 없는 게임 저장 데이터입니다.");
+						if (data.progression !== undefined && requirementsRuntime && !requirementsRuntime.progression.restore(data.progression)) throw Error("저장된 레벨·스킬 진행 정보를 확인하세요.");
+						if (data.progression === undefined) requirementsRuntime?.progression.reset();
+						for (const v of project.variables) {
+							const value = data.variables[v.name];
+							if (typeof value === v.type && (v.type !== "number" || Number.isFinite(value))) vars[v.name] = value;
+						};
+						if (data.inventory) inventory?.restore(data.inventory);
+						factions?.dispose();
+						factions = undefined;
+						pendingCheckpoint = data;
+						const closed = new Set([def.id]);
+						let changed = true;
+						while (changed) {
+							changed = false;
+							for (const [child, parent] of overlayParents) if (closed.has(parent) && !closed.has(child)) {
+								closed.add(child);
+								changed = true;
+							}
+						};
+						for (const key of [...closed].reverse()) if (key !== def.id) {
+							game.scene.stop(key);
+							overlayParents.delete(key);
+						};
+						this.scene.start(data.sceneId);
+						return;
+					},
+					action: (step, value, target, initialValues) => {
+						if (step.kind === "projectileGuidance") {
+							const owner = step.objectId || target || "", runtime = game.scene.scenes.find((s) => s.objectMap?.get(owner)?.active && s.projectiles)?.projectiles;
+							if (!runtime) throw Error("유도 이동을 제어할 오브젝트가 없습니다.");
+							const command = step.property || "restart";
+							if (!runtime.command(command, owner, ["target", "owner"].includes(command) ? step.targetId || String(value ?? "") : value)) throw Error("대상 오브젝트에 유도·추종·귀환 설정을 추가하세요.");
+							return;
+						};
+						if (step.kind === "connection") {
+							const owner = step.objectId || target || "", runtime = game.scene.scenes.find((scene) => scene.objectMap?.get(owner)?.active && scene.connections)?.connections, command = step.property || "on";
+							if (!runtime) throw Error("연결 효과를 제어할 오브젝트가 없습니다.");
+							const argument = command === "attachEnd" || command === "attachStart" ? {
+								targetId: step.targetId || String(value ?? ""),
+								...Number.isFinite(step.x) && Number.isFinite(step.y) ? {
+									x: step.x,
+									y: step.y
+								} : {}
+							} : [
+								"progress",
+								"extend",
+								"retract"
+							].includes(command) ? value === undefined ? undefined : Number(value) : value;
+							runtime.command(command, owner, argument);
+							return;
+						};
+						if (step.kind === "faction") {
+							if (!factions) throw Error("진영 서비스를 사용할 수 없습니다.");
+							const owner = step.objectId || target || "", command = step.property || "team", from = step.text || factions.team(owner), to = step.targetId || "";
+							if (command === "team") factions.setTeam(owner, String(value ?? ""));
+							else if (command === "relation" || command === "relationBoth") factions.setRelation(from, to, String(value), command === "relationBoth");
+							else if (command === "clearRelation" || command === "clearRelationBoth") factions.clearRelation(from, to, command === "clearRelationBoth");
+							else if (command === "default") factions.setDefault(String(value));
+							else if (command === "enemyOfEnemy") {
+								if (value !== true && value !== false && value !== "true" && value !== "false") throw Error("적의 적 규칙은 참거짓으로 입력하세요.");
+								factions.setEnemyOfEnemy(value === true || value === "true");
+							} else throw Error("진영 명령을 확인하세요.");
+							return;
+						};
+						if ([
+							"interaction",
+							"particles",
+							"motionPath",
+							"collision"
+						].includes(step.kind)) {
+							const owner = step.objectId || target || "", property = step.kind === "interaction" ? "interaction" : step.kind === "motionPath" ? "motionPaths" : step.kind;
+							const runtime = game.scene.scenes.find((s) => s.objectMap?.get(owner)?.active && s[property]);
+							if (!runtime) throw Error("엔진 기능을 제어할 실행 중인 오브젝트를 선택하세요.");
+							const command = step.property || (step.kind === "interaction" ? "enable" : step.kind === "particles" ? "on" : step.kind === "motionPath" ? "play" : "enable");
+							if (step.kind === "interaction") runtime.interaction.command(command, owner, value);
+							else if (step.kind === "particles") runtime.particles.command(owner, command, step.value && command === "explode" ? Number(value) : undefined);
+							else if (step.kind === "motionPath") runtime.motionPaths.command(owner, command, command === "seek" ? Number(value) : value);
+							else runtime.collision.command(owner, command, value);
+							return;
+						};
+						if (step.kind === "lighting") {
+							const id = step.targetId === "$self" ? target || step.objectId || "" : step.targetId || "";
+							if (step.targetId === "$self" && !id) throw Error("이 조명 함수는 호출한 오브젝트가 필요합니다.");
+							const runtime = id ? game.scene.scenes.find((s) => s.objectMap?.get(id)?.active && s.lighting)?.lighting : this.lighting;
+							if (!runtime) throw Error("실행 중인 조명 대상을 찾을 수 없습니다.");
+							runtime.command(step.text || "enable", id, value);
+							return;
+						};
+						if (step.kind === "framework") {
+							framework?.action(step.property || "menu", step.targetId || step.text || "", value);
+							return;
+						};
+						if (step.kind === "rig") {
+							const owner = target || step.objectId || "", runtime = game.scene.scenes.find((s) => s.objectMap?.get(owner)?.active && s.rigs)?.rigs;
+							const command = step.property || "play", flag = step.value ? value === true || value === 1 || value === "true" || value === "1" : true;
+							if (command === "play") runtime?.play(owner, step.targetId || "", step.duration);
+							else if (command === "aim") runtime?.aim(owner, flag, step.text || "");
+							else if (command === "pause") runtime?.pause(owner, flag);
+							else if (command === "auto") runtime?.auto(owner);
+							else if (command === "reset") runtime?.reset(owner);
+							return;
+						};
+						if (step.kind === "agent") {
+							const owner = target || step.objectId || "", runtime = game.scene.scenes.find((s) => s.objectMap?.get(owner)?.active && s.gameplay)?.gameplay;
+							runtime?.agent(owner, step.property || "enable", step.targetId || "");
+							return;
+						};
+						if (step.kind === "combat") {
+							const owner = target || step.objectId || "", command = step.property || "attack";
+							const runtime = game.scene.scenes.find((s) => s.objectMap?.get(owner)?.active && s.gameplay)?.gameplay;
+							if (command === "attack") runtime?.attack(owner, step.targetId || undefined, step.text || "basic");
+							else if (command === "damage") runtime?.damage(owner, Number(value), step.targetId || "");
+							else if (command === "heal") runtime?.heal(owner, Number(value));
+							else if (command === "revive") runtime?.revive(owner);
+							else if (command === "status") runtime?.status(owner, step.text || "", step.targetId || owner);
+							else if (command === "clearStatus") runtime?.clearStatus(owner, step.text || "");
+							return;
+						};
+						if (step.kind === "effect") {
+							const go = step.text === "camera" ? this.cameras.cameras.find((camera) => camera.forgeCameraId === step.cameraId) ?? this.cameras.main : this.objectMap.get(target ?? "") ?? this.cameras.main;
+							if (step.property === "clear") this.effects?.stop(go);
+							else if (step.property === "remove") this.effects?.stop(go, step.targetId);
+							else this.effects?.play(go, step.targetId ?? "", { duration: step.duration || undefined });
+							return;
+						};
+						if (step.kind === "music") {
+							const command = step.property ?? "play", player = music();
+							if (command === "play") player?.play(step.targetId ?? "", {
+								volume: Number(value),
+								fade: (step.duration ?? 0) / 1e3,
+								loop: step.text !== "once",
+								owner: def.id
+							});
+							else if (command === "stop") player?.stop((step.duration ?? 0) / 1e3);
+							else if (command === "pause") player?.pause();
+							else if (command === "resume") player?.resume();
+							else if (command === "volume") player?.volume(Number(value), (step.duration ?? 0) / 1e3);
+							return;
+						};
+						if (step.kind === "state") {
+							const owner = target ?? "", machine = step.targetId || undefined, command = step.property ?? "set";
+							if (command === "trigger") this.states?.trigger(owner, step.text ?? "", machine);
+							else if (command === "signal") this.states?.signal(owner, step.text ?? "", machine);
+							else if (command === "change") this.states?.change(owner, step.layerId ?? "", step.stateId ?? "", machine);
+							else if (command === "enable" || command === "disable") this.states?.enable(owner, command === "enable", machine);
+							else if (command === "reset") this.states?.reset(owner, machine);
+							else {
+								const previous = Number(this.states?.get(owner, step.text ?? "", machine)), n = Number(value);
+								this.states?.set(owner, step.text ?? "", step.operation === "add" ? previous + n : step.operation === "subtract" ? previous - n : step.operation === "multiply" ? previous * n : value, machine);
+							};
+							return;
+						};
+						if (step.kind === "timeline") {
+							const id = step.targetId ?? "", command = step.property ?? "play";
+							if (command === "pause") this.timeline?.pause(id);
+							else if (command === "stop") this.timeline?.stop(id);
+							else if (command === "seek") this.timeline?.seek(id, Number(value) || 0);
+							else this.timeline?.play(id, command !== "resume");
+							return;
+						};
+						if (step.kind === "item") {
+							activeItemScene = this;
+							const id = step.targetId ?? "", n = Number(value) || 1;
+							if (step.property === "pickup") {
+								const object = this.objectMap.get(target ?? "");
+								if (!object?.active) return;
+								const amounts = object.getData("forgePickupAmounts") ?? {}, saved = amounts[step.id], remaining = typeof saved === "number" && Number.isSafeInteger(saved) && saved > 0 ? saved : Math.min(1e6, Math.max(1, Number.isFinite(n) ? Math.floor(n) : 1)), taken = inventory?.give(id, remaining) ?? 0, left = remaining - taken;
+								if (taken > 0) this.ctx?.notify(((project.items ?? []).find((item) => item.id === id || item.key === id)?.name ?? "아이템") + " " + taken + "개 획득");
+								if (left <= 0) {
+									const actor = this.actors.find((a) => a.go === object);
+									if (actor) this.fireEvents(actor.def.events ?? [], "collect", actor.def.id);
+									object.destroy();
+								} else {
+									object.setData("forgePickupAmounts", {
+										...amounts,
+										[step.id]: left
+									});
+									if (!taken) this.ctx?.notify("소지품이 가득합니다.");
+								};
+								return;
+							};
+							if (step.property === "take") inventory?.take(id, n);
+							else if (step.property === "use") inventory?.use(id);
+							else if (step.property === "equip") inventory?.equip(id);
+							else if (step.property === "unequip") inventory?.unequip((project.items ?? []).find((i) => i.id === id)?.slot ?? "");
+							else inventory?.give(id, n);
+							return;
+						};
+						const go = this.objectMap.get(target ?? ""), number = Number(value) || 0, property = step.property ?? "x";
+						if (step.kind === "gravity") {
+							this.physics.world.gravity.set(step.x ?? 0, step.y ?? 900);
+							return;
+						};
+						if (step.kind === "camera") {
+							const camera = this.cameras.cameras.find((camera) => camera.forgeCameraId === step.cameraId) ?? this.cameras.main, duration = step.duration ?? 500;
+							if (property === "shake") camera.shake(duration, Math.min(.1, Math.max(0, number || .007)));
+							else if (property === "flash") camera.flash(duration);
+							else if (property === "fade") camera.fadeOut(duration);
+							else if (property === "zoom") camera.zoomTo(Math.max(.05, Math.min(20, number)), duration);
+							return;
+						};
+						if (step.kind === "spawn") {
+							const point = go?.getWorldTransformMatrix();
+							const bindings = {};
+							for (const [id, value] of Object.entries(step.spawnBindings ?? {})) {
+								const node = value === "$self" ? target || step.objectId || "" : value;
+								if (!node) throw Error("생성 인수의 호출 대상이 없습니다.");
+								bindings[id] = node;
+							};
+							this.ctx?.spawn(step.targetId, step.property === "atTarget" ? point?.tx ?? 0 : step.x ?? 0, step.property === "atTarget" ? point?.ty ?? 0 : step.y ?? 0, {
+								values: initialValues,
+								bindings
+							});
+							return;
+						};
+						if (!go?.active) {
+							report("error", "오브젝트 동작의 실행 대상을 찾을 수 없습니다.");
+							return;
+						};
+						if (step.kind === "destroy") {
+							go.destroy();
+							return;
+						};
+						const transformTarget = go.getData?.("forgeAnchor") ?? go;
+						const aliases = {
+							rotation: "angle",
+							opacity: "alpha",
+							width: "displayWidth",
+							height: "displayHeight"
+						}, key = aliases[property] ?? property;
+						const targetObject = property.startsWith("velocity") || property.startsWith("acceleration") ? go.body : transformTarget;
+						if (!targetObject || property.startsWith("velocity") && !targetObject.velocity || property.startsWith("acceleration") && !targetObject.acceleration) {
+							report("error", "속도·가속도를 변경하려면 동적 물리를 설정하세요.");
+							return;
+						};
+						const vector = property.startsWith("velocity") ? "velocity" : property.startsWith("acceleration") ? "acceleration" : "";
+						const before = vector ? targetObject[vector][property.endsWith("X") ? "x" : "y"] : property === "scale" ? transformTarget.scaleX / (transformTarget.getData("forgeScaleX") || 1) : targetObject[key];
+						let next = step.operation === "add" ? Number(before) + number : step.operation === "subtract" ? Number(before) - number : step.operation === "multiply" ? Number(before) * number : number;
+						if (step.kind === "object" && property === "text" && go.setText) {
+							go.setText(step.operation === "add" ? String(before ?? "") + String(value ?? "") : String(value ?? ""));
+							return;
+						};
+						if (!Number.isFinite(next)) {
+							report("error", "오브젝트 동작의 값이 유효한 수가 아닙니다.");
+							return;
+						};
+						if (property === "scale") next = Math.max(1e-4, Math.min(1e4, next));
+						if (property === "width" || property === "height") next = Math.max(1, Math.min(16384, next));
+						if (property === "opacity") next = Math.max(0, Math.min(1, next));
+						if (step.kind === "tween") {
+							const props = property === "scale" ? {
+								scaleX: next * (transformTarget.getData("forgeScaleX") || 1),
+								scaleY: next * (transformTarget.getData("forgeScaleY") || 1)
+							} : { [key]: next };
+							this.tweens.add({
+								targets: transformTarget,
+								...props,
+								duration: step.duration ?? 500,
+								ease: step.ease ?? "Linear"
+							});
+						} else if (vector) targetObject[vector][property.endsWith("X") ? "x" : "y"] = next;
+						else if (property === "scale") transformTarget.setScale(next * (transformTarget.getData("forgeScaleX") || 1), next * (transformTarget.getData("forgeScaleY") || 1));
+						else if (property === "text" && go.setText) go.setText(String(value ?? ""));
+						else if ([
+							"visible",
+							"active",
+							"flipX",
+							"flipY"
+						].includes(property)) {
+							targetObject[key] = value === true || value === "true";
+							if (property === "active" && go.body) go.body.enable = targetObject[key];
+						} else targetObject[key] = next;
+					}
+				});
+				this.physics.world.gravity.y = def.gravity;
+				this.physics.world.gravity.x = def.physicsSettings?.gravityX ?? 0;
+				this.physics.world.setFPS(def.physicsSettings?.fps ?? 60);
+				this.input.setTopOnly(def.physicsSettings?.topOnly ?? true);
+				this.physics.world.setBounds(def.physicsSettings?.boundsX ?? 0, def.physicsSettings?.boundsY ?? 0, def.physicsSettings?.boundsWidth ?? def.worldWidth, def.physicsSettings?.boundsHeight ?? def.worldHeight, def.physicsSettings?.left ?? true, def.physicsSettings?.right ?? true, def.physicsSettings?.up ?? true, def.physicsSettings?.down ?? true);
+				setMasterVolume(project.audioVolume * (frameworkSettings?.masterVolume ?? 1));
+				this.cameras.main.setBackgroundColor(def.background);
+				this.keys = this.input.keyboard.addKeys({
+					left: "LEFT",
+					right: "RIGHT",
+					up: "UP",
+					down: "DOWN",
+					a: "A",
+					d: "D",
+					w: "W",
+					s: "S",
+					space: "SPACE",
+					action: "Z",
+					r: "R"
+				});
+				applyFrameworkKeys(this);
+				const restartEvent = (event) => {
+					if (project.runtimeSettings?.restartOnR !== false && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey && !this.gameUi?.capturesInput() && !framework?.capturesInput()) this.scene.restart();
+				};
+				this.input.keyboard.on("keydown-R", restartEvent);
+				this.events.once("shutdown", () => this.input.keyboard.off("keydown-R", restartEvent));
+				for (const anim of project.animations) {
+					const asset = project.assets.find((a) => a.id === anim.assetId);
+					if (this.anims.exists(anim.id) || !asset) continue;
+					const blankKey = "__forge_blank_" + anim.assetId;
+					if (anim.frames.includes(-1) && !this.textures.exists(blankKey)) this.textures.createCanvas(blankKey, asset.frameWidth, asset.frameHeight);
+					const frames = anim.frames.flatMap((frame, index) => {
+						const source = frame === -1 ? {
+							key: blankKey,
+							frame: "__BASE"
+						} : sourceFor(asset, frame);
+						return this.textures.exists(source.key) && this.textures.get(source.key).has(source.frame) ? [{
+							...source,
+							...anim.frameDurations ? { duration: anim.frameDurations[index] } : {}
+						}] : [];
+					});
+					if (frames.length) this.anims.create({
+						key: anim.id,
+						frames,
+						frameRate: anim.frameDurations ? 1e3 : anim.fps,
+						repeat: anim.repeat,
+						yoyo: anim.yoyo
+					});
+				};
+				const statics = [];
+				const actors = [];
+				const classifiedActors = [];
+				const triggers = [];
+				const fixed = [];
+				const players = [];
+				this.actorListDirty = false;
+				this.pruneActors = () => {
+					this.actors = this.actors.filter((actor) => !actor.go.isDestroyed);
+					for (const list of [
+						actors,
+						players,
+						statics,
+						fixed,
+						classifiedActors
+					]) {
+						const live = list.filter((go) => !go.isDestroyed);
+						list.splice(0, list.length, ...live);
+					};
+					this.actorListDirty = false;
+					factions?.refresh();
+				};
+				const buildObjects = (definitions, spawned = false) => {
+					const actorStart = this.actors.length, triggerStart = triggers.length;
+					// 새 루트는 현재 씬의 살아 있는 루트 뒤에 추가한다. 자식 깊이는 컨테이너 안의 순서다.
+					const spawnDepth = spawned ? this.actors.reduce((maximum, actor) => {
+						const node = actor.go;
+						return node?.active && !node.isDestroyed && node.scene === this && !node.parentContainer ? Math.max(maximum, Number(node.depth) || 0) : maximum;
+					}, -1) + 1 : 0;
+					for (const o of definitions.filter((o) => o.kind === "group")) this.objectMap.set(o.id, this.add.container(o.x, o.y).setSize(o.width, o.height));
+					for (const o of definitions) {
+						const tint = parseInt(o.color.slice(1), 16);
+						let go;
+						const asset = assetById.get(o.assetId) ?? (o.kind === "sprite" && o.rigPlayback?.enabled ? assetById.get(o.rigPlayback.assetId) : undefined);
+						if (o.kind === "group") go = this.objectMap.get(o.id);
+						else if (o.kind === "tilemap") {
+							if (!asset || !this.textures.exists(asset.id)) continue;
+							const data = Array.from({ length: o.rows }, (_, r) => o.tiles.slice(r * o.columns, (r + 1) * o.columns));
+							const map = this.make.tilemap({
+								data,
+								tileWidth: o.tileMap?.tileWidth ?? asset.frameWidth,
+								tileHeight: o.tileMap?.tileHeight ?? asset.frameHeight
+							});
+							const sources = o.tileMap?.sources ?? [{
+								assetId: asset.id,
+								start: 0
+							}];
+							const tilesets = sources.flatMap((source) => {
+								const image = assetById.get(source.assetId);
+								if (!image || !this.textures.exists(image.id)) return [];
+								// Atlas frames may have irregular rectangles, trims, rotation or
+								// live on different packed pages. A native Tileset assumes one
+								// uniform image. Resolve each logical frame once into a cached
+								// sheet; original files and project resources remain untouched.
+								let textureKey = image.id, imageWidth = image.width, imageHeight = image.height, tileWidth = image.frameWidth, tileHeight = image.frameHeight, margin = image.grid?.margin ?? 0, spacing = image.grid?.spacing ?? 0;
+								if (image.atlas?.frames.length) {
+									tileWidth = map.tileWidth;
+									tileHeight = map.tileHeight;
+									margin = spacing = 0;
+									textureKey = "__forge_tiles__" + image.id + "__" + tileWidth + "x" + tileHeight;
+									const count = image.atlas.frames.length, columns = Math.max(1, Math.ceil(Math.sqrt(count * tileHeight / tileWidth))), rows = Math.ceil(count / columns);
+									imageWidth = columns * tileWidth;
+									imageHeight = rows * tileHeight;
+									const gl = this.game.renderer.gl, maxDimension = Math.min(8192, gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 8192);
+									if (!Number.isFinite(imageWidth * imageHeight) || imageWidth > maxDimension || imageHeight > maxDimension || imageWidth * imageHeight > 16777216) throw Error("타일의 논리 크기가 너무 큽니다: " + image.name + " · 타일 크기를 줄이거나 타일셋을 나누세요.");
+									if (!this.textures.exists(textureKey)) {
+										const texture = this.textures.createCanvas(textureKey, imageWidth, imageHeight);
+										if (!texture) throw Error("타일 아틀라스를 준비하지 못했습니다: " + image.name);
+										const context = texture.context;
+										context.imageSmoothingEnabled = false;
+										try {
+											for (let index = 0; index < count; index++) {
+												const location = sourceFor(image, index), sourceTexture = this.textures.get(location.key), frame = sourceTexture?.get(location.frame);
+												if (!frame || !frame.source?.image) throw Error("타일 프레임을 찾을 수 없습니다: " + image.name + " · " + index);
+												const sx = tileWidth / Math.max(1, frame.realWidth), sy = tileHeight / Math.max(1, frame.realHeight), x = index % columns * tileWidth + (frame.x ?? 0) * sx, y = Math.floor(index / columns) * tileHeight + (frame.y ?? 0) * sy, width = frame.width * sx, height = frame.height * sy;
+												if (frame.rotated) {
+													context.save();
+													context.translate(x, y + height);
+													context.rotate(-Math.PI / 2);
+													context.drawImage(frame.source.image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, 0, 0, height, width);
+													context.restore();
+												} else context.drawImage(frame.source.image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, x, y, width, height);
+											};
+											texture.refresh();
+										} catch (error) {
+											this.textures.remove(textureKey);
+											throw error;
+										}
+									}
+								};
+								const set = map.addTilesetImage(image.id, textureKey, tileWidth, tileHeight, margin, spacing, source.start);
+								if (!set) return [];
+								set.updateTileData(imageWidth, imageHeight);
+								if (image.atlas?.frames.length) set.total = image.atlas.frames.length;
+								for (const animation of o.tileMap?.animations ?? []) if (animation.index >= source.start && animation.index < source.start + ("count" in source ? source.count : 4096)) {
+									let time = 0;
+									set.tileData[animation.index - source.start] = {
+										animation: animation.frames.map((f) => {
+											const frame = {
+												tileid: f.index - source.start,
+												duration: f.duration,
+												startTime: time
+											};
+											time += f.duration;
+											return frame;
+										}),
+										animationDuration: animation.frames.reduce((total, f) => total + f.duration, 0)
+									};
+								};
+								return [set];
+							});
+							if (!tilesets.length) continue;
+							go = map.createLayer(0, tilesets, o.x - o.width / 2, o.y - o.height / 2);
+							go.setScale(o.width / (o.columns * (o.tileMap?.tileWidth ?? asset.frameWidth)), o.height / (o.rows * (o.tileMap?.tileHeight ?? asset.frameHeight)));
+							if (o.tileMap?.flags) go.forEachTile((tile) => {
+								const flags = o.tileMap.flags[tile.y * o.columns + tile.x] ?? 0;
+								tile.rotation = [
+									0,
+									0,
+									Math.PI,
+									Math.PI,
+									Math.PI * 1.5,
+									Math.PI / 2,
+									Math.PI * 1.5,
+									Math.PI / 2
+								][flags];
+								tile.flipX = [
+									false,
+									true,
+									true,
+									false,
+									true,
+									false,
+									false,
+									true
+								][flags];
+							});
+							if (o.physics === "static") {
+								if (o.tileMap?.collisionTiles) go.setCollision(o.tileMap.collisionTiles);
+								else go.setCollisionByExclusion([-1]);
+								if (o.tileMap?.collisionOverrides) {
+									go.forEachTile((tile) => {
+										const value = o.tileMap.collisionOverrides[tile.y * o.columns + tile.x];
+										if (value !== undefined && value >= 0) tile.setCollision(value === 1 && tile.index >= 0, value === 1 && tile.index >= 0, value === 1 && tile.index >= 0, value === 1 && tile.index >= 0, false);
+									});
+									go.calculateFacesWithin?.();
+								};
+								statics.push(go);
+							}
+						} else if (o.kind === "sprite" && asset && this.textures.exists(sourceFor(asset, o.frame).key)) {
+							go = o.background?.enabled ? this.add.tileSprite(o.x, o.y, o.width, o.height, sourceFor(asset, o.frame).key, sourceFor(asset, o.frame).frame).setTilePosition(o.background.offsetX, o.background.offsetY).setTileScale(o.background.tileScaleX, o.background.tileScaleY) : o.gameUi?.nineSlice?.enabled && nineSliceFactory && nineSliceLayout ? nineSliceFactory(this, sourceFor(asset, o.frame).key, sourceFor(asset, o.frame).frame, o.width, o.height, o.gameUi.nineSlice, nineSliceLayout).setPosition(o.x, o.y) : this.add.sprite(o.x, o.y, sourceFor(asset, o.frame).key, sourceFor(asset, o.frame).frame).setDisplaySize(o.width, o.height);
+							if (!o.background?.enabled && o.animationId && this.anims.exists(o.animationId)) go.play?.(o.animationId);
+						} else if (o.kind === "text") go = this.add.text(o.x, o.y, o.textBinding && this.logic ? this.logic.format(o.textBinding) : o.text, {
+							fontFamily: "system-ui, sans-serif",
+							fontSize: `${o.fontSize}px`,
+							color: o.color,
+							align: o.gameUi?.enabled ? o.gameUi.text.align ?? "center" : "center",
+							...o.gameUi?.enabled ? {
+								fixedWidth: o.width,
+								fixedHeight: o.height
+							} : {},
+							wordWrap: { width: o.width }
+						}).setOrigin(.5);
+						else if (o.kind === "ellipse") go = this.add.ellipse(o.x, o.y, o.width, o.height, tint);
+						else if (o.kind === "particles") {
+							const key = asset ? sourceFor(asset, o.frame).key : "__forge_particle";
+							if (!this.textures.exists(key)) {
+								const g = this.make.graphics({
+									x: 0,
+									y: 0
+								});
+								g.fillStyle(16777215);
+								g.fillCircle(3, 3, 3);
+								g.generateTexture(key, 6, 6);
+								g.destroy();
+							};
+							go = this.add.particles(o.x, o.y, key, o.particleSettings && this.particles ? this.particles.config(o.particleSettings, asset ? sourceFor(asset, o.frame).frame : undefined) : {
+								...asset ? { frame: sourceFor(asset, o.frame).frame } : {},
+								speed: {
+									min: 10,
+									max: o.speed
+								},
+								lifespan: 1500,
+								quantity: 1,
+								frequency: 100,
+								scale: {
+									start: .8,
+									end: 0
+								},
+								alpha: {
+									start: 1,
+									end: 0
+								},
+								tint
+							});
+							this.particles?.register(o.id, go, o.particleSettings, !(pendingCheckpoint?.sceneId === def.id && pendingCheckpoint?.particles));
+						} else go = this.add.rectangle(o.x, o.y, o.width, o.height, tint);
+						if (o.kind !== "group") {
+							if (go.setOrigin) go.setOrigin(o.renderSettings?.originX ?? .5, o.renderSettings?.originY ?? .5);
+							if (go.setFlip) {
+								go.setFlip(o.renderSettings?.flipX ?? false, o.renderSettings?.flipY ?? false);
+							};
+							if (o.renderSettings?.blend && !(o.kind === "particles" && o.particleSettings)) go.setBlendMode(Phaser.BlendModes[o.renderSettings.blend]);
+							if (o.renderSettings?.tint && go.setTint) go.setTint(parseInt(o.renderSettings.tint.slice(1), 16));
+						};
+						if (o.scale !== undefined) go.setScale(go.scaleX * o.scale, go.scaleY * o.scale);
+						const customProperties = {
+							...o.customProperties,
+							...o.tileMap?.properties
+						};
+						go.setData(Object.fromEntries(Object.entries(customProperties).filter(([key]) => ![
+							"__proto__",
+							"constructor",
+							"prototype"
+						].includes(key) && !key.startsWith("forge"))));
+						go.setData({
+							forgeId: o.id,
+							forgeValue: o.value,
+							forgeScaleX: go.scaleX / (o.scale ?? 1),
+							forgeScaleY: go.scaleY / (o.scale ?? 1)
+						});
+						go.setDepth((o.parentId ? 0 : spawnDepth) + definitions.indexOf(o));
+						if (o.kind === "tilemap") {
+							const anchor = this.add.container(o.x, o.y).setSize(o.width, o.height).setScale(o.scale ?? 1).setAngle(o.rotation).setAlpha(o.opacity).setVisible(o.visible);
+							anchor.setData({
+								forgeScaleX: 1,
+								forgeScaleY: 1
+							});
+							if (o.parentId) this.objectMap.get(o.parentId)?.add(anchor);
+							go.setData("forgeAnchor", anchor);
+							const setLayerVisible = go.setVisible.bind(go);
+							go.setVisible = (visible) => {
+								anchor.setVisible(visible);
+								return setLayerVisible(visible);
+							};
+							anchor.once("destroy", () => {
+								if (go.active && !go.isDestroyed) go.destroy();
+							});
+							go.once("destroy", () => {
+								if (anchor.active && !anchor.isDestroyed) anchor.destroy();
+							});
+						} else if (o.parentId) this.objectMap.get(o.parentId)?.add(go);
+						go.setName(o.name).setAlpha(o.opacity).setVisible(o.visible).setAngle(o.rotation);
+						if (o.fixed) {
+							go.setScrollFactor(0);
+							fixed.push(go);
+						} else go.setScrollFactor?.(o.renderSettings?.scrollFactorX ?? 1, o.renderSettings?.scrollFactorY ?? 1);
+						go.setData?.("forgeObjectId", o.id);
+						this.objectMap.set(o.id, go);
+						go.once("destroy", () => {
+							this.actorListDirty = true;
+							this.objectMap.delete(o.id);
+							this.effects?.stop(go);
+							this.states?.remove(o.id);
+							for (const e of o.events ?? []) {
+								this.fired.delete(e.id);
+								this.touching.delete(e.id);
+							}
+						});
+						if (o.lifetime) this.time.delayedCall(o.lifetime, () => {
+							if (go.active) go.destroy();
+						});
+						applyBloodPresentation(go, o);
+						this.actors.push({
+							def: o,
+							go,
+							startX: o.x,
+							startY: o.y
+						});
+						this.lighting?.bind(o, go);
+						if (o.kind !== "tilemap" && o.kind !== "particles" && o.kind !== "group" && o.physics !== "none") {
+							this.physics.add.existing(go, o.physics === "static");
+							if (o.physics === "static") statics.push(go);
+							else {
+								go.body.setAllowGravity(o.gravity).setBounce(o.bounce).setCollideWorldBounds(true);
+								actors.push(go);
+								if (o.collision) classifiedActors.push(go);
+							}
+						};
+						if (go.body && o.kind !== "tilemap") {
+							const b = o.bodySettings ?? {}, sx = Math.abs(go.scaleX / (o.scale ?? 1)) || 1, sy = Math.abs(go.scaleY / (o.scale ?? 1)) || 1;
+							if (b.shape === "circle" && go.body.setCircle) go.body.setCircle((b.radius ?? Math.min(o.width, o.height) / 2) / sx);
+							else if (b.width !== undefined || b.height !== undefined) go.body.setSize((b.width ?? o.width) / sx, (b.height ?? o.height) / sy, false);
+							if (b.offsetX !== undefined || b.offsetY !== undefined) go.body.setOffset((b.offsetX ?? 0) / sx, (b.offsetY ?? 0) / sy);
+							if (go.body.setVelocity) {
+								go.body.setVelocity(b.velocityX ?? 0, b.velocityY ?? 0);
+								go.body.setAcceleration(b.accelerationX ?? 0, b.accelerationY ?? 0);
+								go.body.setDrag(b.dragX ?? 0, b.dragY ?? 0);
+								go.body.setMaxVelocity(b.maxVelocityX ?? 1e4, b.maxVelocityY ?? 1e4);
+								go.body.setMass(b.mass ?? 1);
+								go.body.setImmovable(b.immovable ?? false);
+								go.body.pushable = b.pushable ?? true;
+								go.body.setCollideWorldBounds(b.collideWorldBounds ?? true);
+							};
+							if (go.parentContainer && go.body.physicsType === Phaser.Physics.Arcade.DYNAMIC_BODY) {
+								const original = go.body.postUpdate.bind(go.body);
+								go.body.postUpdate = () => {
+									const x = go.x, y = go.y;
+									original();
+									const dx = go.x - x, dy = go.y - y, m = go.parentContainer.getWorldTransformMatrix(), det = m.a * m.d - m.b * m.c;
+									go.x = x + (m.d * dx - m.c * dy) / det;
+									go.y = y + (-m.b * dx + m.a * dy) / det;
+								};
+							}
+						};
+						if (["collectible", "goal"].includes(o.behavior)) {
+							if (!go.body) this.physics.add.existing(go, true);
+							triggers.push({
+								def: o,
+								go
+							});
+						};
+						if (o.behavior === "button") go.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
+							if (this.gameUi?.isDisabled(o.id)) return;
+							if (o.soundId && this.cache.audio.exists(o.soundId)) this.sound.play(o.soundId);
+							if (o.targetScene && project.scenes.some((s) => s.id === o.targetScene)) this.scene.start(o.targetScene);
+						});
+						if (o.events?.some((e) => e.trigger === "click")) go.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
+							if (this.gameUi?.isDisabled(o.id)) return;
+							this.fireEvents(o.events ?? [], "click", o.id);
+						});
+						if (o.tween === "float" || o.behavior === "float") this.tweens.add({
+							targets: go,
+							y: o.y - 9,
+							duration: 1400,
+							yoyo: true,
+							repeat: -1,
+							ease: "Sine.inOut"
+						});
+						if (o.tween === "pulse") this.tweens.add({
+							targets: go,
+							alpha: .35,
+							duration: 800,
+							yoyo: true,
+							repeat: -1,
+							ease: "Sine.inOut"
+						});
+						if (o.tween === "spin") this.tweens.add({
+							targets: go,
+							angle: 360,
+							duration: 2400,
+							repeat: -1
+						});
+					};
+					players.splice(0, players.length, ...this.actors.filter((a) => a.go.active && ["platformer", "topdown"].includes(a.def.behavior)).map((a) => a.go));
+					if (spawned) setupInteractions(this.actors.slice(actorStart), triggers.slice(triggerStart));
+					for (const actor of this.actors.slice(actorStart)) {
+						this.collision?.bind(actor.def, actor.go);
+						this.interaction?.bind(actor.def, actor.go);
+						this.motionPaths?.bind(actor.def, actor.go);
+						this.connections?.bind(actor.def, actor.go);
+						this.projectiles?.bind(actor.def, actor.go);
+					};
+					factions?.refresh();
+				};
+				buildObjects(def.objects);
+				this.refreshStaticBodies();
+				this.physics.add.collider(actors, statics, undefined, (a, b) => this.collision?.canSeparate(a, b) ?? true);
+				this.physics.add.collider(classifiedActors, actors, undefined, (a, b) => a !== b && (this.collision?.canSeparate(a, b) ?? true));
+				const setupInteractions = (newActors, newTriggers) => {
+					for (const trigger of newTriggers) this.physics.add.overlap(players, trigger.go, () => {
+						if (!trigger.go.active || !trigger.go.visible) return;
+						if (trigger.def.behavior === "collectible") {
+							if (trigger.def.itemId) {
+								const n = inventory?.give(trigger.def.itemId, trigger.def.itemQuantity ?? 1) ?? 0;
+								if (!n) return;
+								const remaining = (trigger.def.itemQuantity ?? 1) - n;
+								if (remaining > 0) {
+									trigger.def = {
+										...trigger.def,
+										itemQuantity: remaining
+									};
+									return;
+								}
+							};
+							vars.score = (Number(vars.score) || 0) + trigger.def.value;
+							if (trigger.def.soundId && this.cache.audio.exists(trigger.def.soundId)) this.sound.play(trigger.def.soundId);
+							this.fireEvents(trigger.def.events ?? [], "collect", trigger.def.id);
+							trigger.go.destroy();
+							report("info", `아이템 획득 +${trigger.def.value}`);
+						} else if (trigger.def.targetScene) this.scene.start(trigger.def.targetScene);
+					});
+					for (const actor of newActors) for (const event of actor.def.events ?? []) if (event.trigger === "overlap") {
+						if (!actor.go.body) this.physics.add.existing(actor.go, true);
+						const other = event.otherObjectId ? this.objectMap.get(event.otherObjectId) : undefined;
+						if (other && !other.body) this.physics.add.existing(other, true);
+						this.physics.add.overlap(other ?? players, actor.go, (a, b) => {
+							if (a === b || !actor.go.active) return;
+							const frame = this.game.loop.frame, last = this.touching.get(event.id) ?? -100;
+							this.touching.set(event.id, frame);
+							if (frame - last > 2) this.fireEvents([event], "overlap", actor.def.id, (a === actor.go ? b : a)?.getData?.("forgeObjectId"));
+						});
+					}
+				};
+				setupInteractions(this.actors, triggers);
+				for (const actor of this.actors) this.collision?.bind(actor.def, actor.go);
+				this.refreshStaticBodies();
+				for (const event of def.events ?? []) if (event.enabled !== false && event.trigger === "key") {
+					const seen = new WeakSet();
+					const eventName = event.key === "ACTION" ? "keydown" : "keydown-" + (event.key ?? "SPACE");
+					const handle = (e) => {
+						if ((this.gameUi?.capturesInput() || framework?.capturesInput()) && !event.allowWhileUi) return;
+						if (event.key === "ACTION" && e.code !== (frameworkSettings?.controls.action ?? "KeyZ")) return;
+						if (e.ctrlKey || e.metaKey || e.altKey) return;
+						if (seen.has(e) || e.repeat) return;
+						seen.add(e);
+						this.fireEvents([event], "key");
+					};
+					this.input.keyboard.on(eventName, handle);
+					this.events.once("shutdown", () => this.input.keyboard.off(eventName, handle));
+				};
+				def.cameras.forEach((c, i) => {
+					const cam = i === 0 ? this.cameras.main : this.cameras.add(c.x, c.y, c.width, c.height, false, c.name);
+					cam.forgeCameraId = c.id;
+					cam.setViewport(c.x, c.y, c.width, c.height).setName(c.name).setZoom(c.zoom).setScroll(c.scrollX, c.scrollY).setVisible(c.visible);
+					if (c.bounds?.enabled === false) cam.removeBounds();
+					else cam.setBounds(c.bounds?.x ?? 0, c.bounds?.y ?? 0, c.bounds?.width ?? def.worldWidth, c.bounds?.height ?? def.worldHeight);
+					cam.setRotation((c.rotation ?? 0) * Math.PI / 180);
+					if (c.deadzone?.enabled) cam.setDeadzone(c.deadzone.width, c.deadzone.height);
+					const target = this.objectMap.get(c.follow);
+					if (target) {
+						let lastX = target.getWorldTransformMatrix().tx, lastY = target.getWorldTransformMatrix().ty;
+						const followed = target.parentContainer ? {
+							get x() {
+								if (target.active) lastX = target.getWorldTransformMatrix().tx;
+								return lastX;
+							},
+							get y() {
+								if (target.active) lastY = target.getWorldTransformMatrix().ty;
+								return lastY;
+							}
+						} : target;
+						cam.startFollow(followed, c.roundPixels ?? project.pixelArt, c.lerp, c.lerp, c.followOffsetX ?? 0, c.followOffsetY ?? 0);
+					};
+					const saved = pendingCheckpoint?.sceneId === def.id && Array.isArray(pendingCheckpoint?.cameras) ? pendingCheckpoint.cameras.find((row) => row?.id === c.id) : undefined;
+					if (saved && [
+						"scrollX",
+						"scrollY",
+						"zoom",
+						"rotation",
+						"alpha"
+					].every((key) => Number.isFinite(saved[key])) && saved.zoom > 0 && saved.zoom <= 100 && saved.alpha >= 0 && saved.alpha <= 1) {
+						cam.setScroll(saved.scrollX, saved.scrollY).setZoom(saved.zoom).setRotation(saved.rotation).setAlpha(saved.alpha);
+						if (typeof saved.visible === "boolean") cam.setVisible(saved.visible);
+						if (saved.useBounds === false) cam.removeBounds();
+						else if (saved.useBounds === true && saved.bounds && [
+							"x",
+							"y",
+							"width",
+							"height"
+						].every((key) => Number.isFinite(saved.bounds[key])) && saved.bounds.width > 0 && saved.bounds.height > 0) cam.setBounds(saved.bounds.x, saved.bounds.y, saved.bounds.width, saved.bounds.height);
+					};
+					if (i > 0 && fixed.length) cam.ignore(fixed);
+					if (c.effect === "fade") cam.fadeIn(650, 0, 0, 0);
+					if (c.effect === "shake") cam.shake(500, .007);
+					if (c.effect === "flash") cam.flash(500);
+				});
+				if (project.showScore) this.scoreText = this.add.text(project.width - 25, 25, "", {
+					fontFamily: "monospace",
+					fontSize: "18px",
+					color: "#fff1ce",
+					backgroundColor: "#192632",
+					padding: {
+						x: 10,
+						y: 6
+					}
+				}).setOrigin(1, 0).setScrollFactor(0).setDepth(9999);
+				if (this.scoreText) this.cameras.cameras.slice(1).forEach((c) => c.ignore(this.scoreText));
+				this.ctx = {
+					project,
+					debugEnabled: !!options.editorInspection,
+					presentation: {
+						bloodMode: () => bloodMode,
+						setBloodMode: (mode) => {
+							if (![
+								"off",
+								"reduced",
+								"full"
+							].includes(mode)) throw Error("혈흔 표시는 끄기·약하게·보통 중 하나를 선택하세요.");
+							bloodMode = mode;
+							for (const scene of game.scene.getScenes(false)) for (const actor of scene.actors ?? []) if (actor.go.active) applyBloodPresentation(actor.go, actor.def);
+						}
+					},
+					requirements: requirementsRuntime ? { check: requirementsRuntime.check } : undefined,
+					progression: requirementsRuntime?.progression,
+					framework,
+					controls: {
+						isDown: (name) => !framework?.capturesInput() && !!this.keys?.[name === "jump" ? "space" : name]?.isDown,
+						justDown: (name) => !framework?.capturesInput() && !!this.keys?.[name === "jump" ? "space" : name] && Phaser.Input.Keyboard.JustDown(this.keys[name === "jump" ? "space" : name])
+					},
+					catalog: definitionFactory?.(project.definitions ?? []) ?? {},
+					definition: (idOrKey) => {
+						const record = project.definitions?.find((d) => d.published && (d.id === idOrKey || d.key === idOrKey));
+						return record ? this.ctx.catalog[record.key] : undefined;
+					},
+					sceneBlueprint: (idOrName) => {
+						const source = project.scenes.find((scene) => scene.id === idOrName || scene.name === idOrName);
+						return source ? structuredClone(source) : undefined;
+					},
+					inventory: inventory ? new Proxy(inventory, { get: (target, key) => {
+						const value = target[key];
+						return typeof value === "function" ? (...args) => {
+							activeItemScene = this;
+							return value(...args);
+						} : value;
+					} }) : undefined,
+					spawn: (id, x = project.width / 2, y = project.height / 2, options = {}) => {
+						const prefab = project.prefabs.find((p) => p.id === id || p.name === id);
+						if (!prefab) {
+							report("error", "생성할 프리팹을 찾을 수 없습니다.");
+							return null;
+						};
+						if (!Number.isFinite(x) || !Number.isFinite(y)) throw Error("생성 위치는 유효한 숫자여야 합니다.");
+						if (!options || typeof options !== "object") throw Error("생성 설정은 값과 대상 연결을 담은 객체여야 합니다.");
+						this.actors = this.actors.filter((a) => !a.go.isDestroyed);
+						for (const [key, go] of this.objectMap) if (go.isDestroyed) this.objectMap.delete(key);
+						for (const list of [
+							actors,
+							statics,
+							players,
+							fixed,
+							classifiedActors
+						]) {
+							const active = list.filter((go) => !go.isDestroyed);
+							list.splice(0, list.length, ...active);
+						};
+						const source = prefab.objects ?? [prefab.object];
+						const sourceIds = new Set(source.map((o) => o.id));
+						for (const [id, targetId] of Object.entries(options.bindings ?? {})) {
+							if (sourceIds.has(id)) throw Error("프리팹 내부 연결은 생성 인수로 바꿀 수 없습니다.");
+							if (!this.objectMap.get(targetId)?.active) throw Error("생성할 프리팹의 외부 연결 대상이 현재 씬에 없습니다.");
+						};
+						const initial = {};
+						for (const [key, raw] of Object.entries(options.values ?? {})) {
+							if (key === "name") {
+								if (typeof raw !== "string" || !raw.trim() || raw.length > 200) throw Error("생성할 이름은 1~200자여야 합니다.");
+								initial[key] = raw;
+							} else if (key === "color") {
+								if (typeof raw !== "string" || !/^#[0-9a-fA-F]{6}$/.test(raw)) throw Error("생성 색은 #RRGGBB 형식이어야 합니다.");
+								initial[key] = raw;
+							} else {
+								const limits = {
+									opacity: [0, 1],
+									rotation: [-36e3, 36e3],
+									speed: [0, 1e4],
+									value: [-1e9, 1e9],
+									"gameplay.combat.maxHp": [1, 1e8]
+								}, limit = limits[key], value = Number(raw);
+								if (!limit || !(typeof raw === "number" || typeof raw === "string" && raw.trim()) || !Number.isFinite(value) || value < limit[0] || value > limit[1]) throw Error("생성할 " + key + " 값이 허용 범위를 벗어났습니다.");
+								if (key === "gameplay.combat.maxHp" && !prefab.object.gameplay?.combat) throw Error("프리팹에 전투 설정이 없습니다.");
+								initial[key] = value;
+							}
+						};
+						if (this.actors.length + source.length > 5e3) {
+							report("error", "실행 중 오브젝트가 5000개를 넘었습니다.");
+							return null;
+						};
+						const mapping = new Map(source.map((o) => [o.id, runtimeId()])), objects = JSON.parse(JSON.stringify(source));
+						const references = new Map([...mapping, ...Object.entries(options.bindings ?? {})]);
+						for (const o of objects) {
+							const old = o.id;
+							o.id = mapping.get(old);
+							o.parentId = o.parentId ? mapping.get(o.parentId) : undefined;
+							for (const aim of o.rigPlayback?.aims ?? []) if (aim.targetId) aim.targetId = references.get(aim.targetId) ?? aim.targetId;
+							if (o.gameplay?.agent?.targetId) o.gameplay.agent.targetId = references.get(o.gameplay.agent.targetId) ?? o.gameplay.agent.targetId;
+							if (o.projectileGuidance) {
+								for (const key of ["targetId", "ownerId"]) if (o.projectileGuidance[key]) o.projectileGuidance[key] = references.get(o.projectileGuidance[key]) ?? o.projectileGuidance[key];
+							};
+							if (o.lighting?.light?.follow === "object") o.lighting.light.targetId = references.get(o.lighting.light.targetId) ?? o.lighting.light.targetId;
+							if (o.interaction) {
+								o.interaction.targetIds = o.interaction.targetIds.map((id) => references.get(id) ?? id);
+								if (o.interaction.areaObjectId) o.interaction.areaObjectId = references.get(o.interaction.areaObjectId) ?? o.interaction.areaObjectId;
+							};
+							if (o.connection) for (const anchor of [o.connection.start, o.connection.end]) {
+								const bound = anchor.bindingKey ? options.bindings?.[anchor.bindingKey] : undefined;
+								if (bound) {
+									anchor.mode = "object";
+									anchor.targetId = bound;
+								} else if (anchor.mode === "object" && anchor.targetId) anchor.targetId = references.get(anchor.targetId) ?? anchor.targetId;
+							};
+							for (const e of o.events ?? []) {
+								e.id = runtimeId();
+								if (e.otherObjectId) e.otherObjectId = references.get(e.otherObjectId) ?? e.otherObjectId;
+							};
+							if (old === prefab.object.id) {
+								delete o.parentId;
+								o.x = x;
+								o.y = y;
+								for (const [key, value] of Object.entries(initial)) {
+									if (key === "gameplay.combat.maxHp") o.gameplay.combat.maxHp = value;
+									else o[key] = value;
+								}
+							};
+							for (const b of o.effects ?? []) b.id = runtimeId();
+							for (const binding of o.stateMachines ?? []) {
+								binding.id = runtimeId();
+								for (const slot of Object.keys(binding.targets)) binding.targets[slot] = references.get(binding.targets[slot]) ?? binding.targets[slot];
+							}
+						};
+						buildObjects(objects, true);
+						this.states?.sync();
+						for (const o of objects) this.effects?.bind(this.objectMap.get(o.id), o.effects);
+						this.refreshStaticBodies();
+						this.syncUiCameras?.();
+						return this.objectMap.get(mapping.get(prefab.object.id));
+					},
+					texture: (assetId, frame = 0) => {
+						const asset = project.assets.find((a) => a.id === assetId);
+						return asset ? sourceFor(asset, frame) : {
+							key: assetId,
+							frame
+						};
+					},
+					applyResource: (target, resource) => {
+						const go = typeof target === "string" ? this.ctx.find(target) : target;
+						if (!go || !resource) return false;
+						if (resource.kind === "animation" && go.play && this.anims.exists(resource.animationId)) {
+							go.play(resource.animationId);
+							return true;
+						};
+						if (resource.kind === "asset") {
+							const asset = assetById.get(resource.assetId);
+							if (asset && asset.type !== "audio" && go.setTexture) {
+								const source = sourceFor(asset, resource.frame ?? 0);
+								if (this.textures.exists(source.key) && this.textures.get(source.key).has(source.frame)) {
+									go.anims?.stop();
+									go.setTexture(source.key, source.frame);
+									return true;
+								}
+							}
+						};
+						report("error", "적용할 리소스와 대상 오브젝트를 확인하세요.");
+						return false;
+					},
+					scene: this,
+					objects: this.objectMap,
+					vars,
+					data: this.startupData,
+					storage: {
+						load: async (key, fallback = null) => await storage("load", key) ?? fallback,
+						save: (key, value) => storage("save", key, value),
+						remove: (key) => storage("remove", key)
+					},
+					utils: {},
+					physics2d: ropePhysicsFactory?.(Phaser, this),
+					find: (name) => this.objectMap.get(name) ?? [...this.objectMap.values()].find((o) => o.name === name),
+					goto: (id, data = {}) => {
+						const scene = project.scenes.find((s) => s.id === id || s.name === id);
+						if (scene) {
+							const parent = overlayParents.get(def.id);
+							if (parent) {
+								this.scene.stop(parent);
+								overlayParents.delete(def.id);
+							};
+							this.scene.start(scene.id, data);
+						}
+					},
+					openOverlay: (id, data = {}) => {
+						const target = project.scenes.find((s) => s.id === id || s.name === id);
+						if (!target || target.id === def.id || this.scene.isActive(target.id)) return false;
+						overlayParents.set(target.id, def.id);
+						this.scene.launch(target.id, data);
+						this.scene.pause(def.id);
+						return true;
+					},
+					closeOverlay: () => {
+						const parent = overlayParents.get(def.id);
+						if (!parent) return false;
+						overlayParents.delete(def.id);
+						this.scene.resume(parent);
+						this.scene.stop(def.id);
+						return true;
+					},
+					notify: (message) => {
+						const notice = this.add.text(project.width / 2, project.height / 2, message, {
+							fontFamily: "system-ui",
+							fontSize: "28px",
+							color: "#b7c9e3",
+							backgroundColor: "#192632",
+							padding: {
+								x: 24,
+								y: 16
+							},
+							align: "center"
+						}).setOrigin(.5).setScrollFactor(0).setDepth(1e4);
+						this.time.delayedCall(2600, () => notice.destroy());
+					},
+					log: (message) => report("info", message),
+					run: (id, args = {}, target) => {
+						const fn = project.functions?.find((f) => f.id === id || f.name === id);
+						return fn ? this.logic?.run(fn.id, args, target) : false;
+					}
+				};
+				if (pendingCheckpoint?.sceneId === def.id && Array.isArray(pendingCheckpoint.spawned)) {
+					const spawned = pendingCheckpoint.spawned.filter((o) => o && typeof o.id === "string" && !def.objects.some((base) => base.id === o.id));
+					if (spawned.length + def.objects.length > 5e3) throw new Error("저장한 진행의 오브젝트가 5,000개를 넘습니다.");
+					buildObjects(spawned, true);
+				};
+				this.timeline = timelineFactory?.(project, def.id, {
+					apply: (id, property, value) => {
+						const object = this.objectMap.get(id);
+						if (!object?.active) return;
+						const go = object.getData?.("forgeAnchor") ?? object;
+						if (property === "scale") go.setScale(Math.max(1e-4, Math.min(1e4, value)) * (go.getData("forgeScaleX") || 1), Math.max(1e-4, Math.min(1e4, value)) * (go.getData("forgeScaleY") || 1));
+						else if (property === "rotation") go.angle = value;
+						else if (property === "opacity") go.alpha = Math.max(0, Math.min(1, value));
+						else if (property === "visible") go.visible = value >= .5;
+						else if (property === "frame") {
+							const a = assetById.get(def.objects.find((o) => o.id === id)?.assetId ?? "");
+							if (a && object.setTexture) {
+								const src = sourceFor(a, Math.max(0, Math.round(value)));
+								object.setTexture(src.key, src.frame);
+							}
+						} else go[property] = value;
+						if (go.body?.updateFromGameObject) go.body.updateFromGameObject();
+					},
+					marker: (m) => this.logic?.run(m.functionId, m.args),
+					error: (message) => report("error", message)
+				});
+				this.ctx.timeline = this.timeline;
+				if (pendingCheckpoint?.sceneId === def.id) {
+					for (const state of pendingCheckpoint.objects) {
+						const object = this.objectMap.get(state.id);
+						if (!object) continue;
+						const go = object.getData?.("forgeAnchor") ?? object;
+						for (const key of [
+							"x",
+							"y",
+							"angle",
+							"alpha",
+							"scaleX",
+							"scaleY"
+						]) if (Number.isFinite(state[key])) go[key] = state[key];
+						if (typeof state.visible === "boolean") go.visible = state.visible;
+						if (typeof state.active === "boolean") object.setActive(state.active);
+						if (state.pickupAmounts && typeof state.pickupAmounts === "object" && !Array.isArray(state.pickupAmounts) && Object.entries(state.pickupAmounts).every(([key, value]) => key.length > 0 && key.length <= 200 && typeof value === "number" && Number.isSafeInteger(value) && value > 0 && value <= 1e6)) object.setData("forgePickupAmounts", { ...state.pickupAmounts });
+						if (state.frame !== undefined && object.setFrame && !this.actors.find((a) => a.go === object)?.def.rigPlayback?.enabled) object.setFrame(state.frame);
+						if (object.setTilePosition && Number.isFinite(state.tilePositionX) && Number.isFinite(state.tilePositionY)) object.setTilePosition(state.tilePositionX, state.tilePositionY);
+						if (go.body?.updateFromGameObject) go.body.updateFromGameObject();
+						if (Number.isFinite(state.velocityX) && Number.isFinite(state.velocityY)) go.body?.setVelocity?.(state.velocityX, state.velocityY);
+						if (Number.isFinite(state.accelerationX) && Number.isFinite(state.accelerationY)) go.body?.setAcceleration?.(state.accelerationX, state.accelerationY);
+					};
+					for (const actor of this.actors) applyBloodPresentation(actor.go, actor.def);
+					this.ctx.resumed = true;
+					this.ctx.checkpoint = pendingCheckpoint;
+					pendingCheckpoint = null;
+				};
+				if (this.ctx.resumed) {
+					const checkpoint = this.ctx.checkpoint;
+					this.fired = new Set(checkpoint?.fired ?? []);
+					for (const id of checkpoint?.removed ?? []) this.objectMap.get(id)?.destroy();
+					this.actors = this.actors.filter((a) => !a.go.isDestroyed);
+					for (const list of [
+						actors,
+						players,
+						statics,
+						fixed,
+						classifiedActors
+					]) {
+						const live = list.filter((go) => !go.isDestroyed);
+						list.splice(0, list.length, ...live);
+					};
+					this.timeline?.restore(checkpoint?.timelines ?? []);
+				} else this.timeline?.autoplay();
+				if (lightingFactory) {
+					this.lighting = lightingFactory(project, def, this, () => this.actors, (message) => report("error", message));
+					this.ctx.lighting = this.lighting;
+					if (this.ctx.checkpoint?.lighting) this.lighting.restore(this.ctx.checkpoint.lighting);
+				};
+				factions ??= factionFactory?.(project.factionSettings, { actors: () => game.scene.getScenes(false).filter((scene) => scene.scene.isActive() || scene.scene.isPaused()).flatMap((scene) => scene.actors ?? []) });
+				if (this.ctx.checkpoint?.factions && !factions?.restore(this.ctx.checkpoint.factions)) throw Error("저장된 진영 관계를 확인하세요.");
+				this.ctx.factions = factions;
+				if (interactionFactory) {
+					const keys = new Map();
+					this.interaction = interactionFactory({
+						actors: () => this.actors,
+						relation: (owner, other) => factions?.relation(factions.team(owner), factions.team(other)) ?? "neutral",
+						fire: (id, trigger, other) => {
+							const actor = this.actors.find((a) => a.def.id === id);
+							if (actor) this.fireEvents(actor.def.events ?? [], trigger, id, other);
+						},
+						isKeyDown: (name) => {
+							if (this.gameUi?.capturesInput() || framework?.capturesInput()) return false;
+							let key = keys.get(name);
+							if (!key) {
+								key = this.input.keyboard?.addKey(name, false);
+								if (key) keys.set(name, key);
+							};
+							return !!key?.isDown;
+						}
+					});
+					for (const actor of this.actors) this.interaction.bind(actor.def, actor.go);
+					if (this.ctx.checkpoint?.interaction) this.interaction.restore(this.ctx.checkpoint.interaction);
+					this.ctx.interaction = this.interaction;
+				};
+				if (motionPathFactory) {
+					this.motionPaths = motionPathFactory(this, () => this.actors, (message) => report("error", message));
+					if (this.ctx.checkpoint?.motionPaths) this.motionPaths.restore(this.ctx.checkpoint.motionPaths);
+					this.ctx.motionPaths = this.motionPaths;
+				};
+				if (projectileGuidanceFactory) {
+					this.projectiles = projectileGuidanceFactory(project, this, {
+						actors: () => this.actors,
+						object: (id) => this.objectMap.get(id),
+						run: (id, args, ownerId) => {
+							this.logic?.run(id, args, ownerId);
+						},
+						relation: (owner, target) => factions?.relation(factions.team(owner), factions.team(target)) ?? "neutral",
+						resolveTarget: (id, owner, source) => id === "$self" ? source : id === "$owner" ? owner : id === "$player" ? this.actors.find((a) => a.go.active && ["platformer", "topdown"].includes(a.def.behavior))?.def.id ?? "" : id === "$target" ? String(this.objectMap.get(owner)?.getData?.("aiTarget") ?? "") : id,
+						paused: () => !!(this.gameUi?.capturesInput() || framework?.capturesInput()),
+						error: (message) => report("error", message)
+					});
+					for (const actor of this.actors) this.projectiles.bind(actor.def, actor.go);
+					if (this.ctx.checkpoint?.projectiles && !this.projectiles.restore(this.ctx.checkpoint.projectiles)) throw Error("저장된 유도 이동 상태를 확인하세요.");
+					this.ctx.projectiles = this.projectiles;
+					const updateProjectiles = (_time, delta) => this.projectiles?.update(delta);
+					this.events.on("postupdate", updateProjectiles);
+					this.events.once("shutdown", () => this.events.off("postupdate", updateProjectiles));
+				};
+				if (this.ctx.checkpoint?.particles) this.particles?.restore(this.ctx.checkpoint.particles);
+				if (this.ctx.checkpoint?.collision) this.collision?.restore(this.ctx.checkpoint.collision);
+				this.ctx.particles = this.particles;
+				this.ctx.collision = this.collision;
+				if (connectionFactory) {
+					this.connections = connectionFactory(this, {
+						actors: () => this.actors,
+						source: (id, frame) => {
+							const asset = assetById.get(id);
+							return asset ? sourceFor(asset, frame) : undefined;
+						},
+						error: (message) => report("error", message)
+					});
+					for (const actor of this.actors) this.connections.bind(actor.def, actor.go);
+					if (this.ctx.checkpoint?.connections) this.connections.restore(this.ctx.checkpoint.connections);
+					this.connections.update(0);
+					this.ctx.connections = this.connections;
+					const updateConnections = (_time, delta) => this.connections?.update(delta);
+					this.events.on("postupdate", updateConnections);
+					this.events.once("shutdown", () => this.events.off("postupdate", updateConnections));
+				};
+				if (effectFactory) {
+					this.effects = effectFactory(Phaser, project, this, (message) => report("error", message));
+					this.ctx.effects = this.effects;
+					this.effects.bind(this.cameras.main, def.effects);
+					def.cameras.forEach((c, i) => this.effects?.bind(this.cameras.cameras[i], c.effects));
+					for (const a of this.actors) if (a.go.active) this.effects.bind(a.go.getData?.("forgeAnchor") ?? a.go, a.def.effects);
+				};
+				this.ctx.music = music();
+				if (this.ctx.checkpoint?.music) musicRuntime?.restore(this.ctx.checkpoint.music, def.id);
+				else if (def.music) musicRuntime?.play(def.music.assetId, {
+					volume: def.music.volume,
+					loop: def.music.loop,
+					fade: def.music.fadeIn,
+					owner: def.id
+				});
+				if (stateFactory && machineFactory && project.stateMachines?.length) {
+					this.states = stateFactory(project, def, {
+						objects: this.objectMap,
+						effect: (id, preset) => {
+							const go = this.objectMap.get(id);
+							if (go) {
+								this.effects?.stop(go, undefined, "forge-state");
+								if (preset) this.effects?.play(go, preset, { key: "forge-state" });
+							}
+						},
+						actors: () => this.actors,
+						variable: (id) => this.logic?.read(id),
+						run: (id, args, target, alive) => {
+							this.logic?.run(id, args, target || undefined, [], { remaining: 512 }, () => true, alive);
+						},
+						gravity: () => this.physics.world.gravity,
+						factions: () => factions,
+						error: (message) => report("error", message)
+					}, machineFactory);
+					this.ctx.states = this.states;
+					const normalizedKey = (event) => event.code.replace(/^Key|^Digit/, "").replace(/^Arrow/, "").toUpperCase();
+					const keyDown = (event) => !this.gameUi?.capturesInput() && this.states?.key(normalizedKey(event), true), keyUp = (event) => this.states?.key(normalizedKey(event), false), blur = () => this.states?.releaseKeys();
+					this.input.keyboard.on("keydown", keyDown);
+					this.input.keyboard.on("keyup", keyUp);
+					window.addEventListener("blur", blur);
+					this.events.once("shutdown", () => {
+						this.input.keyboard?.off("keydown", keyDown);
+						this.input.keyboard?.off("keyup", keyUp);
+						window.removeEventListener("blur", blur);
+					});
+					this.states.start(this.ctx.checkpoint?.states ?? []);
+				};
+				if (gameplayFactory) {
+					this.gameplay = gameplayFactory(project, def, {
+						scene: this,
+						actors: () => this.actors,
+						objects: this.objectMap,
+						factions: () => factions,
+						skillAllowed: (skill, owner) => {
+							if (!skill.definitionId) return !skill.requireLearned;
+							const result = requirementsRuntime?.progression.use(skill.definitionId, { requireLearned: skill.requireLearned }) ?? {
+								passed: false,
+								reasons: ["스킬 조건 판정기를 사용할 수 없습니다."]
+							};
+							this.objectMap.get(owner)?.setData("requirementReasons", result.reasons);
+							return result.passed;
+						},
+						states: () => this.states,
+						run: (id, args, owner) => this.logic?.run(id, args, owner),
+						write: (id, value) => {
+							const v = project.variables.find((v) => v.id === id);
+							if (v && typeof value === v.type && (v.type !== "number" || Number.isFinite(value))) vars[v.name] = value;
+						},
+						equipment: () => inventory?.stats() ?? {},
+						error: (message) => report("error", message)
+					});
+					this.ctx.gameplay = this.gameplay;
+					this.gameplay.restore(this.ctx.checkpoint?.gameplay ?? []);
+				};
+				if (gameUiFactory && def.objects.some((o) => o.gameUi?.enabled || o.gameUi?.buttonFrames?.enabled)) {
+					const focusMarks = new Map();
+					const uiObjects = new Set(), uiCamera = this.cameras.add(this.cameras.main.x, this.cameras.main.y, this.cameras.main.width, this.cameras.main.height).setName("게임 UI");
+					const register = (go) => {
+						const root = go?.getData?.("forgeAnchor") ?? go;
+						if (!root) return;
+						const visit = (node) => {
+							uiObjects.add(node);
+							node.cameraFilter &= ~uiCamera.id;
+							node.setData?.("forgeGameUi", true);
+							for (const child of node.list ?? []) visit(child);
+						};
+						visit(root);
+					};
+					const uiIds = new Set(def.objects.filter((o) => o.gameUi?.enabled).map((o) => o.id));
+					let added = true;
+					while (added) {
+						added = false;
+						for (const o of def.objects) if (o.parentId && uiIds.has(o.parentId) && !uiIds.has(o.id)) {
+							uiIds.add(o.id);
+							added = true;
+						}
+					};
+					for (const id of uiIds) register(this.objectMap.get(id));
+					this.syncUiCameras = () => {
+						for (const go of uiObjects) if (!go.active) uiObjects.delete(go);
+						const allowed = new Set(uiObjects);
+						for (const go of uiObjects) for (let parent = go.parentContainer; parent; parent = parent.parentContainer) allowed.add(parent);
+						for (const camera of this.cameras.cameras) if (camera !== uiCamera) for (const go of uiObjects) camera.ignore(go);
+						const visit = (go) => {
+							if (!allowed.has(go)) uiCamera.ignore(go);
+							for (const child of go.list ?? []) visit(child);
+						};
+						for (const go of this.children.list) visit(go);
+					};
+					const worldAdded = (go) => {
+						if (!uiObjects.has(go)) uiCamera.ignore(go);
+					};
+					this.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, worldAdded);
+					this.events.once("shutdown", () => this.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, worldAdded));
+					this.updateUiFrame = () => {
+						for (const go of uiObjects) if (!go.active) uiObjects.delete(go);
+						const main = this.cameras.main;
+						if (uiCamera.x !== main.x || uiCamera.y !== main.y || uiCamera.width !== main.width || uiCamera.height !== main.height) uiCamera.setViewport(main.x, main.y, main.width, main.height);
+						for (const [go, mark] of focusMarks) {
+							if (!go.active || !go.visible) {
+								mark.setVisible(false);
+								continue;
+							};
+							const bounds = go.getBounds();
+							mark.setVisible(true).setPosition(bounds.centerX, bounds.centerY).setSize(bounds.width + 8, bounds.height + 8);
+						}
+					};
+					this.gameUi = gameUiFactory(project, def, {
+						objects: this.objectMap,
+						create: (definitions) => {
+							if (this.actors.filter((a) => !a.go.isDestroyed).length + definitions.length > 5e3) throw Error("게임 UI의 반복 오브젝트가 전체 5000개 한도를 넘었습니다.");
+							this.actors = this.actors.filter((a) => !a.go.isDestroyed);
+							for (const [id, go] of this.objectMap) if (go.isDestroyed) this.objectMap.delete(id);
+							for (const list of [
+								actors,
+								statics,
+								players,
+								fixed,
+								classifiedActors
+							]) {
+								const live = list.filter((go) => !go.isDestroyed);
+								list.splice(0, list.length, ...live);
+							};
+							buildObjects(definitions, true);
+							for (const o of definitions) register(this.objectMap.get(o.id));
+							this.syncUiCameras?.();
+							return new Map(definitions.map((o) => [o.id, this.objectMap.get(o.id)]));
+						},
+						variable: (id) => this.logic?.read(id),
+						writeVariable: (id, value) => {
+							const variable = project.variables.find((v) => v.id === id);
+							if (!variable || variable.type === "number" && (typeof value !== "number" || !Number.isFinite(value)) || variable.type === "boolean" && typeof value !== "boolean" || variable.type === "string" && typeof value !== "string") return false;
+							const before = vars[variable.name];
+							vars[variable.name] = typeof value === "string" ? value.slice(0, 1e4) : value;
+							observatory?.variableChanged(id, before, vars[variable.name], "UI 입력");
+							return true;
+						},
+						run: (id, args, target) => this.logic?.run(id, args, target),
+						viewport: () => ({
+							width: this.cameras.main.width,
+							height: this.cameras.main.height
+						}),
+						error: (message) => report("error", message),
+						gamepads: () => [...navigator.getGamepads?.() ?? []],
+						inventory: () => inventory?.list().map(({ item, quantity }) => ({
+							id: item.id,
+							key: item.key,
+							name: item.name,
+							description: item.description,
+							quantity,
+							iconAssetId: item.iconAssetId,
+							iconFrame: item.iconFrame,
+							equipped: Object.values(inventory.equipment()).includes(item.id)
+						})) ?? [],
+						focus: (go, active) => {
+							const previous = focusMarks.get(go);
+							if (previous) {
+								uiObjects.delete(previous);
+								previous.destroy();
+							};
+							focusMarks.delete(go);
+							if (!active || !go.active) return;
+							const bounds = go.getBounds(), mark = this.add.rectangle(bounds.centerX, bounds.centerY, bounds.width + 8, bounds.height + 8).setFillStyle(0, 0).setStrokeStyle(2, 11454962).setScrollFactor(0).setDepth(10001);
+							register(mark);
+							this.syncUiCameras?.();
+							focusMarks.set(go, mark);
+						}
+					});
+					this.ctx.gameUi = this.gameUi;
+					this.ctx.gameUi.attachVisual = (go) => {
+						register(go);
+						this.syncUiCameras?.();
+						return go;
+					};
+					const keyDown = (event) => this.gameUi?.keyDown(event);
+					this.input.keyboard?.on("keydown", keyDown);
+					this.events.once("shutdown", () => {
+						this.input.keyboard?.off("keydown", keyDown);
+						for (const mark of focusMarks.values()) mark.destroy();
+					});
+					this.gameUi.update(0, 0);
+					this.syncUiCameras();
+				};
+				this.rigs = rigFactory?.(project, this, {
+					actors: () => this.actors,
+					objects: this.objectMap,
+					variable: (id) => this.logic?.read(id),
+					texture: sourceFor,
+					error: (message) => report("error", message)
+				});
+				this.ctx.rigs = this.rigs;
+				this.rigs?.update(0);
+				this.rigs?.restore(this.ctx.checkpoint?.rigs);
+				for (const event of def.events ?? []) {
+					if (event.enabled !== false && event.trigger === "timer") this.time.addEvent({
+						delay: event.interval,
+						loop: !event.once,
+						callback: () => this.fireEvents([event], "timer")
+					});
+					if (event.enabled !== false && event.trigger === "change") this.variableEvents.set(event.id, this.logic?.read(event.variableId));
+				};
+				if (scriptFactory) {
+					this.ctx.modules = scriptFactory(project, this.ctx, Phaser, (message) => report("error", message));
+					this.ctx.modules.load();
+				} else for (const script of project.scripts) try {
+					const result = new Function("ctx", "Phaser", script.code)(this.ctx, Phaser);
+					if (result && typeof result === "object") Object.assign(this.ctx.utils, result);
+				} catch (e) {
+					report("error", `${script.name}: ${e}`);
+				};
+				try {
+					this.hooks = new Function("Phaser", `${def.code}\nreturn {create:typeof create==='function'?create:null,update:typeof update==='function'?update:null};`)(Phaser);
+					this.hooks.create?.(this.ctx);
+					this.fireEvents(def.events ?? [], "start");
+				} catch (e) {
+					report("error", `${def.name} create: ${e}`);
+				};
+				report("success", `${def.name} 실행 · Phaser ${Phaser.VERSION}`);
+				if (window.parent !== window) window.parent.postMessage({
+					source: "phaser-forge-runtime",
+					level: "ready",
+					sceneId: def.id,
+					version: Phaser.VERSION
+				}, "*");
+			}
+			refreshStaticBodies() {
+				for (const actor of this.actors) {
+					if (!actor.go.active) continue;
+					const go = actor.go, o = {
+						...actor.def,
+						...this.states?.profile(actor.def.id)
+					};
+					const anchor = go.getData?.("forgeAnchor");
+					if (anchor?.active && o.kind === "tilemap") {
+						const matrix = anchor.getWorldTransformMatrix(), x = -anchor.width / 2, y = -anchor.height / 2;
+						go.x = matrix.a * x + matrix.c * y + matrix.tx;
+						go.y = matrix.b * x + matrix.d * y + matrix.ty;
+						go.scaleX = Math.hypot(matrix.a, matrix.b) * anchor.width / (o.columns * (o.tileMap?.tileWidth ?? assetById.get(o.assetId)?.frameWidth ?? o.tileSize));
+						go.scaleY = Math.hypot(matrix.c, matrix.d) * anchor.height / (o.rows * (o.tileMap?.tileHeight ?? assetById.get(o.assetId)?.frameHeight ?? o.tileSize));
+						go.rotation = Math.atan2(matrix.b, matrix.a);
+						go.visible = anchor.visible;
+						go.alpha = anchor.alpha;
+						let parent = anchor.parentContainer;
+						while (parent) {
+							go.visible = go.visible && parent.visible;
+							go.alpha *= parent.alpha;
+							parent = parent.parentContainer;
+						}
+					};
+					if (!go.active || !go.body || go.body.physicsType !== Phaser.Physics.Arcade.STATIC_BODY) continue;
+					const m = go.getWorldTransformMatrix(), signature = [
+						m.a,
+						m.b,
+						m.c,
+						m.d,
+						m.tx,
+						m.ty
+					].join(",");
+					if (go._forgeStaticPose === signature) continue;
+					go._forgeStaticPose = signature;
+					const sx = Math.hypot(m.a, m.b), sy = Math.hypot(m.c, m.d), baseX = Math.abs(go.scaleX / (o.scale ?? 1)) || 1, baseY = Math.abs(go.scaleY / (o.scale ?? 1)) || 1, b = o.bodySettings ?? {}, body = go.body;
+					body.world.staticTree.remove(body);
+					body.position.set(m.tx - (go.displayOriginX - (b.offsetX ?? 0) / baseX) * sx, m.ty - (go.displayOriginY - (b.offsetY ?? 0) / baseY) * sy);
+					body.width = (b.shape === "circle" ? (b.radius ?? Math.min(o.width, o.height) / 2) * 2 : b.width ?? o.width) / baseX * sx;
+					body.height = (b.shape === "circle" ? (b.radius ?? Math.min(o.width, o.height) / 2) * 2 : b.height ?? o.height) / baseY * sy;
+					body.halfWidth = body.width / 2;
+					body.halfHeight = body.height / 2;
+					body.center.set(body.position.x + body.halfWidth, body.position.y + body.halfHeight);
+					body.world.staticTree.insert(body);
+				}
+			}
+			fireEvents(events, trigger, target, otherId) {
+				for (const event of events) if (event.enabled !== false && event.trigger === trigger && (!otherId || !event.otherObjectId || event.otherObjectId === otherId) && (!event.once || !this.fired.has(event.id))) {
+					if (event.once) this.fired.add(event.id);
+					this.logic?.run(event.functionId, otherId ? Object.fromEntries(Object.entries(event.args).map(([key, value]) => [key, value === "$other" ? otherId : value === "$self" ? target ?? "" : value])) : event.args, target);
+				}
+			}
+			update(time, delta) {
+				if (!this.keys) return;
+				this.gameUi?.update(time, delta);
+				for (const actor of this.actors) if (actor.go.active && actor.def.background?.enabled && actor.go.setTilePosition) {
+					const b = actor.def.background;
+					actor.go.setTilePosition(actor.go.tilePositionX + b.speedX * delta / 1e3, actor.go.tilePositionY + b.speedY * delta / 1e3);
+				};
+				this.updateUiFrame?.();
+				const uiCapturesInput = !!(this.gameUi?.capturesInput() || framework?.capturesInput());
+				if (uiCapturesInput) this.states?.releaseKeys();
+				this.states?.before(delta);
+				this.timeline?.advance(delta);
+				this.refreshStaticBodies();
+				const k = this.keys;
+				const dx = uiCapturesInput ? 0 : (k.right.isDown || k.d.isDown ? 1 : 0) - (k.left.isDown || k.a.isDown ? 1 : 0);
+				const dy = uiCapturesInput ? 0 : (k.down.isDown || k.s.isDown ? 1 : 0) - (k.up.isDown || k.w.isDown ? 1 : 0);
+				const wantsJump = !uiCapturesInput && this.actors.some((a) => (this.states?.profile(a.def.id)?.behavior ?? a.def.behavior) === "platformer" && a.go.active && a.go.body) && (Phaser.Input.Keyboard.JustDown(k.space) || Phaser.Input.Keyboard.JustDown(k.up) || Phaser.Input.Keyboard.JustDown(k.w));
+				for (const a of this.actors) {
+					const { go } = a, override = this.states?.profile(a.def.id), o = override ? {
+						...a.def,
+						...override
+					} : a.def;
+					if (!go.active) continue;
+					if (this.motionPaths?.isDriving(o.id) || this.projectiles?.isDriving(o.id)) continue;
+					if (go.getData?.("gameplayBlocked")) {
+						(go.getData?.("forgeAnchor") ?? go).body?.setVelocity?.(0, 0);
+						continue;
+					};
+					if (!o.stop && o.behavior === "platformer" && go.body?.setVelocity) {
+						const gx = go.body.allowGravity ? this.physics.world.gravity.x + go.body.gravity.x : 0, gy = go.body.allowGravity ? this.physics.world.gravity.y + go.body.gravity.y : 0, length = Math.hypot(gx, gy), nx = length ? gx / length : 0, ny = length ? gy / length : 1, tx = ny, ty = -nx, normal = go.body.velocity.x * nx + go.body.velocity.y * ny;
+						go.body.setVelocity(tx * dx * o.speed + nx * normal, ty * dx * o.speed + ny * normal);
+						if (dx && go.setFlipX) go.setFlipX(dx < 0);
+						const side = Math.abs(nx) > Math.abs(ny) ? nx > 0 ? "right" : "left" : ny > 0 ? "down" : "up";
+						if (wantsJump && (go.body.blocked[side] || go.body.touching[side])) go.body.setVelocity(tx * dx * o.speed - nx * o.jump, ty * dx * o.speed - ny * o.jump);
+					};
+					if (!o.stop && o.behavior === "topdown" && go.body?.setVelocity) {
+						const len = Math.hypot(dx, dy) || 1;
+						go.body.setVelocity(dx / len * o.speed, dy / len * o.speed);
+						if (dx && go.setFlipX) go.setFlipX(dx < 0);
+					};
+					if (!o.stop && o.behavior === "patrol" && go.body?.setVelocityX) go.body.setVelocityX(Math.cos(time / 1500) * o.speed);
+					if (o.behavior === "rotate") go.angle += o.speed * delta / 1e3;
+				};
+				const zones = this.actors.filter((a) => a.def.behavior === "gravityZone" && a.go.active).sort((a, b) => (a.def.gravityField?.priority ?? 0) - (b.def.gravityField?.priority ?? 0));
+				for (const actor of this.actors) {
+					const go = actor.go, o = actor.def;
+					if (!go.active || !go.body || go.body.physicsType !== Phaser.Physics.Arcade.DYNAMIC_BODY) continue;
+					const b = o.bodySettings ?? {}, world = this.physics.world.gravity;
+					let gx = b.gravityMode === "replace" ? b.gravityX ?? 0 : world.x + (b.gravityMode === "add" ? b.gravityX ?? 0 : 0), gy = b.gravityMode === "replace" ? b.gravityY ?? 900 : world.y + (b.gravityMode === "add" ? b.gravityY ?? 0 : 0);
+					if (o.gravity && go.body.allowGravity) {
+						const center = go.body.center;
+						for (const zone of zones) {
+							const point = zone.go.getWorldTransformMatrix().applyInverse(center.x, center.y), r = zone.def.renderSettings, ox = r?.originX ?? .5, oy = r?.originY ?? .5;
+							if (point.x >= -zone.def.width * ox && point.x <= zone.def.width * (1 - ox) && point.y >= -zone.def.height * oy && point.y <= zone.def.height * (1 - oy)) {
+								const field = zone.def.gravityField;
+								if (field?.mode === "add") {
+									gx += field.x;
+									gy += field.y;
+								} else {
+									gx = field?.x ?? 0;
+									gy = field?.y ?? -700;
+								}
+							}
+						}
+					};
+					go.body.setGravity(gx - world.x, gy - world.y);
+				};
+				if (this.scoreText?.active) this.scoreText.setText("★ " + (vars.score ?? 0));
+				for (const actor of this.actors) {
+					if (actor.go.active && actor.def.textBinding && actor.go.setText) {
+						const text = this.logic?.format(actor.def.textBinding);
+						if (text !== undefined && actor.go.text !== text) actor.go.setText(text);
+					}
+				};
+				for (const event of def.events ?? []) if (event.trigger === "change") {
+					const value = this.logic?.read(event.variableId);
+					if (!Object.is(value, this.variableEvents.get(event.id))) {
+						this.variableEvents.set(event.id, value);
+						this.fireEvents([event], "change");
+					}
+				};
+				if (window.parent !== window && Math.floor(time / 250) !== Math.floor((time - delta) / 250)) window.parent.postMessage({
+					source: "phaser-forge-runtime",
+					level: "variables",
+					values: Object.fromEntries(project.variables.map((v) => [v.name, typeof vars[v.name] === "string" ? vars[v.name].slice(0, 512) : vars[v.name]]))
+				}, "*");
+				if (this.hooks.update) try {
+					this.hooks.update(this.ctx, time, delta);
+				} catch (e) {
+					report("error", `${def.name} update: ${e}`);
+					this.hooks.update = null;
+				};
+				this.gameplay?.update(delta);
+				this.interaction?.update(delta);
+				this.states?.after();
+				this.states?.endFrame();
+				this.rigs?.update(delta);
+				if (this.actorListDirty) this.pruneActors?.();
+			}
+		};
+	});
+	const first = options.startSceneId ?? project.startSceneId;
+	const index = project.scenes.findIndex((s) => s.id === first);
+	if (index > 0) {
+		const [entry] = scenes.splice(index, 1);
+		scenes.unshift(entry);
+	};
+	const game = new Phaser.Game({
+		autoFocus: options.autoFocus !== false,
+		type: options.renderer ?? Phaser.AUTO,
+		parent: "game",
+		width: project.width,
+		height: project.height,
+		backgroundColor: "#141a24",
+		pixelArt: project.pixelArt,
+		roundPixels: project.pixelArt,
+		render: { maxLights: Math.max(16, ...project.scenes.map((s) => s.lighting?.maxLights ?? 16)) },
+		banner: false,
+		scale: {
+			mode: Phaser.Scale.FIT,
+			autoCenter: Phaser.Scale.CENTER_BOTH
+		},
+		physics: {
+			default: "arcade",
+			arcade: {
+				gravity: {
+					x: 0,
+					y: 900
+				},
+				debug: !!options.debug
+			}
+		},
+		scene: scenes,
+		audio: { disableWebAudio: false }
+	});
+	let debugPaused = false, debugTime = 0;
+	const frameworkScene = () => game.scene.getScenes(false).find((s) => s.ctx && !overlayParents.has(s.scene.key) && (s.scene.isActive() || s.scene.isPaused()));
+	const busSounds = new Map();
+	const busGain = (sound) => sound.forgeMusicBus ? frameworkSettings?.musicVolume ?? 1 : frameworkSettings?.effectsVolume ?? 1;
+	if (project.framework?.enabled && project.framework.modules.settings && game.sound) {
+		const originalAdd = game.sound.add.bind(game.sound);
+		game.sound.add = (...args) => {
+			const sound = originalAdd(...args);
+			const output = sound.pannerNode ?? sound.spatialNode ?? sound.volumeNode;
+			const gain = output && game.sound.context?.createGain();
+			if (gain) {
+				output.disconnect(game.sound.destination);
+				output.connect(gain);
+				gain.connect(game.sound.destination);
+			};
+			const updateTagVolume = !gain && sound.updateVolume?.bind(sound);
+			if (updateTagVolume) sound.updateVolume = () => {
+				updateTagVolume();
+				if (sound.audio) sound.audio.volume *= busGain(sound);
+			};
+			const state = {
+				update: () => {
+					if (gain) gain.gain.setValueAtTime(busGain(sound), game.sound.context.currentTime);
+					else sound.updateVolume?.();
+				},
+				dispose: () => {
+					gain?.disconnect();
+				}
+			};
+			busSounds.set(sound, state);
+			sound.on("play", state.update);
+			sound.once("destroy", () => {
+				state.dispose();
+				busSounds.delete(sound);
+			});
+			state.update();
+			return sound;
+		};
+	};
+	if (project.framework?.enabled) framework = frameworkFactory?.(project, {
+		mount: document.getElementById("game") ?? document.body,
+		scene: () => {
+			const s = frameworkScene();
+			return s ? {
+				id: s.scene.key,
+				name: project.scenes.find((d) => d.id === s.scene.key)?.name ?? s.scene.key
+			} : undefined;
+		},
+		progress: async (operation, key) => {
+			const scene = frameworkScene();
+			if (!scene?.progress) throw Error("실행 중인 게임 씬이 없습니다.");
+			return scene.progress(operation, key);
+		},
+		storage: {
+			load: async (key, fallback) => await storage("load", key) ?? fallback,
+			save: (key, value) => storage("save", key, value),
+			remove: (key) => storage("remove", key)
+		},
+		vars,
+		run: (id, args) => {
+			const scene = frameworkScene();
+			scene?.ctx?.run(id, args);
+		},
+		pause: (paused) => {
+			if (paused === frameworkPaused) return;
+			frameworkPaused = paused;
+			if (paused) {
+				frameworkPausedScenes = game.scene.getScenes(true).map((s) => s.scene.key);
+				for (const id of frameworkPausedScenes) game.scene.pause(id);
+			} else {
+				for (const id of frameworkPausedScenes) if (game.scene.isPaused(id)) game.scene.resume(id);
+				frameworkPausedScenes = [];
+			}
+		},
+		navigate: (id) => {
+			if (!project.scenes.some((s) => s.id === id)) return;
+			for (const s of game.scene.getScenes(false)) if (s.scene.isActive() || s.scene.isPaused()) game.scene.stop(s.scene.key);
+			overlayParents.clear();
+			game.scene.start(id);
+		},
+		reset: () => {
+			pendingCheckpoint = null;
+			factions?.dispose();
+			factions = undefined;
+			requirementsRuntime?.progression.reset();
+			inventory?.restore({
+				version: 1,
+				quantities: Object.fromEntries((project.items ?? []).map((i) => [i.id, i.initialQuantity])),
+				equipment: {}
+			});
+		},
+		applySettings: (settings) => {
+			frameworkSettings = settings;
+			setMasterVolume(project.audioVolume * settings.masterVolume);
+			game.sound.mute = settings.muted;
+			if (game.sound.context) game.sound.masterMuteNode?.gain.setValueAtTime(settings.muted ? 0 : 1, game.sound.context.currentTime);
+			for (const state of busSounds.values()) state.update();
+			for (const s of game.scene.getScenes(false)) applyFrameworkKeys(s);
+			if (game.canvas) game.canvas.style.imageRendering = settings.pixelated ? "pixelated" : "auto";
+		},
+		fullscreen: async (enabled) => {
+			if (enabled) await document.documentElement.requestFullscreen?.();
+			else if (document.fullscreenElement) await document.exitFullscreen();
+		},
+		error: (message) => report("error", message)
+	});
+	const collectDebugSnapshot = (only) => {
+		const objectIds = only ? new Set(only.filter((w) => w.kind === "object").map((w) => w.sceneId + ":" + w.targetId)) : undefined;
+		const sceneIds = only ? new Set(only.filter((w) => w.kind !== "variable").map((w) => w.sceneId)) : undefined;
+		const runtimeScenes = game.scene.getScenes(false).filter((s) => s.objectMap && (s.scene.isActive() || s.scene.isPaused()) && (!sceneIds || sceneIds.has(s.scene.key)));
+		const objects = runtimeScenes.flatMap((s) => [...s.objectMap].filter(([id]) => !objectIds || objectIds.has(s.scene.key + ":" + id)).map(([id, object]) => {
+			const o = object.getData?.("forgeAnchor") ?? object, m = o.getWorldTransformMatrix?.();
+			return {
+				id,
+				sceneId: s.scene.key,
+				name: object.name || id,
+				active: object.active,
+				x: o.x,
+				y: o.y,
+				rotation: o.angle,
+				opacity: o.alpha,
+				scaleX: o.scaleX,
+				scaleY: o.scaleY,
+				visible: o.visible,
+				worldX: m?.tx ?? o.x,
+				worldY: m?.ty ?? o.y,
+				velocityX: object.body?.velocity?.x,
+				velocityY: object.body?.velocity?.y,
+				body: object.body ? {
+					x: object.body.x,
+					y: object.body.y,
+					width: object.body.width,
+					height: object.body.height
+				} : null
+			};
+		}));
+		return {
+			source: "phaser-forge-runtime",
+			level: "inspect",
+			objects,
+			values: { ...vars },
+			music: musicRuntime?.status(),
+			states: only && !only.some((w) => w.kind === "state") ? [] : runtimeScenes.flatMap((s) => (s.states?.inspect() ?? []).map((entry) => ({
+				...entry,
+				sceneId: s.scene.key
+			}))),
+			timelines: runtimeScenes.flatMap((s) => s.timeline?.status() ?? [])
+		};
+	};
+	const debugSnapshot = () => {
+		if (window.parent !== window) window.parent.postMessage(collectDebugSnapshot(), "*");
+		observatory?.flush();
+	};
+	const debugVariableNames = options.editorInspection ? new Map(project.variables.map((v) => [v.id, v.name])) : undefined;
+	if (options.editorInspection && window.parent !== window) observatory = observatoryFactory?.({
+		sample: collectDebugSnapshot,
+		variableName: (id) => debugVariableNames?.get(id),
+		send: (packet) => window.parent.postMessage({
+			source: "phaser-forge-runtime",
+			level: "observation",
+			packet
+		}, "*"),
+		pause: () => {
+			if (!debugPaused) {
+				debugPaused = true;
+				debugTime = game.loop.time;
+				game.loop.sleep();
+				game.sound.pauseAll();
+			}
+		}
+	});
+	const observationTimer = observatory ? setInterval(() => observatory?.flush(), 100) : undefined;
+	if (options.observatoryConfig) observatory?.configure(options.observatoryConfig);
+	const commands = (e) => {
+		if (e.source !== window.parent || e.data?.source !== "phaser-forge-editor") return;
+		if (e.data.action === "observeConfigure") observatory?.configure(e.data.config ?? { enabled: false });
+		if (e.data.action === "observeClear") observatory?.clear();
+		if (e.data.action === "pause") {
+			debugPaused = true;
+			debugTime = game.loop.time;
+			game.loop.sleep();
+			game.sound.pauseAll();
+		};
+		if (e.data.action === "resume") {
+			debugPaused = false;
+			game.loop.wake();
+			game.sound.resumeAll();
+		};
+		if (e.data.action === "step" && debugPaused) {
+			debugTime += 1e3 / 60;
+			game.loop.frame++;
+			game.loop.time = debugTime;
+			game.loop.delta = 1e3 / 60;
+			game.step(debugTime, 1e3 / 60);
+			debugSnapshot();
+		};
+		if (e.data.action === "effectPreview") {
+			const s = game.scene.getScenes(true).find((s) => s.ctx);
+			if (s?.effects && e.data.preset) {
+				const views = s.forgeEffectPreviewViews ??= new Map(s.cameras.cameras.map((c) => [c, {
+					x: c.x,
+					y: c.y,
+					width: c.width,
+					height: c.height,
+					zoomX: c.zoomX,
+					zoomY: c.zoomY,
+					scrollX: c.scrollX,
+					scrollY: c.scrollY,
+					rotation: c.rotation,
+					visible: c.visible,
+					useBounds: c.useBounds,
+					bounds: c._bounds && {
+						x: c._bounds.x,
+						y: c._bounds.y,
+						width: c._bounds.width,
+						height: c._bounds.height
+					},
+					follow: c._follow,
+					lerpX: c.lerp?.x,
+					lerpY: c.lerp?.y,
+					offsetX: c.followOffset?.x,
+					offsetY: c.followOffset?.y,
+					roundPixels: c.roundPixels
+				}]));
+				for (const c of s.cameras.cameras) s.effects.stop(c, undefined, "forge-preview");
+				for (const go of s.ctx.objects.values()) s.effects.stop(go, undefined, "forge-preview");
+				for (const [c, b] of views) {
+					c.stopFollow();
+					c.removeBounds();
+					c.setViewport(b.x, b.y, b.width, b.height).setZoom(b.zoomX, b.zoomY).setRotation(b.rotation).setScroll(b.scrollX, b.scrollY).setVisible(b.visible);
+					if (b.useBounds && b.bounds) c.setBounds(b.bounds.x, b.bounds.y, b.bounds.width, b.bounds.height);
+					if (b.follow) c.startFollow(b.follow, b.roundPixels, b.lerpX, b.lerpY, b.offsetX, b.offsetY);
+				};
+				s.effects.upsert(e.data.preset);
+				const target = e.data.mode === "camera" ? s.cameras.cameras.find((c) => c.forgeCameraId === e.data.cameraId) ?? s.cameras.main : s.ctx.find(e.data.targetId || "효과 대상");
+				const object = e.data.mode === "camera" ? null : s.ctx.find(e.data.targetId || "효과 대상");
+				if (e.data.fit && target) {
+					const view = e.data.mode === "camera" ? target : s.cameras.cameras.find((c) => c.visible && !(object.cameraFilter & c.id)) ?? s.cameras.main;
+					const width = game.scale.width, height = game.scale.height;
+					for (const c of s.cameras.cameras) c.setVisible(c === view);
+					view.stopFollow();
+					view.removeBounds();
+					if (e.data.mode === "camera") {
+						const b = views.get(view), factor = Math.min(width / b.width, height / b.height);
+						view.setViewport((width - b.width * factor) / 2, (height - b.height * factor) / 2, b.width * factor, b.height * factor).setZoom(b.zoomX * factor, b.zoomY * factor);
+						view.centerOn(b.scrollX + b.width / 2, b.scrollY + b.height / 2);
+					} else {
+						const b = object.getBounds();
+						view.setViewport(0, 0, width, height).setRotation(0);
+						view.setZoom(Math.max(.001, Math.min(16, Math.min(width / Math.max(1, b.width), height / Math.max(1, b.height)) * .75)));
+						view.centerOn(b.centerX, b.centerY);
+					}
+				};
+				if (e.data.enabled !== false) s.effects.play(target, e.data.preset.id, { key: "forge-preview" });
+			}
+		};
+		if (e.data.action === "debugCommand") {
+			if (!options.editorInspection) return;
+			const requestId = String(e.data.requestId ?? "").slice(0, 100), d = e.data.command ?? {}, reply = (ok, value, message) => {
+				window.parent.postMessage({
+					source: "phaser-forge-runtime",
+					level: "debugResult",
+					result: {
+						requestId,
+						ok,
+						value,
+						message
+					}
+				}, "*");
+				debugSnapshot();
+			};
+			try {
+				const typed = (type, input) => {
+					if (type === "number") {
+						if (input === null || typeof input === "object" || typeof input === "boolean" || typeof input === "string" && !input.trim() || !Number.isFinite(Number(input))) throw Error("유한한 숫자를 입력하세요.");
+						return Number(input);
+					};
+					if (type === "boolean") {
+						if (input === true || input === "true") return true;
+						if (input === false || input === "false") return false;
+						throw Error("참/거짓 값을 확인하세요.");
+					};
+					if (input && typeof input === "object") throw Error("문자열을 입력하세요.");
+					return String(input ?? "").slice(0, 1e4);
+				};
+				if (d.action === "getVariable" || d.action === "setVariable") {
+					const v = project.variables.find((v) => v.id === d.id);
+					if (!v) throw Error("정식 게임 변수를 선택하세요.");
+					if (d.action === "getVariable") reply(true, vars[v.name]);
+					else {
+						const value = typed(v.type, d.value), before = vars[v.name];
+						vars[v.name] = value;
+						observatory?.variableChanged(v.id, before, value, "점검 중 수정");
+						reply(true, value, "적용됨");
+					};
+					return;
+				};
+				let s = game.scene.getScenes(true).find((s) => s.scene.key === d.sceneId);
+				if (d.action === "game" && typeof s?.data?.get?.("spaceGame")?.debug !== "function") s = game.scene.getScenes(true).find((scene) => typeof scene.data?.get?.("spaceGame")?.debug === "function");
+				if (!s?.ctx) throw Error("선택한 씬이 실행 중이 아닙니다.");
+				if (d.action === "game") {
+					const api = s.data?.get?.("spaceGame");
+					if (typeof api?.debug !== "function") throw Error("이 게임은 전용 값 점검을 제공하지 않습니다.");
+					if (!/^(\$fields|credits|tick|ship\.(hull|shield|energy|heat|fuel|speed|velocity\.[xy]))$/.test(String(d.path))) throw Error("편집할 수 없는 게임 값입니다.");
+					const result = api.debug({
+						path: d.path,
+						...Object.hasOwn(d, "value") ? { value: typed("number", d.value) } : {}
+					});
+					if (!result?.ok) throw Error(result?.reason ?? "게임 값 적용이 거절됐습니다.");
+					reply(true, result.value, Object.hasOwn(d, "value") ? "게임 값 적용됨" : "게임 값");
+					return;
+				};
+				if (d.action === "runFunction") {
+					const fn = project.functions?.find((f) => f.id === d.id);
+					if (!fn) throw Error("함수를 찾지 못했습니다.");
+					if (d.objectId && !s.objectMap?.get(d.objectId)?.active) throw Error("함수 실행 대상이 없습니다.");
+					const input = d.args ?? {};
+					if (!input || typeof input !== "object" || Array.isArray(input) || Object.keys(input).some((key) => !fn.parameters.some((p) => p.name === key))) throw Error("함수 인수를 확인하세요.");
+					const args = Object.fromEntries(fn.parameters.map((p) => [p.name, typed(p.type, Object.hasOwn(input, p.name) ? input[p.name] : p.value)])), accepted = s.logic.run(fn.id, args, d.objectId || undefined, [], { remaining: 512 }, () => true, () => !!s.runToken?.active);
+					if (accepted === false) throw Error("함수 실행이 거절됐습니다. 실행 기록을 확인하세요.");
+					reply(true, args, "함수 실행 요청됨");
+					return;
+				};
+				if (d.action === "setObject") {
+					const object = s.objectMap?.get(d.id);
+					if (!object?.active) throw Error("편집할 실행 오브젝트가 없습니다.");
+					const property = d.property, go = object.getData?.("forgeAnchor") ?? object;
+					if (![
+						"x",
+						"y",
+						"rotation",
+						"opacity",
+						"visible",
+						"velocityX",
+						"velocityY"
+					].includes(property)) throw Error("읽기 전용 속성입니다.");
+					const value = typed(property === "visible" ? "boolean" : "number", d.value);
+					if (property === "visible") go.visible = value;
+					else if (property === "rotation") go.angle = value;
+					else if (property === "opacity") {
+						if (Number(value) < 0 || Number(value) > 1) throw Error("불투명도는 0~1입니다.");
+						go.alpha = value;
+					} else if (property === "velocityX" || property === "velocityY") {
+						const setter = property === "velocityX" ? "setVelocityX" : "setVelocityY";
+						if (typeof object.body?.[setter] !== "function") throw Error("물리 몸체가 없어 속도를 수정할 수 없습니다.");
+						object.body[setter](value);
+					} else {
+						if (Math.abs(Number(value)) > 1e7) throw Error("위치 범위를 넘었습니다.");
+						go[property] = value;
+					};
+					go.body?.updateFromGameObject?.();
+					s.refreshStaticBodies?.();
+					reply(true, value, "적용됨");
+					return;
+				};
+				if (d.action === "stateCommand" && d.command === "set") {
+					const binding = s.states?.inspect().find((row) => row.owner === (d.owner || "") && row.bindingId === d.bindingId), parameter = binding?.parameters.find((p) => p.id === d.key || p.name === d.key);
+					if (!parameter) throw Error("실행 중인 상태 매개변수가 없습니다.");
+					if (parameter.type === "trigger") throw Error("트리거는 값으로 수정할 수 없습니다.");
+					const value = typed(parameter.type ?? typeof parameter.value, d.value);
+					s.states.set(d.owner || "", d.key, value, d.bindingId);
+					reply(true, value, "적용됨");
+					return;
+				};
+				throw Error("지원하지 않는 점검 명령입니다.");
+			} catch (error) {
+				reply(false, undefined, error instanceof Error ? error.message : String(error));
+			};
+			return;
+		};
+		if (e.data.action === "inspect") debugSnapshot();
+		if (e.data.action === "stateCommand") {
+			const s = game.scene.getScenes(true).find((s) => s.scene.key === e.data.sceneId), d = e.data, owner = d.owner || "", machine = d.bindingId;
+			if (s?.states && s.states.inspect().some((entry) => entry.owner === owner && entry.bindingId === machine)) {
+				if (d.command === "set") s.states.set(owner, d.key, d.value, machine);
+				else if (d.command === "trigger") s.states.trigger(owner, d.key, machine);
+				else if (d.command === "signal") s.states.signal(owner, String(d.key).slice(0, 200), machine);
+				else if (d.command === "change") s.states.change(owner, d.layerId, d.stateId, machine);
+				else if (d.command === "enable") s.states.enable(owner, !!d.value, machine);
+				else if (d.command === "layer") s.states.enableLayer(owner, d.layerId, !!d.value, machine);
+				else if (d.command === "reset") s.states.reset(owner, machine);
+				debugSnapshot();
+			}
+		};
+		if (e.data.action === "setVariable") {
+			const variable = project.variables.find((v) => v.id === e.data.id);
+			if (variable) {
+				const value = variable.type === "number" ? Number(e.data.value) : variable.type === "boolean" ? e.data.value === true || e.data.value === "true" : String(e.data.value ?? "").slice(0, 1e4);
+				if (variable.type !== "number" || Number.isFinite(value)) {
+					const before = vars[variable.name];
+					vars[variable.name] = value;
+					observatory?.variableChanged(variable.id, before, value, "점검 중 수정");
+					debugSnapshot();
+				}
+			}
+		};
+		if (e.data.action === "setObject") {
+			const scene = game.scene.getScenes(true).find((s) => s.scene.key === e.data.sceneId), object = scene?.objectMap?.get(e.data.id), property = e.data.property, value = Number(e.data.value);
+			if (object && Number.isFinite(value) && [
+				"x",
+				"y",
+				"rotation",
+				"opacity",
+				"visible",
+				"velocityX",
+				"velocityY"
+			].includes(property)) {
+				const go = object.getData?.("forgeAnchor") ?? object;
+				if (property === "rotation") go.angle = value;
+				else if (property === "opacity") go.alpha = Math.max(0, Math.min(1, value));
+				else if (property === "visible") go.visible = value >= .5;
+				else if (property === "velocityX" && object.body?.setVelocityX) object.body.setVelocityX(value);
+				else if (property === "velocityY" && object.body?.setVelocityY) object.body.setVelocityY(value);
+				else if (property === "x" || property === "y") go[property] = Math.max(-1e7, Math.min(1e7, value));
+				go.body?.updateFromGameObject?.();
+				scene.refreshStaticBodies?.();
+				debugSnapshot();
+			}
+		};
+		if (e.data.action === "runFunction") {
+			const scene = game.scene.getScenes(true).find((s) => s.scene.key === e.data.sceneId) || game.scene.getScenes(true).find((s) => s.ctx);
+			if (scene?.logic && project.functions?.some((f) => f.id === e.data.id)) {
+				try {
+					scene.logic.run(e.data.id, e.data.args && typeof e.data.args === "object" ? e.data.args : {}, e.data.objectId || undefined, [], { remaining: 512 }, () => true, () => !!scene.runToken?.active);
+				} catch (error) {
+					report("error", error);
+				}
+			};
+			debugSnapshot();
+		};
+		if (e.data.action === "inventory" && inventory) {
+			const item = project.items?.find((i) => i.id === e.data.itemId);
+			if (!item) return;
+			activeItemScene = game.scene.getScenes(true).find((s) => s.ctx) ?? activeItemScene;
+			try {
+				if (e.data.operation === "use") inventory.use(item.id);
+				if (e.data.operation === "equip") inventory.equip(item.id);
+				if (e.data.operation === "unequip") inventory.unequip(item.slot);
+			} catch (error) {
+				report("error", error);
+			}
+		}
+	};
+	window.addEventListener("message", commands);
+	const stats = setInterval(() => {
+		if (window.parent !== window) window.parent.postMessage({
+			source: "phaser-forge-runtime",
+			level: "stats",
+			inventory: inventory?.serialize(),
+			fps: game.loop.actualFps,
+			objects: game.scene.getScenes(true).reduce((n, s) => n + s.children.length, 0)
+		}, "*");
+	}, 1e3);
+	game.events.once("destroy", () => {
+		observatory?.dispose();
+		clearInterval(observationTimer);
+		framework?.dispose();
+		musicRuntime?.destroy();
+		factions?.dispose();
+		clearInterval(stats);
+		window.removeEventListener("message", commands);
+	});
+	return game;
+})(Phaser,project,{},function createGameLogic(project, vars, effects) {
+	const definitions = new Map(project.variables.map((v) => [v.id, v]));
+	const functions = new Map((project.functions ?? []).map((f) => [f.id, f]));
+	let callSequence = 0;
+	const pending = new Map();
+	const convert = (value, type) => type === "number" ? Number.isFinite(Number(value)) ? Number(value) : 0 : type === "boolean" ? value === true || value === "true" : String(value ?? "");
+	const read = (ref, args) => !ref ? "" : ref.source === "definition" ? (() => {
+		const [definitionId, fieldId] = ref.value.split("/");
+		const d = project.definitions?.find((d) => d.id === definitionId && d.published), f = d?.fields.find((f) => f.id === fieldId && f.published);
+		if (!f) return "";
+		if (f.type === "number") return Number(f.value) || 0;
+		if (f.type === "boolean") return f.value === "true";
+		if ([
+			"json",
+			"reference-list",
+			"resource",
+			"resource-list"
+		].includes(f.type)) {
+			try {
+				return JSON.parse(f.value);
+			} catch {
+				return null;
+			}
+		};
+		return f.value;
+	})() : ref.source === "variable" ? vars[definitions.get(ref.value)?.name ?? ""] : ref.source === "parameter" ? args[ref.value] : ref.value;
+	const format = (binding) => {
+		const v = definitions.get(binding.variableId);
+		let value = v ? vars[v.name] : "";
+		if (typeof value === "number") value = binding.digits > 0 ? value.toFixed(binding.digits) : String(value);
+		return binding.prefix + String(value ?? "") + binding.suffix;
+	};
+	const describe = (text) => text.replace(/\{\{([A-Za-z_$][\w$]*)\}\}/g, (_, name) => String(vars[name] ?? ""));
+	const run = (id, input = {}, target, stack = [], budget = { remaining: 512 }, done = () => true, active = () => true, parentCallId) => {
+		const fn = functions.get(id);
+		const watching = !!effects.observe && !!effects.observing?.(id, stack);
+		const callId = watching ? String(++callSequence) : "";
+		const started = watching ? Date.now() : 0;
+		let ended = false;
+		const emit = (kind, detail = {}) => {
+			if (!watching) return;
+			try {
+				effects.observe?.({
+					kind,
+					functionId: id,
+					functionName: fn?.name ?? id,
+					callId,
+					parentCallId,
+					stack: [...stack, id],
+					time: Date.now(),
+					target,
+					...detail
+				});
+			} catch {}
+		};
+		const end = (kind = "return", message) => {
+			if (!watching || ended) return;
+			ended = true;
+			pending.delete(callId);
+			emit(kind, {
+				duration: Date.now() - started,
+				message
+			});
+		};
+		const fail = (message) => {
+			emit("error", { message });
+			effects.error(message);
+		};
+		if (!fn) {
+			fail("연결된 게임 함수를 찾을 수 없습니다.");
+			return false;
+		};
+		if (stack.includes(id) || stack.length >= 16) {
+			fail("게임 함수의 순환 호출을 중단했습니다: " + fn.name);
+			return false;
+		};
+		const args = Object.fromEntries(fn.parameters.map((p) => [p.name, convert(Object.hasOwn(input, p.name) ? input[p.name] : p.value, p.type)]));
+		emit("call", { args });
+		if (watching) pending.set(callId, () => end("cancel", "씬 종료로 중단"));
+		const complete = () => {
+			end();
+			return done();
+		};
+		const execute = (steps, finish = complete) => {
+			if (!active()) {
+				end("cancel");
+				return false;
+			};
+			try {
+				for (let index = 0; index < steps.length; index++) {
+					if (!active()) {
+						end("cancel");
+						return false;
+					};
+					const step = steps[index], rest = () => execute(steps.slice(index + 1), finish);
+					if (watching) emit("step", {
+						stepId: step.id,
+						stepKind: step.kind
+					});
+					if (--budget.remaining < 0) {
+						fail("한 이벤트의 동작이 512개를 넘었습니다.");
+						end("cancel");
+						return false;
+					};
+					if (step.kind === "script") {
+						if (!effects.script) throw Error("공통 코드 호출은 게임 실행에서 확인하세요.");
+						const input = Object.fromEntries(Object.entries(step.scriptArgs ?? {}).map(([key, value]) => [key, read(value, args)]));
+						const result = effects.script(step.targetId ?? "", step.property ?? "", input, step.objectId === "$self" ? target ?? "" : step.objectId || target || "");
+						const record = (value) => {
+							if (!step.resultVariableId) return;
+							const variable = definitions.get(step.resultVariableId);
+							if (!variable) throw Error("코드 실행 결과의 변수가 연결되지 않았습니다.");
+							const before = vars[variable.name], after = convert(value, variable.type);
+							vars[variable.name] = after;
+							effects.variableChanged?.(variable.id, before, after, id);
+							emit("variable", {
+								variableId: variable.id,
+								before,
+								after,
+								stepId: step.id
+							});
+						};
+						if (result && typeof result.then === "function") {
+							emit("wait", {
+								stepId: step.id,
+								message: "공통 코드 응답 대기"
+							});
+							void Promise.resolve(result).then((value) => {
+								if (!active()) {
+									end("cancel");
+									return;
+								};
+								record(value);
+								emit("resume");
+								rest();
+							}).catch((error) => {
+								if (active()) fail(String(error));
+								end("cancel");
+							});
+							return true;
+						};
+						record(result);
+						continue;
+					};
+					if (step.kind === "wait") {
+						if (!effects.wait) {
+							fail("동작 대기는 게임 실행에서 확인하세요.");
+							end("cancel");
+							return false;
+						};
+						emit("wait", {
+							duration: Math.max(16, step.duration ?? 500),
+							stepId: step.id
+						});
+						effects.wait(Math.max(16, step.duration ?? 500), () => {
+							if (!active()) {
+								end("cancel");
+								return;
+							};
+							emit("resume");
+							rest();
+						});
+						return true;
+					};
+					if (step.kind === "storage") {
+						if (!effects.storage) {
+							fail("게임 저장·불러오기는 게임 실행에서 확인하세요.");
+							end("cancel");
+							return false;
+						};
+						emit("wait", {
+							message: "저장 장치 응답 대기",
+							stepId: step.id
+						});
+						void effects.storage(step.property ?? "save", step.text || "checkpoint").then((ok) => {
+							if (ok === undefined) {
+								end("cancel", "불러오기 후 씬 재시작");
+								return;
+							};
+							emit("resume");
+							execute(ok ? step.then ?? [] : step.otherwise ?? [], rest);
+						}).catch((error) => {
+							fail(String(error));
+							execute(step.otherwise ?? [], rest);
+						});
+						return true;
+					};
+					if (step.kind === "requirements" || step.kind === "progression") {
+						const result = effects.requirement?.(step, read(step.value, args)) ?? {
+							passed: false,
+							reasons: ["조건과 진행 판정기를 게임 실행에서 확인하세요."]
+						};
+						for (const [variableId, value, type] of [[
+							step.resultVariableId,
+							result.passed,
+							"boolean"
+						], [
+							step.reasonVariableId,
+							result.reasons.join("\n"),
+							"string"
+						]]) {
+							if (!variableId) continue;
+							const variable = definitions.get(variableId);
+							if (!variable || variable.type !== type) {
+								fail("조건 판정 결과의 " + (type === "boolean" ? "참거짓" : "문자열") + " 변수를 확인하세요.");
+								continue;
+							};
+							const before = vars[variable.name];
+							vars[variable.name] = value;
+							effects.variableChanged?.(variable.id, before, value, id);
+						};
+						emit("condition", {
+							stepId: step.id,
+							after: result.passed,
+							message: result.reasons.join(" / ")
+						});
+						return execute(result.passed ? step.then ?? [] : step.otherwise ?? [], rest);
+					};
+					if ([
+						"object",
+						"tween",
+						"spawn",
+						"destroy",
+						"camera",
+						"gravity",
+						"item",
+						"timeline",
+						"state",
+						"music",
+						"effect",
+						"rig",
+						"agent",
+						"combat",
+						"framework",
+						"lighting",
+						"interaction",
+						"particles",
+						"motionPath",
+						"collision",
+						"faction",
+						"connection",
+						"projectileGuidance"
+					].includes(step.kind)) {
+						effects.action?.(step.targetValue ? {
+							...step,
+							targetId: String(read(step.targetValue, args) ?? "")
+						} : step, read(step.value, args), step.objectId === "$self" ? target : step.objectId || target, step.kind === "spawn" ? Object.fromEntries(Object.entries(step.spawnValues ?? {}).map(([key, value]) => [key, read(value, args)])) : undefined);
+					} else if (step.kind === "value") {
+						const variable = definitions.get(step.variableId ?? "");
+						if (!variable) {
+							fail(fn.name + ": 변수가 연결되지 않았습니다.");
+							continue;
+						};
+						const value = convert(read(step.value, args), variable.type);
+						let next = value;
+						if (step.operation && step.operation !== "set" && variable.type === "number") {
+							const before = Number(vars[variable.name]) || 0, n = Number(value);
+							next = step.operation === "add" ? before + n : step.operation === "subtract" ? before - n : before * n;
+						};
+						if (typeof next === "number" && !Number.isFinite(next)) {
+							fail(fn.name + ": 계산 결과가 수의 범위를 벗어났습니다.");
+							continue;
+						};
+						const before = vars[variable.name];
+						vars[variable.name] = next;
+						if (watching) emit("variable", {
+							stepId: step.id,
+							variableId: variable.id,
+							before,
+							after: next
+						});
+						try {
+							effects.variableChanged?.(variable.id, before, next, id);
+						} catch {}
+					} else if (step.kind === "condition") {
+						const variable = definitions.get(step.variableId ?? "");
+						if (!variable) {
+							fail(fn.name + ": 조건 변수가 연결되지 않았습니다.");
+							continue;
+						};
+						const a = vars[variable.name], b = convert(read(step.value, args), variable.type);
+						const yes = step.compare === "eq" ? a === b : step.compare === "ne" ? a !== b : step.compare === "lt" ? Number(a) < Number(b) : step.compare === "lte" ? Number(a) <= Number(b) : step.compare === "gt" ? Number(a) > Number(b) : Number(a) >= Number(b);
+						if (watching) emit("condition", {
+							stepId: step.id,
+							variableId: variable.id,
+							before: a,
+							after: yes
+						});
+						return execute(yes ? step.then ?? [] : step.otherwise ?? [], rest);
+					} else if (step.kind === "scene") {
+						end("cancel", "씬 이동");
+						effects.scene(step.targetId ?? "", step.property);
+						return false;
+					} else if (step.kind === "sound") {
+						const resource = step.property === "definition" ? read(step.value, args) : null;
+						const id = step.property === "definition" ? resource?.kind === "asset" ? resource.assetId : "" : step.targetId;
+						if (id && (step.property !== "definition" || project.assets.some((a) => a.id === id && a.type === "audio"))) effects.sound(id);
+						else fail(fn.name + ": 재생할 소리 연결을 확인하세요.");
+					} else if (step.kind === "message") effects.message(describe(step.text ?? ""));
+					else if (step.kind === "animation") {
+						const resource = step.property === "definition" ? read(step.value, args) : null;
+						const id = step.property === "definition" ? resource?.kind === "animation" ? resource.animationId : "" : step.targetId;
+						if (id && (step.property !== "definition" || project.animations.some((a) => a.id === id))) effects.animation(id, step.objectId || target);
+						else fail(fn.name + ": 재생할 애니메이션 연결을 확인하세요.");
+					} else if (step.kind === "function") {
+						const childResult = run(step.targetId ?? "", args, target, [...stack, id], budget, rest, active, callId || parentCallId);
+						if (!childResult) end("cancel", "하위 함수 중단");
+						return childResult;
+					}
+				};
+				return finish();
+			} catch (error) {
+				emit("error", { message: String(error) });
+				end("cancel");
+				throw error;
+			}
+		};
+		return execute(fn.steps);
+	};
+	return {
+		run,
+		format,
+		cancelObservations: () => {
+			for (const cancel of [...pending.values()]) cancel();
+			pending.clear();
+		},
+		read: (id) => vars[definitions.get(id)?.name ?? ""]
+	};
+},function createInventory(project, effect = () => {}, canUse = () => true) {
+	const definitions = project.items ?? [], quantities = new Map(definitions.map((i) => [i.id, i.initialQuantity])), equipment = new Map();
+	const find = (id) => definitions.find((i) => i.id === id || i.key === id);
+	const count = (id) => quantities.get(find(id)?.id ?? "") ?? 0;
+	const amount = (n) => Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+	let depth = 0;
+	const fire = (id, itemId) => {
+		if (!id) return;
+		if (depth >= 8) throw new Error("아이템 효과가 순환 호출됩니다.");
+		depth++;
+		try {
+			effect(id, itemId);
+		} finally {
+			depth--;
+		}
+	};
+	const unequip = (slot) => {
+		const id = equipment.get(slot), item = id ? find(id) : undefined;
+		if (!item) return false;
+		equipment.delete(slot);
+		fire(item.onUnequip, item.id);
+		return true;
+	};
+	const give = (id, n = 1) => {
+		const item = find(id);
+		if (!item) return 0;
+		const before = count(id), after = Math.min(item.stackLimit, before + amount(n));
+		quantities.set(item.id, after);
+		return after - before;
+	};
+	const take = (id, n = 1) => {
+		const item = find(id);
+		if (!item) return 0;
+		const removed = Math.min(count(id), amount(n));
+		quantities.set(item.id, count(id) - removed);
+		if (!count(id)) {
+			for (const [slot, equipped] of equipment) if (equipped === item.id) unequip(slot);
+		};
+		return removed;
+	};
+	return {
+		count,
+		give,
+		take,
+		list: () => definitions.filter((i) => count(i.id) > 0).map((i) => ({
+			item: i,
+			quantity: count(i.id)
+		})),
+		use: (id) => {
+			const item = find(id);
+			if (!item || !count(id) || !canUse(item.id)) return false;
+			if (item.consumable) take(item.id, 1);
+			fire(item.onUse, item.id);
+			return true;
+		},
+		equip: (id) => {
+			const item = find(id);
+			if (!item || !item.slot || !count(id)) return false;
+			if (equipment.get(item.slot) === item.id) return true;
+			unequip(item.slot);
+			equipment.set(item.slot, item.id);
+			fire(item.onEquip, item.id);
+			return true;
+		},
+		unequip,
+		equipment: () => Object.fromEntries(equipment),
+		stats: () => {
+			const result = Object.create(null);
+			for (const id of new Set(equipment.values())) for (const stat of find(id)?.stats ?? []) result[stat.name] = (result[stat.name] || 0) + stat.value;
+			return result;
+		},
+		weight: () => definitions.reduce((sum, item) => sum + count(item.id) * item.weight, 0),
+		serialize: () => ({
+			version: 1,
+			quantities: Object.fromEntries(quantities),
+			equipment: Object.fromEntries(equipment)
+		}),
+		restore: (value) => {
+			const data = value;
+			if (!data || data.version !== 1 || !data.quantities || typeof data.quantities !== "object" || !data.equipment || typeof data.equipment !== "object") return false;
+			const next = new Map(definitions.map((i) => [i.id, Math.min(i.stackLimit, amount(Number(data.quantities[i.id] ?? 0)))]));
+			quantities.clear();
+			next.forEach((n, id) => quantities.set(id, n));
+			equipment.clear();
+			for (const [slot, id] of Object.entries(data.equipment)) {
+				const item = find(String(id));
+				if (item?.slot === slot && count(item.id)) equipment.set(slot, item.id);
+			};
+			return true;
+		}
+	};
+},function publishedDefinitions(definitions = []) {
+	const value = (f) => {
+		if (f.type === "number") return Number.isFinite(Number(f.value)) ? Number(f.value) : 0;
+		if (f.type === "boolean") return f.value === "true";
+		if ([
+			"json",
+			"reference-list",
+			"resource",
+			"resource-list"
+		].includes(f.type)) {
+			try {
+				return JSON.parse(f.value);
+			} catch {
+				return null;
+			}
+		};
+		return f.value;
+	};
+	return Object.fromEntries(definitions.filter((d) => d.published).map((d) => [d.key, Object.fromEntries(d.fields.filter((f) => f.published).map((f) => [f.key, value(f)]))]));
+},function createTimelinePlayer(project, sceneId, effects) {
+	const timelines = new Map((project.timelines ?? []).filter((t) => t.sceneId === sceneId).map((t) => [t.id, {
+		...t,
+		tracks: t.tracks.map((track) => ({
+			...track,
+			keys: [...track.keys].sort((a, b) => a.time - b.time)
+		}))
+	}]));
+	const states = new Map();
+	const ease = (kind, n) => {
+		if (kind === "hold") return n === 1 ? 1 : 0;
+		if (kind === "sine") return (1 - Math.cos(Math.PI * n)) / 2;
+		if (kind === "quad") return n * n;
+		if (kind === "cubic") return 1 - (1 - n) ** 3;
+		if (kind === "back") {
+			const c = 1.70158;
+			return 1 + (c + 1) * (n - 1) ** 3 + c * (n - 1) ** 2;
+		};
+		if (kind === "bounce") {
+			const c = 7.5625, d = 2.75;
+			if (n < 1 / d) return c * n * n;
+			if (n < 2 / d) return c * (n -= 1.5 / d) * n + .75;
+			if (n < 2.5 / d) return c * (n -= 2.25 / d) * n + .9375;
+			return c * (n -= 2.625 / d) * n + .984375;
+		};
+		return n;
+	};
+	const sample = (track, time) => {
+		const keys = track.keys;
+		if (!keys.length) return undefined;
+		if (time <= keys[0].time) return keys[0].value;
+		let low = 0, high = keys.length - 1;
+		while (low < high) {
+			const mid = Math.ceil((low + high) / 2);
+			if (keys[mid].time <= time) low = mid;
+			else high = mid - 1;
+		};
+		const a = keys[low], b = keys[low + 1];
+		if (!b || time === a.time) return a.value;
+		if (track.property === "visible" || track.property === "frame") return a.value;
+		const n = (time - a.time) / (b.time - a.time);
+		return a.value + (b.value - a.value) * ease(a.ease, n);
+	};
+	const position = (t, elapsed) => {
+		const active = Math.max(0, elapsed - t.delay), span = t.duration * (t.yoyo ? 2 : 1), total = t.repeat < 0 ? Infinity : span * (t.repeat + 1), complete = active >= total;
+		let part = complete ? span : active % span;
+		if (t.yoyo && part > t.duration) part = 2 * t.duration - part;
+		return {
+			time: Math.max(0, Math.min(t.duration, part)),
+			complete,
+			active: elapsed >= t.delay
+		};
+	};
+	const apply = (t, time) => {
+		for (const track of t.tracks) if (track.enabled) {
+			const value = sample(track, time);
+			if (value !== undefined) effects.apply(track.objectId, track.property, value);
+		}
+	};
+	const seek = (id, time) => {
+		const t = timelines.get(id);
+		if (!t) return false;
+		const state = states.get(id) ?? {
+			time: 0,
+			playing: false,
+			complete: false
+		};
+		state.time = t.delay + Math.max(0, Math.min(t.duration, time));
+		state.complete = false;
+		states.set(id, state);
+		apply(t, Math.max(0, Math.min(t.duration, time)));
+		return true;
+	};
+	const play = (id, restart = true) => {
+		const t = timelines.get(id);
+		if (!t) {
+			effects.error?.("재생할 타임라인을 찾을 수 없습니다.");
+			return false;
+		};
+		const state = states.get(id);
+		states.set(id, {
+			time: restart || state?.complete ? 0 : state?.time ?? 0,
+			playing: true,
+			complete: false
+		});
+		apply(t, position(t, states.get(id).time).time);
+		if (restart && t.delay === 0) {
+			for (const m of t.markers) if (m.time === 0) effects.marker?.(m);
+		};
+		return true;
+	};
+	const pause = (id) => {
+		const s = states.get(id);
+		if (s) s.playing = false;
+	};
+	const stop = (id) => {
+		pause(id);
+		seek(id, 0);
+	};
+	const advance = (delta) => {
+		for (const [id, state] of [...states]) {
+			if (!state.playing) continue;
+			const t = timelines.get(id), before = state.time, next = before + Math.max(0, Number.isFinite(delta) ? delta : 0) * t.timeScale;
+			state.time = next;
+			const p = position(t, next);
+			apply(t, p.time);
+			const span = t.duration * (t.yoyo ? 2 : 1), events = [];
+			for (const m of t.markers) {
+				for (const offset of [m.time, ...t.yoyo && m.time > 0 && m.time < t.duration ? [span - m.time] : []]) {
+					const first = Math.max(0, Math.floor((before - t.delay - offset) / span) + 1), last = Math.min(t.repeat < 0 ? Infinity : t.repeat, Math.floor((next - t.delay - offset) / span));
+					for (let cycle = first; cycle <= last && events.length <= 512; cycle++) events.push({
+						at: t.delay + cycle * span + offset,
+						marker: m
+					});
+					if (events.length > 512) break;
+				};
+				if (events.length > 512) break;
+			};
+			if (events.length > 512) {
+				effects.error?.("한 프레임의 타임라인 이벤트가 512개를 넘어 중단했습니다.");
+				state.playing = false;
+				continue;
+			};
+			for (const event of events.sort((a, b) => a.at - b.at)) {
+				if (states.get(id) !== state || !state.playing) break;
+				effects.marker?.(event.marker);
+			};
+			if (states.get(id) === state && p.complete) {
+				state.complete = true;
+				state.playing = false;
+			}
+		}
+	};
+	const restore = (records) => {
+		for (const r of records) {
+			const t = timelines.get(r.id);
+			if (!t || !Number.isFinite(r.time)) continue;
+			const state = {
+				time: Math.max(0, r.time),
+				playing: !!r.playing,
+				complete: !!r.complete
+			};
+			states.set(r.id, state);
+			apply(t, position(t, state.time).time);
+		}
+	};
+	return {
+		sample,
+		ease,
+		position,
+		seek,
+		play,
+		pause,
+		stop,
+		advance,
+		restore,
+		status: () => [...states].map(([id, s]) => ({
+			id,
+			...s,
+			position: position(timelines.get(id), s.time).time
+		})),
+		autoplay: () => {
+			for (const t of timelines.values()) if (t.autoplay) play(t.id);
+		}
+	};
+},function createSceneStateRuntime(project, sceneDefinition, host, factory) {
+	const machines = new Map((project.stateMachines ?? []).map((m) => [m.id, m]));
+	const entries = new Map(), overrides = new Map();
+	const baselines = new Map(), previous = new Map(), animationTokens = new Map();
+	const keys = new Map();
+	const definitions = new Map();
+	const ownerEntries = new Map();
+	const effectTokens = new Map();
+	const diagnostics = new Map();
+	const observations = new Map();
+	let destroyed = false, operationDepth = 0;
+	const resolveOwner = (target) => typeof target === "string" ? host.objects.has(target) ? target : host.actors().find((a) => a.def.name === target)?.def.id ?? target : target?.getData?.("forgeObjectId") ?? [...host.objects].find(([, go]) => go === target)?.[0] ?? "";
+	const property = (owner, key, targets = {}) => {
+		if (key === "inputX") return (keys.get("RIGHT")?.held || keys.get("D")?.held ? 1 : 0) - (keys.get("LEFT")?.held || keys.get("A")?.held ? 1 : 0);
+		if (key === "inputY") return (keys.get("DOWN")?.held || keys.get("S")?.held ? 1 : 0) - (keys.get("UP")?.held || keys.get("W")?.held ? 1 : 0);
+		const go = host.objects.get(owner);
+		if (!go) return undefined;
+		const observed = observations.get(owner);
+		if (observed && Object.prototype.hasOwnProperty.call(observed, key)) return observed[key];
+		if (key === "faction" || key === "team") return host.factions?.()?.team(owner) ?? go.getData?.("faction") ?? "";
+		if (key.startsWith("relation:")) {
+			const id = targets[key.slice(9)], runtime = host.factions?.();
+			return id && host.objects.get(id)?.active && runtime ? runtime.relation(runtime.team(owner), runtime.team(id)) : undefined;
+		};
+		const relative = /^(distance|deltaX|deltaY):(.+)$/.exec(key);
+		if (relative) {
+			const target = host.objects.get(targets[relative[2]] ?? "");
+			if (!target || target.active === false) return undefined;
+			const origin = go.getData?.("forgeAnchor") ?? go, destination = target.getData?.("forgeAnchor") ?? target, targetObservation = observations.get(targets[relative[2]]), dx = (targetObservation?.x ?? destination.x) - (observed?.x ?? origin.x), dy = (targetObservation?.y ?? destination.y) - (observed?.y ?? origin.y);
+			return relative[1] === "distance" ? Math.hypot(dx, dy) : relative[1] === "deltaX" ? dx : dy;
+		};
+		if (key === "velocityX" || key === "velocityY") return go.body?.velocity?.[key.endsWith("X") ? "x" : "y"] ?? 0;
+		if (key === "absVelocityX" || key === "absVelocityY") return Math.abs(go.body?.velocity?.[key.endsWith("X") ? "x" : "y"] ?? 0);
+		if (key === "speed") return Math.hypot(go.body?.velocity?.x ?? 0, go.body?.velocity?.y ?? 0);
+		if (key === "normalVelocity") {
+			const w = host.gravity(), gx = w.x + (go.body?.gravity?.x ?? 0), gy = w.y + (go.body?.gravity?.y ?? 0), length = Math.hypot(gx, gy) || 1;
+			return ((go.body?.velocity?.x ?? 0) * gx + (go.body?.velocity?.y ?? 0) * gy) / length;
+		};
+		if (key === "grounded") {
+			const world = host.gravity(), gx = go.body?.allowGravity ? world.x + (go.body.gravity?.x ?? 0) : 0, gy = go.body?.allowGravity ? world.y + (go.body.gravity?.y ?? 0) : 0;
+			const side = Math.abs(gx) > Math.abs(gy) ? gx > 0 ? "right" : "left" : gy >= 0 ? "down" : "up";
+			return !!(go.body?.blocked?.[side] || go.body?.touching?.[side]);
+		};
+		if (key.startsWith("blocked")) {
+			const side = key.slice(7).toLowerCase();
+			return !!(go.body?.blocked?.[side] || go.body?.touching?.[side]);
+		};
+		if (key === "animationComplete") return !!go.anims?.currentAnim && !go.anims.isPlaying;
+		if (key === "animationPlaying") return !!go.anims?.isPlaying;
+		if (key === "opacity") return (go.getData?.("forgeAnchor") ?? go).alpha;
+		if (key.startsWith("data:")) return go.getData?.(key.slice(5));
+		return go[key];
+	};
+	const attach = (owner, b) => {
+		const key = owner + "/" + b.id;
+		if (entries.has(key)) return;
+		const machine = machines.get(b.machineId);
+		if (!machine) {
+			host.error("연결된 상태 구성을 찾을 수 없습니다: " + b.name);
+			return;
+		};
+		const engine = factory(machine, b, {
+			variable: host.variable,
+			property: (key, targetId) => property(targetId ? b.targets[targetId] ?? "" : owner, key, b.targets),
+			key: (name, mode) => {
+				const k = keys.get(name.toUpperCase());
+				return mode === "pressed" ? !!k?.pressed : mode === "released" ? !!k?.released : mode === "up" ? !k?.held : !!k?.held;
+			},
+			run: (id, alive) => host.run(id, Object.fromEntries(machine.parameters.map((p) => [p.key, engine.get(p.id)])), owner, alive),
+			error: host.error
+		});
+		const entry = {
+			owner,
+			binding: b,
+			engine,
+			enabled: b.enabled
+		};
+		entries.set(key, entry);
+		let owned = ownerEntries.get(owner);
+		if (!owned) {
+			owned = new Set();
+			ownerEntries.set(owner, owned);
+		};
+		owned.add(key);
+	};
+	const sync = () => {
+		if (destroyed) return;
+		for (const a of host.actors()) definitions.set(a.def.id, a.def);
+		for (const b of sceneDefinition.stateMachines ?? []) attach("", b);
+		for (const a of host.actors()) if (host.objects.has(a.def.id)) for (const b of a.def.stateMachines ?? []) attach(a.def.id, b);
+		for (const [key, e] of entries) if (e.owner && !host.objects.has(e.owner)) {
+			e.engine.destroy();
+			entries.delete(key);
+			diagnostics.delete(e.owner);
+			observations.delete(e.owner);
+			ownerEntries.get(e.owner)?.delete(key);
+			if (!ownerEntries.get(e.owner)?.size) ownerEntries.delete(e.owner);
+		};
+		for (const id of baselines.keys()) if (!host.objects.has(id)) {
+			baselines.delete(id);
+			previous.delete(id);
+			animationTokens.delete(id);
+			overrides.delete(id);
+		}
+	};
+	const readBase = (go, def, key) => {
+		const anchor = go.getData?.("forgeAnchor") ?? go;
+		if ([
+			"behavior",
+			"speed",
+			"jump",
+			"stop"
+		].includes(key)) return key === "stop" ? false : def?.[key];
+		if (key === "gravity") return go.body?.allowGravity ?? false;
+		if (key === "bodyEnabled") return go.body?.enable ?? true;
+		if (key === "opacity") return anchor.alpha;
+		if (key === "visible") return anchor.visible;
+		if (key === "tint") return {
+			tinted: go.isTinted,
+			color: go.tintTopLeft ?? go.fillColor ?? 16777215
+		};
+		if (key.startsWith("velocity")) return go.body?.velocity?.[key.endsWith("X") ? "x" : "y"] ?? 0;
+		if (key.startsWith("acceleration")) return go.body?.acceleration?.[key.endsWith("X") ? "x" : "y"] ?? 0;
+		return go[key];
+	};
+	const motionWarnings = new Set();
+	const setPhysical = (go, key, value) => {
+		if (go.getData?.("forgeMotionPath") && (key === "gravity" || key.startsWith("velocity") || key.startsWith("acceleration"))) {
+			const id = go.getData?.("forgeId") ?? go.name ?? "";
+			if (!motionWarnings.has(id)) {
+				motionWarnings.add(id);
+				host.error("이동 경로 사용 중에는 상태의 속도·가속도·중력을 함께 제어할 수 없습니다.");
+			};
+			return;
+		};
+		const anchor = go.getData?.("forgeAnchor") ?? go;
+		if (key === "visible") anchor.visible = value;
+		else if (key === "opacity") anchor.alpha = value;
+		else if (key === "flipX") go.setFlipX?.(value);
+		else if (key === "flipY") go.setFlipY?.(value);
+		else if (key === "gravity") go.body?.setAllowGravity?.(value);
+		else if (key === "bodyEnabled" && go.body) go.body.enable = value;
+		else if (key.startsWith("velocity") && go.body?.velocity) go.body.velocity[key.endsWith("X") ? "x" : "y"] = value;
+		else if (key.startsWith("acceleration") && go.body?.acceleration) go.body.acceleration[key.endsWith("X") ? "x" : "y"] = value;
+		else if (key === "tint") {
+			const n = typeof value === "string" ? parseInt(value.slice(1), 16) : value?.color ?? 16777215;
+			if (go.setFillStyle) go.setFillStyle(n);
+			else if (typeof value === "object" && !value.tinted) go.clearTint?.();
+			else go.setTint?.(n);
+		}
+	};
+	const apply = () => {
+		const merged = new Map();
+		for (const e of [...entries.values()].filter((e) => e.enabled).sort((a, b) => a.binding.priority - b.binding.priority)) for (const [target, view] of e.engine.profiles()) {
+			const id = target || e.owner;
+			if (!id || !host.objects.has(id)) continue;
+			const before = merged.get(id);
+			merged.set(id, {
+				profile: {
+					...before?.profile,
+					...view.profile
+				},
+				effectToken: view.effectToken ? e.binding.id + ":" + view.effectToken : before?.effectToken,
+				animationToken: view.animationToken ? e.binding.id + ":" + view.animationToken : before?.animationToken ?? ""
+			});
+		};
+		for (const id of new Set([...previous.keys(), ...merged.keys()])) {
+			const go = host.objects.get(id);
+			if (!go) continue;
+			const current = merged.get(id), profile = current?.profile ?? {}, old = previous.get(id) ?? new Set(), next = new Set(Object.keys(profile));
+			const base = baselines.get(id) ?? new Map();
+			baselines.set(id, base);
+			for (const key of next) if (!base.has(key)) {
+				if (key.startsWith("animation")) {
+					if (!base.has("animation")) base.set("animation", {
+						id: go.anims?.currentAnim?.key,
+						playing: go.anims?.isPlaying,
+						progress: go.anims?.getProgress?.(),
+						timeScale: go.anims?.timeScale
+					});
+				} else base.set(key, readBase(go, definitions.get(id), key));
+			};
+			for (const key of old) if (!next.has(key) && !key.startsWith("animation")) setPhysical(go, key, base.get(key));
+			if (old.has("animationSpeed") && !next.has("animationSpeed") && go.anims) go.anims.timeScale = base.get("animation")?.timeScale ?? 1;
+			if ([...old].some((k) => k.startsWith("animation")) && ![...next].some((k) => k.startsWith("animation"))) {
+				const b = base.get("animation");
+				if (b?.id && go.play) {
+					go.play(b.id);
+					if (Number.isFinite(b.progress)) go.anims.setProgress(b.progress);
+					if (!b.playing) go.anims.stop();
+					go.anims.timeScale = b.timeScale ?? 1;
+				} else go.anims?.stop();
+				animationTokens.delete(id);
+			};
+			for (const [key, value] of Object.entries(profile)) setPhysical(go, key, value);
+			overrides.set(id, profile);
+			const fxToken = profile.effectId ? current?.effectToken ?? profile.effectId : "";
+			if (fxToken !== (effectTokens.get(id) ?? "")) {
+				host.effect?.(id, profile.effectId ?? "");
+				if (fxToken) effectTokens.set(id, fxToken);
+				else effectTokens.delete(id);
+			};
+			if (current) {
+				if (profile.animationMode === "stop") go.anims?.stop();
+				else if (profile.animationId && go.play && current.animationToken !== animationTokens.get(id)) {
+					if (profile.restartAnimation !== false || go.anims?.currentAnim?.key !== profile.animationId || !go.anims.isPlaying) try {
+						go.play(profile.animationId);
+					} catch (e) {
+						host.error(String(e));
+					}
+				};
+				if (profile.animationSpeed !== undefined && go.anims) go.anims.timeScale = profile.animationSpeed;
+				if (current.animationToken) animationTokens.set(id, current.animationToken);
+			};
+			if (next.size) previous.set(id, next);
+			else {
+				previous.delete(id);
+				overrides.delete(id);
+				baselines.delete(id);
+			}
+		}
+	};
+	const find = (target, machine) => {
+		const owner = resolveOwner(target ?? "");
+		return [...ownerEntries.get(owner) ?? []].flatMap((key) => {
+			const entry = entries.get(key);
+			return entry ? [entry] : [];
+		}).filter((e) => e.owner === owner && (!machine || [
+			e.binding.id,
+			e.binding.name,
+			e.binding.machineId,
+			machines.get(e.binding.machineId)?.name
+		].includes(machine)));
+	};
+	const operate = (target, machine, fn) => {
+		if (operationDepth >= 16) {
+			host.error("상태 함수의 반복 제어를 중단했습니다. 진입 함수의 초기화·재진입 연결을 확인하세요.");
+			return false;
+		};
+		operationDepth++;
+		try {
+			const list = find(target, machine), results = list.map(fn);
+			apply();
+			return !!list.length && results.some((result) => result !== false);
+		} finally {
+			operationDepth--;
+		}
+	};
+	const api = {
+		sync,
+		isEnabled: (target, machine) => find(target, machine).some((entry) => entry.enabled && entry.engine.isEnabled()),
+		evaluate: (target, machine, delta = 0) => operate(target, machine, (entry) => {
+			if (!entry.enabled || !entry.engine.isEnabled()) return false;
+			entry.engine.update(delta);
+			return true;
+		}),
+		start: (saved = []) => {
+			sync();
+			for (const e of entries.values()) {
+				const snapshot = saved.find((s) => s.owner === e.owner && s.bindingId === e.binding.id);
+				if (snapshot) {
+					e.enabled = snapshot.enabled ?? e.enabled;
+					e.engine.restore(snapshot);
+				} else if (e.enabled) e.engine.start();
+			};
+			apply();
+		},
+		before: (delta) => {
+			for (const e of entries.values()) if (e.enabled) e.engine.update(delta);
+			apply();
+		},
+		remove: (id) => {
+			if (effectTokens.has(id)) {
+				host.effect?.(id, "");
+				effectTokens.delete(id);
+			};
+			for (const [key, e] of entries) if (e.owner === id) {
+				e.engine.destroy();
+				entries.delete(key);
+				ownerEntries.get(e.owner)?.delete(key);
+				if (!ownerEntries.get(e.owner)?.size) ownerEntries.delete(e.owner);
+			};
+			baselines.delete(id);
+			previous.delete(id);
+			overrides.delete(id);
+			animationTokens.delete(id);
+			definitions.delete(id);
+			diagnostics.delete(id);
+			observations.delete(id);
+		},
+		after: () => {
+			for (const [id, p] of overrides) {
+				const go = host.objects.get(id);
+				if (!go) continue;
+				if (p.stop && go.body?.setVelocity) {
+					const def = definitionsFor(id), world = host.gravity();
+					if ((p.behavior ?? def?.behavior) === "platformer") {
+						const gx = go.body.allowGravity ? world.x + (go.body.gravity?.x ?? 0) : 0, gy = go.body.allowGravity ? world.y + (go.body.gravity?.y ?? 0) : 0, length = Math.hypot(gx, gy) || 1, nx = gx / length, ny = gy / length, n = go.body.velocity.x * nx + go.body.velocity.y * ny;
+						go.body.setVelocity(nx * n, ny * n);
+					} else go.body.setVelocity(0, 0);
+				};
+				for (const key of [
+					"velocityX",
+					"velocityY",
+					"accelerationX",
+					"accelerationY",
+					"flipX",
+					"flipY"
+				]) if (p[key] !== undefined) setPhysical(go, key, p[key]);
+			}
+		},
+		profile: (id) => overrides.get(id),
+		observe: (target, values) => {
+			const owner = resolveOwner(target);
+			if (values) observations.set(owner, Object.fromEntries(Object.entries(values).filter(([, value]) => value !== undefined)));
+			else observations.delete(owner);
+		},
+		diagnose: (target, code, message) => {
+			const owner = resolveOwner(target);
+			if (!message) {
+				diagnostics.get(owner)?.delete(code);
+				if (!diagnostics.get(owner)?.size) diagnostics.delete(owner);
+				return;
+			};
+			let warnings = diagnostics.get(owner);
+			if (!warnings) diagnostics.set(owner, warnings = new Map());
+			if (warnings.get(code) !== message) {
+				warnings.set(code, message);
+				host.error(message);
+			}
+		},
+		key: (key, down) => {
+			key = key.toUpperCase().replace(/^(SHIFT|CONTROL|ALT|META)(LEFT|RIGHT)$/, "$1").replace(/^CONTROL$/, "CTRL");
+			const previous = keys.get(key) ?? {
+				held: false,
+				pressed: false,
+				released: false
+			};
+			keys.set(key, {
+				held: down,
+				pressed: previous.pressed || down && !previous.held,
+				released: previous.released || !down && previous.held
+			});
+		},
+		releaseKeys: () => {
+			for (const [key, k] of keys) if (k.held) keys.set(key, {
+				held: false,
+				pressed: false,
+				released: true
+			});
+		},
+		endFrame: () => {
+			for (const k of keys.values()) {
+				k.pressed = false;
+				k.released = false;
+			}
+		},
+		set: (target, key, value, machine) => operate(target, machine, (e) => e.engine.set(key, value)),
+		get: (target, key, machine) => find(target, machine).map((e) => e.engine.get(key)).find((value) => value !== undefined),
+		// Sensor writes only change parameters; transitions/profiles run once in before().
+		// Avoid reapplying every actor's appearance after each individual sensor value.
+		setParameters: (target, values, machine) => {
+			const list = find(target, machine);
+			let changed = false;
+			for (const entry of list) for (const [key, value] of Object.entries(values)) changed = entry.engine.set(key, value) || changed;
+			return changed;
+		},
+		trigger: (target, key, machine) => operate(target, machine, (e) => e.engine.trigger(key)),
+		signal: (target, name, machine) => operate(target, machine, (e) => e.engine.signal(name)),
+		change: (target, layer, state, machine, reenter = false) => operate(target, machine, (e) => e.engine.force(layer, state, reenter)),
+		enable: (target, enabled, machine) => operate(target, machine, (e) => {
+			if (e.enabled && !enabled) e.engine.suspend();
+			e.enabled = enabled;
+			if (enabled) e.engine.start();
+		}),
+		enableLayer: (target, layer, enabled, machine) => operate(target, machine, (e) => e.engine.enableLayer(layer, enabled)),
+		reset: (target, machine) => operate(target, machine, (e) => {
+			e.engine.destroy();
+			entries.delete(e.owner + "/" + e.binding.id);
+			attach(e.owner, e.binding);
+			const next = entries.get(e.owner + "/" + e.binding.id);
+			if (next?.enabled) next.engine.start();
+		}),
+		snapshot: () => [...entries.values()].map((e) => ({
+			...e.engine.snapshot(),
+			owner: e.owner,
+			enabled: e.enabled
+		})),
+		inspect: () => [...entries.values()].map((e) => ({
+			...e.engine.inspect(),
+			owner: e.owner,
+			ownerName: e.owner ? definitionsFor(e.owner)?.name ?? e.owner : sceneDefinition.name,
+			enabled: e.enabled,
+			warnings: [...diagnostics.get(e.owner)?.values() ?? []]
+		})),
+		destroy: () => {
+			destroyed = true;
+			for (const e of entries.values()) e.engine.destroy();
+			entries.clear();
+			ownerEntries.clear();
+			keys.clear();
+			diagnostics.clear();
+			observations.clear();
+			apply();
+		}
+	};
+	function definitionsFor(id) {
+		return definitions.get(id);
+	}
+	return api;
+},function createStateMachineRuntime(machine, binding, effects) {
+	// 같은 불변 정의를 여러 오브젝트가 사용할 때 실행 계획만 공유한다.
+	const factory = createStateMachineRuntime;
+	const plans = factory.definitionPlans ??= new WeakMap();
+	let plan = plans.get(machine);
+	if (!plan || plan.stateSource !== machine.states || plan.transitionSource !== machine.transitions || plan.layerSource !== machine.layers || plan.stateCount !== machine.states.length || plan.transitionCount !== machine.transitions.length) {
+		plan = {
+			stateSource: machine.states,
+			transitionSource: machine.transitions,
+			layerSource: machine.layers,
+			stateCount: machine.states.length,
+			transitionCount: machine.transitions.length,
+			states: new Map(machine.states.map((s) => [s.id, s])),
+			paths: new Map(),
+			leaves: new Map(),
+			from: new Map(),
+			candidates: new Map()
+		};
+		plans.set(machine, plan);
+	};
+	const definition = plan, states = definition.states, parameters = new Map(machine.parameters.map((p) => [p.id, p]));
+	const byKey = new Map(machine.parameters.map((p) => [p.key, p.id])), values = new Map(), signals = new Set();
+	const slots = new Map(machine.animationSlots.map((s) => [s.id, s.animationId]));
+	const active = new Map();
+	let alive = true, generation = 0, updating = false, requests = [];
+	const history = [];
+	let clock = 0;
+	const stats = {
+		transitionChecks: 0,
+		conditionChecks: 0,
+		updateFunctionCalls: 0
+	};
+	const clearStats = () => {
+		stats.transitionChecks = 0;
+		stats.conditionChecks = 0;
+		stats.updateFunctionCalls = 0;
+	};
+	const convert = (p, v) => p.type === "number" ? Number.isFinite(Number(v)) ? Number(v) : 0 : p.type === "boolean" || p.type === "trigger" ? v === true || v === "true" : String(v ?? "");
+	for (const p of machine.parameters) values.set(p.id, convert(p, binding.parameters[p.id] ?? p.value));
+	const path = (id) => {
+		const cached = definition.paths.get(id);
+		if (cached) return cached;
+		const original = id;
+		const result = [];
+		const seen = new Set();
+		while (id && !seen.has(id)) {
+			seen.add(id);
+			const s = states.get(id);
+			if (!s) break;
+			result.unshift(s);
+			id = s.parentId;
+		};
+		definition.paths.set(original, result);
+		return result;
+	};
+	const leaf = (id) => {
+		const cached = definition.leaves.get(id);
+		if (cached !== undefined) return cached;
+		const original = id;
+		const seen = new Set();
+		while (id && !seen.has(id)) {
+			seen.add(id);
+			const s = states.get(id);
+			if (!s) break;
+			const child = states.get(s.initialChildId);
+			if (!child || child.parentId !== id) break;
+			id = child.id;
+		};
+		definition.leaves.set(original, id);
+		return id;
+	};
+	const order = (a, b) => b.t.priority - a.t.priority || b.depth - a.depth || a.i - b.i;
+	if (!definition.from.size) {
+		for (const layer of machine.layers) {
+			definition.from.set(layer.id, new Map());
+			definition.candidates.set(layer.id, new Map());
+		};
+		machine.transitions.forEach((t, i) => {
+			if (!t.enabled) return;
+			const byFrom = definition.from.get(t.layerId);
+			if (!byFrom) return;
+			let bucket = byFrom.get(t.from);
+			if (!bucket) {
+				bucket = [];
+				byFrom.set(t.from, bucket);
+			};
+			bucket.push({
+				t,
+				i,
+				depth: t.from === "*" ? -1 : path(t.from).length - 1
+			});
+		});
+	};
+	const candidates = (layerId, stateId, ancestry) => {
+		const cache = definition.candidates.get(layerId), cached = cache?.get(stateId);
+		if (cached) return cached;
+		const byFrom = definition.from.get(layerId), result = [...byFrom?.get("*") ?? []];
+		for (const state of ancestry) result.push(...byFrom?.get(state.id) ?? []);
+		result.sort(order);
+		cache?.set(stateId, result);
+		return result;
+	};
+	const call = (id, token) => {
+		if (id && alive) try {
+			effects.run(id, () => alive && (token?.active ?? true));
+		} catch (e) {
+			effects.error(machine.name + ": " + String(e));
+		}
+	};
+	const change = (layerId, destination, reenter = false, transitionId = "", silent = false) => {
+		const layer = active.get(layerId), next = states.get(leaf(destination));
+		if (!layer || !next || next.layerId !== layerId) return false;
+		const before = layer.stateId;
+		if (before === next.id && !reenter) return false;
+		const previous = layer.ancestry, following = path(next.id);
+		let shared = 0;
+		while (shared < previous.length && shared < following.length && previous[shared].id === following[shared].id) shared++;
+		if (reenter) {
+			const requested = following.findIndex((s) => s.id === destination);
+			if (requested >= 0) shared = Math.min(shared, requested);
+		};
+		for (const s of previous.slice(shared).reverse()) {
+			const token = layer.tokens.get(s.id);
+			if (token) token.active = false;
+			layer.tokens.delete(s.id);
+			layer.elapsed.delete(s.id);
+			layer.updates.delete(s.id);
+			if (!silent) call(s.exitFunctionId);
+		};
+		layer.stateId = next.id;
+		layer.ancestry = following;
+		layer.candidates = candidates(layerId, next.id, following);
+		for (const s of following.slice(shared)) {
+			const token = {
+				active: true,
+				generation: ++generation
+			};
+			layer.tokens.set(s.id, token);
+			layer.elapsed.set(s.id, 0);
+			layer.updates.set(s.id, 0);
+			if (!silent) call(s.enterFunctionId, token);
+		};
+		if (before) {
+			history.push({
+				layerId,
+				from: before,
+				to: next.id,
+				transitionId,
+				time: clock
+			});
+			if (history.length > 64) history.shift();
+		};
+		return true;
+	};
+	for (const l of machine.layers) active.set(l.id, {
+		stateId: "",
+		elapsed: new Map(),
+		updates: new Map(),
+		tokens: new Map(),
+		enabled: l.enabled,
+		ancestry: [],
+		candidates: []
+	});
+	const initialize = () => {
+		for (const l of machine.layers) {
+			const a = active.get(l.id);
+			if (a.enabled && !a.stateId) change(l.id, l.initialStateId);
+		}
+	};
+	const compare = (a, b, op) => op === "eq" ? a === b : op === "ne" ? a !== b : op === "lt" ? Number(a) < Number(b) : op === "lte" ? Number(a) <= Number(b) : op === "gt" ? Number(a) > Number(b) : Number(a) >= Number(b);
+	const test = (c, elapsed) => {
+		stats.conditionChecks++;
+		let a;
+		if (c.source === "parameter") a = values.get(byKey.get(c.key) ?? c.key);
+		else if (c.source === "variable") a = effects.variable(c.key);
+		else if (c.source === "property") a = effects.property(c.key, c.targetId);
+		else if (c.source === "time") a = elapsed;
+		else if (c.source === "key") return c.compare === "ne" ? !effects.key(c.key, c.value) : effects.key(c.key, c.value);
+		else a = signals.has(c.key);
+		if (a === undefined) return false;
+		const b = typeof a === "number" ? Number(c.value) : typeof a === "boolean" ? c.value === "true" : c.value;
+		return compare(a, b, c.compare);
+	};
+	const api = {
+		isEnabled: () => alive && machine.layers.some((layer) => active.get(layer.id)?.enabled ?? layer.enabled),
+		start: () => {
+			updating = true;
+			initialize();
+			updating = false;
+		},
+		update: (delta) => {
+			clearStats();
+			if (!alive) return;
+			updating = true;
+			initialize();
+			const dt = Math.max(0, Math.min(1e3, Number.isFinite(delta) ? delta : 0));
+			clock += dt;
+			const pending = requests;
+			requests = [];
+			for (const r of pending) change(r.layer, r.state, r.reenter);
+			const consumed = new Set();
+			for (const l of machine.layers) {
+				const a = active.get(l.id);
+				if (!a.enabled) continue;
+				for (const id of a.elapsed.keys()) a.elapsed.set(id, (a.elapsed.get(id) ?? 0) + dt);
+				for (const { t } of a.candidates) {
+					stats.transitionChecks++;
+					const elapsed = a.elapsed.get(t.from === "*" ? a.stateId : t.from) ?? 0;
+					if (elapsed < t.minTime) continue;
+					const group = !t.groups.length ? [] : t.groups.find((g) => g.every((c) => test(c, elapsed)));
+					if (!group) continue;
+					// A matching higher-priority self transition holds the state. It must
+					// not fall through to a lower-priority wildcard fallback each frame.
+					if (a.stateId === leaf(t.to) && !t.reenter) {
+						for (const c of group) if (c.source === "parameter") {
+							const id = byKey.get(c.key) ?? c.key;
+							if (parameters.get(id)?.type === "trigger") consumed.add(id);
+						};
+						break;
+					};
+					if (change(l.id, t.to, t.reenter, t.id)) {
+						for (const c of group) if (c.source === "parameter") {
+							const id = byKey.get(c.key) ?? c.key;
+							if (parameters.get(id)?.type === "trigger") consumed.add(id);
+						};
+						call(t.functionId);
+						break;
+					}
+				};
+				for (const s of a.ancestry) {
+					const elapsed = (a.updates.get(s.id) ?? 0) + dt;
+					if (s.updateFunctionId && elapsed >= s.updateInterval) {
+						a.updates.set(s.id, elapsed % s.updateInterval);
+						stats.updateFunctionCalls++;
+						call(s.updateFunctionId, a.tokens.get(s.id));
+					} else a.updates.set(s.id, elapsed);
+				}
+			};
+			for (const id of consumed) values.set(id, false);
+			signals.clear();
+			updating = false;
+		},
+		get: (key) => values.get(byKey.get(key) ?? key),
+		set: (key, value) => {
+			const id = byKey.get(key) ?? key, p = parameters.get(id);
+			if (!p) return false;
+			values.set(id, convert(p, value));
+			return true;
+		},
+		trigger: (key) => parameters.get(byKey.get(key) ?? key)?.type === "trigger" && api.set(key, true),
+		signal: (name) => {
+			if (name.length <= 200) signals.add(name);
+		},
+		force: (layer, state, reenter = false) => {
+			const l = machine.layers.find((l) => l.id === layer || l.name === layer), s = machine.states.find((s) => (s.id === state || s.name === state) && s.layerId === l?.id);
+			if (!l || !s) return false;
+			if (updating) {
+				if (requests.length < 64) requests.push({
+					layer: l.id,
+					state: s.id,
+					reenter
+				});
+				return true;
+			};
+			return change(l.id, s.id, reenter);
+		},
+		enableLayer: (id, enabled) => {
+			const l = machine.layers.find((l) => l.id === id || l.name === id), a = l && active.get(l.id);
+			if (!a || !l) return false;
+			if (!enabled) {
+				for (let index = a.ancestry.length - 1; index >= 0; index--) {
+					const s = a.ancestry[index];
+					const token = a.tokens.get(s.id);
+					if (token) token.active = false;
+					call(s.exitFunctionId);
+				};
+				a.stateId = "";
+				a.ancestry = [];
+				a.candidates = [];
+				a.tokens.clear();
+				a.elapsed.clear();
+				a.updates.clear();
+			};
+			a.enabled = enabled;
+			if (enabled && !a.stateId) change(l.id, l.initialStateId);
+			return true;
+		},
+		profiles: () => {
+			const result = new Map();
+			for (const l of machine.layers) {
+				const a = active.get(l.id);
+				if (!a.enabled) continue;
+				for (const s of a.ancestry) for (const effect of s.effects) {
+					const target = effect.targetId ? binding.targets[effect.targetId] : "";
+					if (effect.targetId && !target) continue;
+					const previous = result.get(target ?? "") ?? {
+						profile: {},
+						animationToken: ""
+					};
+					const p = { ...effect.profile };
+					for (const [key, id] of Object.entries(effect.parameters ?? {})) {
+						if (values.has(id)) {
+							const v = values.get(id);
+							if (typeof v === "number") {
+								const max = key === "opacity" ? 1 : key === "animationSpeed" ? 10 : 1e4, min = [
+									"opacity",
+									"animationSpeed",
+									"jump"
+								].includes(key) ? 0 : -1e4;
+								p[key] = Math.max(min, Math.min(max, v));
+							} else if (key !== "tint" || /^#[0-9a-fA-F]{6}$/.test(String(v))) p[key] = v;
+						}
+					};
+					if (p.animationSlotId) p.animationId = binding.animations[p.animationSlotId] ?? slots.get(p.animationSlotId) ?? "";
+					const controlsAnimation = p.animationMode !== undefined || !!p.animationId;
+					result.set(target ?? "", {
+						profile: {
+							...previous.profile,
+							...p
+						},
+						effectToken: p.effectId ? effect.id + ":" + (a.tokens.get(s.id)?.generation ?? 0) : previous.effectToken,
+						animationToken: controlsAnimation ? effect.id + ":" + (a.tokens.get(s.id)?.generation ?? 0) : previous.animationToken
+					});
+				}
+			};
+			return result;
+		},
+		snapshot: () => ({
+			machineId: machine.id,
+			bindingId: binding.id,
+			parameters: Object.fromEntries(values),
+			layers: [...active].map(([id, a]) => ({
+				id,
+				enabled: a.enabled,
+				stateId: a.stateId,
+				elapsed: Object.fromEntries(a.elapsed)
+			}))
+		}),
+		restore: (snapshot) => {
+			if (snapshot.machineId !== machine.id || snapshot.bindingId !== binding.id) return false;
+			for (const p of machine.parameters) if (Object.hasOwn(snapshot.parameters ?? {}, p.id)) values.set(p.id, convert(p, snapshot.parameters[p.id]));
+			for (const l of machine.layers) {
+				const a = active.get(l.id), saved = snapshot.layers?.find((s) => s.id === l.id);
+				if (!saved) continue;
+				for (const token of a.tokens.values()) token.active = false;
+				a.stateId = "";
+				a.ancestry = [];
+				a.candidates = [];
+				a.tokens.clear();
+				a.elapsed.clear();
+				a.updates.clear();
+				a.enabled = saved.enabled;
+				if (a.enabled) {
+					const state = states.get(saved.stateId);
+					change(l.id, state?.layerId === l.id ? state.id : l.initialStateId, false, "", true);
+					for (const id of a.elapsed.keys()) {
+						const v = saved.elapsed?.[id];
+						if (Number.isFinite(v) && v >= 0) a.elapsed.set(id, Math.min(v, 864e5));
+					}
+				}
+			};
+			return true;
+		},
+		inspect: () => ({
+			machineId: machine.id,
+			bindingId: binding.id,
+			name: binding.name || machine.name,
+			parameters: machine.parameters.map((p) => ({
+				id: p.id,
+				key: p.key,
+				name: p.name,
+				type: p.type,
+				value: values.get(p.id)
+			})),
+			layers: machine.layers.map((l) => {
+				const a = active.get(l.id);
+				return {
+					...l,
+					enabled: a.enabled,
+					stateId: a.stateId,
+					path: a.ancestry.map((s) => ({
+						id: s.id,
+						name: s.name
+					})),
+					elapsed: a.elapsed.get(a.stateId) ?? 0
+				};
+			}),
+			history: [...history],
+			stats: {
+				...stats,
+				activeStates: [...active.values()].reduce((count, layer) => count + (layer.enabled ? layer.ancestry.length : 0), 0),
+				definedStates: states.size
+			}
+		}),
+		suspend: () => {
+			clearStats();
+			for (const a of active.values()) for (const [id, token] of a.tokens) {
+				token.active = false;
+				a.tokens.set(id, {
+					active: true,
+					generation: ++generation
+				});
+			};
+			signals.clear();
+			requests = [];
+		},
+		destroy: () => {
+			if (!alive) return;
+			for (const a of active.values()) for (const token of a.tokens.values()) token.active = false;
+			alive = false;
+			clearStats();
+			signals.clear();
+			requests = [];
+		}
+	};
+	return api;
+},function createMusicRuntime(project, manager, onError) {
+	let current = null, assetId = "", owner = "", targetVolume = 1, loop = true, dead = false;
+	const sounds = new Set(), owners = new Map(), timers = new Map();
+	const cancel = (s) => {
+		const timer = timers.get(s);
+		if (timer) clearInterval(timer);
+		timers.delete(s);
+	};
+	const dispose = (s) => {
+		if (!sounds.delete(s)) return;
+		cancel(s);
+		owners.delete(s);
+		s.stop();
+		s.destroy();
+	};
+	const fade = (s, to, seconds, done) => {
+		cancel(s);
+		const start = Number(s.volume) || 0, started = Date.now();
+		if (!seconds) {
+			s.setVolume(to);
+			done?.();
+			return;
+		};
+		const timer = setInterval(() => {
+			const fraction = Math.min(1, (Date.now() - started) / (seconds * 1e3));
+			s.setVolume(start + (to - start) * fraction);
+			if (fraction === 1) {
+				cancel(s);
+				done?.();
+			}
+		}, 20);
+		timers.set(s, timer);
+	};
+	const api = {
+		play: (id, options = {}) => {
+			if (dead) return false;
+			const a = project.assets.find((a) => a.id === id && a.type === "audio");
+			if (!a) {
+				onError("배경음 리소스가 없습니다.");
+				return false;
+			};
+			const settings = a.audioSettings, requested = Math.max(0, Math.min(1, options.volume ?? 1)), volume = requested * (settings?.volume ?? 1);
+			owner = options.owner ?? owner;
+			targetVolume = requested;
+			loop = options.loop ?? true;
+			if (current && assetId === id && (current.isPlaying || current.isPaused)) {
+				owners.set(current, owner);
+				current.setLoop(loop);
+				if (options.rate) current.setRate(options.rate);
+				fade(current, volume, options.fade ?? 0);
+				return true;
+			};
+			const old = current;
+			// 전환 중 다시 곡을 바꾸면 이전 전환의 꼬리를 먼저 정리한다.
+			for (const sound of [...sounds]) if (sound !== old) dispose(sound);
+			if (old) fade(old, 0, options.fade ?? 0, () => dispose(old));
+			try {
+				const sound = manager.add(id);
+				sound.forgeMusicBus = true;
+				sounds.add(sound);
+				owners.set(sound, owner);
+				current = sound;
+				assetId = id;
+				const start = settings?.loopStart ?? 0, end = settings?.loopEnd ?? 0, duration = Math.max(0, end - start);
+				if (duration > 0) sound.addMarker({
+					name: "forge-loop",
+					start,
+					duration,
+					config: { loop }
+				});
+				sound.once?.("complete", () => {
+					if (current === sound) {
+						current = null;
+						assetId = "";
+					};
+					dispose(sound);
+				});
+				const config = {
+					volume: options.fade ? 0 : volume,
+					loop,
+					rate: options.rate ?? settings?.rate ?? 1,
+					seek: Math.max(0, Math.min(duration || 1e7, options.seek ?? 0))
+				};
+				if (duration > 0) sound.play("forge-loop", config);
+				else sound.play(config);
+				if (options.fade) fade(sound, volume, options.fade);
+				return true;
+			} catch (e) {
+				onError("배경음을 재생하지 못했습니다: " + String(e));
+				current = null;
+				assetId = "";
+				return false;
+			}
+		},
+		stop: (seconds = 0, sceneOwner) => {
+			const stopping = [...sounds].filter((sound) => !sceneOwner || owners.get(sound) === sceneOwner);
+			if (stopping.includes(current)) {
+				current = null;
+				assetId = "";
+				owner = "";
+			};
+			for (const sound of stopping) fade(sound, 0, seconds, () => dispose(sound));
+		},
+		pause: () => current?.pause(),
+		resume: () => current?.resume(),
+		volume: (value, seconds = 0) => {
+			targetVolume = Math.max(0, Math.min(1, value));
+			if (current) fade(current, targetVolume * (project.assets.find((a) => a.id === assetId)?.audioSettings?.volume ?? 1), seconds);
+		},
+		status: () => ({
+			assetId,
+			owner,
+			volume: targetVolume,
+			loop,
+			seek: current?.seek ?? 0,
+			rate: current?.rate ?? 1,
+			playing: !!current?.isPlaying,
+			paused: !!current?.isPaused
+		}),
+		restore: (saved, sceneOwner) => {
+			if (!saved?.assetId) return false;
+			const result = api.play(saved.assetId, {
+				volume: saved.volume,
+				loop: saved.loop,
+				seek: saved.seek,
+				rate: saved.rate,
+				owner: sceneOwner
+			});
+			if (saved.paused) api.pause();
+			return result;
+		},
+		destroy: () => {
+			dead = true;
+			for (const s of sounds) dispose(s);
+			current = null;
+		}
+	};
+	return api;
+},function createEffectRuntime(Phaser, project, scene, error) {
+	const entries = new Map(), baselines = new Map(), filterFocusBaselines = new Map(), presets = new Map(project.visualEffects?.map((p) => [p.id, p]));
+	const identities = new WeakMap();
+	let serial = 0, webglWarning = false;
+	const resolve = (target) => typeof target === "string" ? scene.objectMap?.get(target) ?? scene.cameras.cameras.find((c) => c.name === target) : target ?? scene.cameras.main;
+	const preserveContainerFilterBounds = (go) => {
+		if (go.type !== "Container" || go.filtersAutoFocus === false || go.filtersFocusContext || !go.getBounds || !go.getWorldTransformMatrix) return;
+		const bounds = go.getBounds(), matrix = go.getWorldTransformMatrix(), left = -go.width * go.originX, top = -go.height * go.originY, poorlyBounded = ![
+			left,
+			top,
+			go.width,
+			go.height
+		].every(Number.isFinite) || !(go.width > 0 && go.height > 0);
+		if (!(bounds.width > 0 && bounds.height > 0) || !poorlyBounded && !matrix.applyInverse) return;
+		// Phaser focuses a sized Container on its center-based logical rectangle,
+		// not the bounds of its children. Positive-coordinate scene groups can
+		// extend far outside it. Use the documented camera-context path only for
+		// overflowing groups; ordinary sprites and centered UI keep tight buffers.
+		const outside = poorlyBounded || [
+			[bounds.x, bounds.y],
+			[bounds.x + bounds.width, bounds.y],
+			[bounds.x, bounds.y + bounds.height],
+			[bounds.x + bounds.width, bounds.y + bounds.height]
+		].some(([x, y]) => {
+			const point = matrix.applyInverse(x, y, {});
+			return point.x < left - .5 || point.x > left + go.width + .5 || point.y < top - .5 || point.y > top + go.height + .5;
+		});
+		if (outside) {
+			if (!filterFocusBaselines.has(go)) filterFocusBaselines.set(go, go.filtersFocusContext);
+			go.filtersFocusContext = true;
+		}
+	};
+	const clear = (key) => {
+		const e = entries.get(key);
+		if (!e) return;
+		entries.delete(key);
+		e.timer?.remove(false);
+		for (const timer of e.timers) timer.remove(false);
+		for (const child of e.children) clear(child);
+		for (const tween of e.tweens) tween.remove();
+		for (const visual of e.visuals) {
+			scene.events.off("update", visual.update);
+			visual.go.destroy();
+		};
+		for (const f of e.filters) if (f.controller.camera) f.list.remove(f.controller, true);
+		if (filterFocusBaselines.has(e.target) && ![...entries.values()].some((other) => other.target === e.target && other.filters.length)) {
+			e.target.filtersFocusContext = filterFocusBaselines.get(e.target);
+			filterFocusBaselines.delete(e.target);
+		};
+		for (const property of e.cameraEffects) if (![...entries.values()].some((other) => other.target === e.target && other.cameraEffects.has(property))) e.target[property]?.reset();
+		for (const property of e.properties) if (![...entries.values()].some((other) => other.target === e.target && other.properties.has(property))) {
+			const base = baselines.get(e.target), value = base?.get(property);
+			if (value !== undefined) {
+				e.target[property] = value;
+				base.delete(property);
+			};
+			if (!base?.size) baselines.delete(e.target);
+		}
+	};
+	const api = {
+		upsert: (preset) => {
+			presets.set(preset.id, preset);
+		},
+		play: (target, presetId, options = {}) => {
+			const go = resolve(target), preset = options.preset ?? presets.get(presetId);
+			if (!go || !preset) return false;
+			let identity = identities.get(go);
+			if (!identity) {
+				identity = "target_" + ++serial;
+				identities.set(go, identity);
+			};
+			const key = String(identity) + "/" + (options.key ?? preset.id);
+			clear(key);
+			const e = {
+				target: go,
+				presetId,
+				filters: [],
+				tweens: [],
+				timer: null,
+				timers: [],
+				children: new Set(),
+				parent: options.parent,
+				properties: new Set(),
+				cameraEffects: new Set(),
+				visuals: []
+			};
+			entries.set(key, e);
+			const capture = (property) => {
+				let map = baselines.get(go);
+				if (!map) {
+					map = new Map();
+					baselines.set(go, map);
+				};
+				if (!map.has(property)) map.set(property, go[property]);
+				e.properties.add(property);
+			};
+			const color = (v) => parseInt(String(v ?? "#ffffff").replace("#", ""), 16);
+			if (preset.items.some((item) => item.enabled && item.timing)) {
+				const items = preset.items.filter((item) => item.enabled);
+				for (const item of items) {
+					const childKey = (options.key ?? preset.id) + "/item/" + item.id, apply = () => {
+						if (entries.get(key) !== e || go.active === false) return;
+						const child = {
+							...preset,
+							items: [{
+								...item,
+								timing: undefined
+							}],
+							duration: item.timing?.duration ?? 0
+						};
+						e.children.add(String(identity) + "/" + childKey);
+						api.play(go, presetId, {
+							key: childKey,
+							scope: options.scope,
+							values: options.values,
+							preset: child,
+							parent: key,
+							origin: options.origin
+						});
+					};
+					if (item.timing?.start) e.timers.push(scene.time.delayedCall(item.timing.start, apply));
+					else apply();
+				};
+				const finite = items.every((item) => (item.timing?.duration ?? 0) > 0), duration = options.duration ?? (preset.duration || (finite ? Math.max(0, ...items.map((item) => item.timing.start + item.timing.duration)) : 0));
+				if (duration > 0) e.timer = scene.time.delayedCall(duration, () => clear(key));
+				return true;
+			};
+			try {
+				for (const item of preset.items) {
+					if (!item.enabled) continue;
+					const p = {
+						...item.params,
+						...options.values?.[item.id]
+					}, num = (key) => Number(p[key]);
+					if (item.type === "sprite") {
+						const asset = project.assets.find((a) => a.id === item.assetId && a.type !== "audio");
+						if (!asset) throw Error("원화 애니메이션의 이미지 리소스를 연결하세요.");
+						const number = (name, fallback) => Number.isFinite(Number(p[name])) ? Number(p[name]) : fallback, start = Math.max(0, Math.floor(number("frameStart", 0))), end = Math.max(start, Math.floor(number("frameEnd", start))), count = asset.atlas?.frames.length ?? (asset.type === "image" ? 1 : asset.frameTotal ?? 1), fps = Math.max(1, Math.min(120, number("fps", 24)));
+						if (start >= count || end >= count) throw Error("원화 애니메이션의 프레임 범위를 확인하세요.");
+						if (item.animation && ![
+							"width",
+							"height",
+							"x",
+							"y",
+							"angle",
+							"opacity"
+						].includes(item.animation.property)) throw Error("원화의 시간 변화 속성을 확인하세요.");
+						const textureAt = (index) => {
+							const frame = asset.atlas?.frames[index];
+							return {
+								key: project.official ? "forge-added-" + asset.id : frame?.pageId ?? asset.id,
+								frame: frame?.pageId ? `${asset.id}:${index}` : frame?.name ?? (asset.type === "image" ? undefined : index)
+							};
+						}, first = textureAt(start), sprite = scene.add.sprite(0, 0, first.key, first.frame), life = Math.max(1, number("duration", 0) || (end - start + 1) * 1e3 / fps), fadeIn = Math.max(0, number("fadeIn", 0)), fadeOut = Math.max(0, number("fadeOut", 70)), sourceWidth = asset.atlas?.frames[start]?.sourceWidth ?? asset.frameWidth ?? asset.width, sourceHeight = asset.atlas?.frames[start]?.sourceHeight ?? asset.frameHeight ?? asset.height, scale = Math.max(.01, options.origin?.scale ?? 1), follow = p.follow === "follow";
+						if (item.animation) {
+							const animation = item.animation;
+							p[animation.property] = animation.from;
+							e.tweens.push(scene.tweens.add({
+								targets: p,
+								[animation.property]: animation.to,
+								duration: animation.duration,
+								delay: animation.delay,
+								repeat: animation.repeat,
+								yoyo: animation.yoyo,
+								ease: animation.ease
+							}));
+						};
+						const size = () => {
+							const w = Math.max(0, number("width", 96)) || sourceWidth, h = Math.max(0, number("height", 0)) || sourceHeight * w / Math.max(1, sourceWidth);
+							sprite.setDisplaySize(w * scale, h * scale);
+						};
+						sprite.setOrigin(number("originX", .5), p.orientation === "target" && options.origin?.mirrorY === true ? 1 - number("originY", .5) : number("originY", .5)).setFlipY(p.orientation === "target" && options.origin?.mirrorY === true).setBlendMode(Phaser.BlendModes?.[String(p.blend ?? "NORMAL")] ?? 0);
+						size();
+						sprite.setData?.("forgeEffectSprite", {
+							presetId,
+							itemId: item.id,
+							assetId: asset.id,
+							start,
+							end,
+							fps
+						});
+						sprite.cameraFilter = typeof go.setZoom === "function" ? (scene.cameras.cameras ?? []).reduce((mask, camera) => camera === go ? mask : mask | (camera.id ?? 0), 0) : go.cameraFilter ?? 0;
+						sprite.setScrollFactor(go.scrollFactorX ?? 1, go.scrollFactorY ?? 1);
+						const sourceTransform = () => {
+							const camera = typeof go.setZoom === "function";
+							let x = camera ? go.worldView?.centerX ?? go.scrollX + go.width / 2 : go.x ?? 0, y = camera ? go.worldView?.centerY ?? go.scrollY + go.height / 2 : go.y ?? 0, angle = go.rotation ?? 0;
+							if (go.parentContainer && go.getWorldTransformMatrix) {
+								const matrix = go.getWorldTransformMatrix();
+								x = matrix.tx;
+								y = matrix.ty;
+								angle = matrix.rotation ?? angle;
+							};
+							return {
+								x,
+								y,
+								angle
+							};
+						}, snapshot = sourceTransform(), transform = () => {
+							const current = follow ? sourceTransform() : snapshot, x = options.origin ? options.origin.x + current.x - snapshot.x : current.x, y = options.origin ? options.origin.y + current.y - snapshot.y : current.y, angle = options.origin?.angle !== undefined ? options.origin.angle + current.angle - snapshot.angle : current.angle;
+							const rotation = p.orientation === "target" ? angle : 0, mirror = p.orientation === "target" && options.origin?.mirrorY === true ? -1 : 1, ox = number("x", 0), oy = number("y", 0) * mirror;
+							sprite.setPosition(x + ox * Math.cos(rotation) - oy * Math.sin(rotation), y + ox * Math.sin(rotation) + oy * Math.cos(rotation));
+							sprite.setRotation(rotation + number("angle", 0) * Math.PI * mirror / 180);
+							sprite.setDepth((Number(go.depth) || 0) + number("depth", 1));
+						};
+						let elapsed = 0, frameIndex = start, removed = false;
+						const dispose = () => {
+							if (removed) return;
+							removed = true;
+							scene.events.off("update", update);
+							sprite.destroy();
+							e.visuals = e.visuals.filter((row) => row.go !== sprite);
+							if (!e.visuals.length && preset.items.every((item) => !item.enabled || item.type === "sprite")) clear(key);
+						}, update = (_time, delta) => {
+							if (removed) return;
+							// 접촉점에 고정한 원화는 상대 사망·풀 재사용 뒤에도 한 번의 재생을 마친다.
+							if (follow && (go.active === false || !go.scene && go.destroyed)) {
+								dispose();
+								return;
+							};
+							elapsed += Math.max(0, delta) * (scene.time.timeScale ?? 1);
+							if (elapsed >= life) {
+								dispose();
+								return;
+							};
+							const index = Math.min(end, start + Math.floor(elapsed / 1e3 * fps));
+							if (index !== frameIndex) {
+								const texture = textureAt(index);
+								sprite.setTexture(texture.key, texture.frame);
+								frameIndex = index;
+							};
+							if (follow || item.animation && [
+								"x",
+								"y",
+								"angle"
+							].includes(item.animation.property)) transform();
+							size();
+							sprite.setAlpha(Math.max(0, Math.min(1, number("opacity", 1))) * (fadeIn ? Math.min(1, elapsed / fadeIn) : 1) * (fadeOut ? Math.min(1, (life - elapsed) / fadeOut) : 1));
+						};
+						transform();
+						sprite.setAlpha(fadeIn ? 0 : Math.max(0, Math.min(1, number("opacity", 1))));
+						e.visuals.push({
+							go: sprite,
+							update
+						});
+						scene.events.on("update", update);
+						continue;
+					};
+					if (item.type === "tween") {
+						const property = String(p.property) === "opacity" ? "alpha" : String(p.property) === "rotation" ? "angle" : String(p.property);
+						if (property === "scale") {
+							const camera = typeof go.setZoom === "function";
+							const x = camera ? "zoomX" : "scaleX", y = camera ? "zoomY" : "scaleY";
+							capture(x);
+							capture(y);
+							const baseX = baselines.get(go).get(x), baseY = baselines.get(go).get(y);
+							go[x] = baseX * num("from");
+							go[y] = baseY * num("from");
+							e.tweens.push(scene.tweens.add({
+								targets: go,
+								[x]: baseX * num("to"),
+								[y]: baseY * num("to"),
+								duration: num("duration"),
+								repeat: num("repeat"),
+								yoyo: !!num("yoyo"),
+								ease: "Sine.InOut"
+							}));
+						} else if ([
+							"alpha",
+							"angle",
+							"x",
+							"y"
+						].includes(property)) {
+							capture(property);
+							go[property] = num("from");
+							e.tweens.push(scene.tweens.add({
+								targets: go,
+								[property]: num("to"),
+								duration: num("duration"),
+								repeat: num("repeat"),
+								yoyo: !!num("yoyo"),
+								ease: "Sine.InOut"
+							}));
+						};
+						continue;
+					};
+					if ([
+						"pan",
+						"zoom",
+						"rotate"
+					].includes(item.type)) {
+						if (typeof go.setZoom !== "function") {
+							error("카메라 이동·확대·회전은 카메라에 적용하세요.");
+							continue;
+						};
+						if (item.type === "pan") {
+							capture("scrollX");
+							capture("scrollY");
+							e.cameraEffects.add("panEffect");
+							const center = {
+								x: go.scrollX + go.width / 2,
+								y: go.scrollY + go.height / 2
+							};
+							go.pan(center.x + num("x"), center.y + num("y"), num("duration"), Phaser.Tweens.Builders.GetEaseFunction(String(p.ease)), true);
+						} else {
+							const values = {};
+							if (item.type === "zoom") {
+								capture("zoomX");
+								capture("zoomY");
+								values.zoomX = go.zoomX * num("amount");
+								values.zoomY = go.zoomY * num("amount");
+							} else {
+								capture("rotation");
+								values.rotation = go.rotation + num("angle") * Math.PI / 180;
+							};
+							e.tweens.push(scene.tweens.add({
+								targets: go,
+								...values,
+								duration: num("duration"),
+								ease: String(p.ease),
+								yoyo: !!Number(p.yoyo ?? 0),
+								repeat: Math.max(0, Math.min(100, Math.floor(Number(p.repeat) || 0)))
+							}));
+						};
+						continue;
+					};
+					if ([
+						"shake",
+						"flash",
+						"fade",
+						"fadeIn"
+					].includes(item.type)) {
+						if (!go.filters || go.enableFilters) {
+							error("화면 흔들림·번쩍임·페이드는 카메라에 적용하세요.");
+							continue;
+						};
+						e.cameraEffects.add(item.type === "fadeIn" ? "fadeEffect" : item.type + "Effect");
+						if (item.type === "shake") go.shake(num("duration"), num("amount"));
+						else {
+							const value = color(p.color), args = [
+								num("duration"),
+								value >> 16 & 255,
+								value >> 8 & 255,
+								value & 255
+							];
+							if (item.type === "flash") go.flash(...args);
+							else if (item.type === "fadeIn") go.fadeIn(...args);
+							else go.fadeOut(...args);
+						};
+						continue;
+					};
+					if (!scene.game.renderer.gl) {
+						if (!webglWarning) {
+							error("이 실행 환경은 WebGL 필터를 지원하지 않습니다.");
+							webglWarning = true;
+						};
+						continue;
+					};
+					go.enableFilters?.();
+					const list = go.filters?.[options.scope ?? "internal"];
+					if (!list) continue;
+					let controller;
+					if (item.type === "glow") controller = list.addGlow(color(p.color), num("outerStrength"), num("innerStrength"), num("scale"), false, num("quality"), num("distance"));
+					else if (item.type === "shadow") controller = list.addShadow(num("x"), num("y"), num("decay"), num("power"), color(p.color), num("samples"), num("intensity"));
+					else if (item.type === "blur") controller = list.addBlur(num("quality"), num("x"), num("y"), num("strength"), 16777215, num("steps"));
+					else if (item.type === "bokeh") controller = list.addBokeh(num("radius"), num("amount"), num("contrast"));
+					else if (item.type === "tiltShift") controller = list.addTiltShift(num("radius"), num("amount"), num("contrast"), num("blurX"), num("blurY"), num("strength"));
+					else if (item.type === "pixelate") controller = list.addPixelate(num("amount"));
+					else if (item.type === "barrel") controller = list.addBarrel(num("amount"));
+					else if (item.type === "vignette") controller = list.addVignette(num("x"), num("y"), num("radius"), num("strength"), color(p.color));
+					else if (item.type === "color") {
+						controller = list.addColorMatrix();
+						const mode = String(p.mode);
+						if ([
+							"grayscale",
+							"sepia",
+							"negative",
+							"brightness",
+							"contrast",
+							"saturate",
+							"hue",
+							"night",
+							"lsd"
+						].includes(mode)) controller.colorMatrix[mode](num("amount"));
+					} else if (item.type === "quantize") controller = list.addQuantize({
+						steps: [
+							num("steps"),
+							num("steps"),
+							num("steps"),
+							255
+						],
+						dither: !!num("dither")
+					});
+					else if (item.type === "threshold") controller = list.addThreshold(num("edge1"), num("edge2"));
+					else if (item.type === "wipe") {
+						controller = list.addWipe(num("width"), num("direction"), num("axis"));
+						controller.progress = num("progress");
+					} else if (item.type === "displacement" || item.type === "blend") {
+						const a = project.assets.find((a) => a.id === item.assetId), f = a?.atlas?.frames[0], texture = a ? scene.textures.getFrame(project.official ? "forge-added-" + a.id : f?.pageId ?? a.id, f?.pageId ? `${a.id}:0` : f?.name ?? (a.type === "image" ? undefined : 0)) : null;
+						if (!texture) throw Error("효과에 사용할 이미지 리소스를 연결하세요.");
+						controller = item.type === "displacement" ? list.addDisplacement(texture, num("x"), num("y")) : list.addBlend(texture, Phaser.BlendModes[String(p.mode)] ?? Phaser.BlendModes.SCREEN, num("amount"));
+					} else if (item.type === "shader") {
+						let hash = 2166136261;
+						for (let i = 0; i < item.fragment.length; i++) hash = Math.imul(hash ^ item.fragment.charCodeAt(i), 16777619);
+						const nodeName = "ForgeFilter_" + (hash >>> 0).toString(16), source = item.fragment;
+						if (!scene.game.renderer.renderNodes.hasNode(nodeName)) {
+							class CustomNode extends Phaser.Renderer.WebGL.RenderNodes.BaseFilterShader {
+								constructor(manager) {
+									super(nodeName, manager, null, source);
+								}
+								setupUniforms(control, context) {
+									this.programManager.setUniform("uTime", (control.camera?.scene?.time?.now ?? 0) / 1e3);
+									this.programManager.setUniform("uResolution", [context.width, context.height]);
+									for (const [key, value] of Object.entries(control.values)) this.programManager.setUniform(key, value);
+								}
+							}
+							scene.game.renderer.renderNodes.addNodeConstructor(nodeName, CustomNode);
+						};
+						controller = new Phaser.Filters.Controller(list.camera, nodeName);
+						controller.values = Object.fromEntries(item.uniforms.map((u) => [u.key, Number(p[u.key] ?? u.value)]));
+						list.add(controller);
+					};
+					if (controller) {
+						controller.setPaddingOverride?.(null);
+						e.filters.push({
+							list,
+							controller
+						});
+						preserveContainerFilterBounds(go);
+						if (item.animation) {
+							const a = item.animation, object = item.type === "shader" ? controller.values : controller;
+							if (![
+								"__proto__",
+								"constructor",
+								"prototype"
+							].includes(a.property)) {
+								object[a.property] = a.from;
+								e.tweens.push(scene.tweens.add({
+									targets: object,
+									[a.property]: a.to,
+									duration: a.duration,
+									delay: a.delay,
+									repeat: a.repeat,
+									yoyo: a.yoyo,
+									ease: a.ease
+								}));
+							}
+						}
+					}
+				};
+				const duration = options.duration ?? preset.duration;
+				if (duration > 0) e.timer = scene.time.delayedCall(duration, () => clear(key));
+				return true;
+			} catch (cause) {
+				clear(key);
+				error(preset.name + ": " + String(cause));
+				return false;
+			}
+		},
+		bind: (target, bindings) => {
+			for (const b of bindings ?? []) if (b.enabled) api.play(target, b.presetId, {
+				key: b.id,
+				scope: b.scope,
+				values: b.values
+			});
+		},
+		stop: (target, presetId, key) => {
+			const go = resolve(target);
+			for (const [id, e] of entries) if (e.target === go && (!presetId || e.presetId === presetId) && (!key || id.endsWith("/" + key))) clear(id);
+		},
+		controls: (target) => {
+			const go = resolve(target), properties = new Set(), presetIds = new Set();
+			for (const entry of entries.values()) {
+				if (entry.target !== go) continue;
+				presetIds.add(entry.presetId);
+				for (const property of entry.properties) properties.add(property);
+			};
+			return {
+				properties: [...properties],
+				presetIds: [...presetIds]
+			};
+		},
+		status: () => [...entries.values()].filter((e) => !e.parent).map((e) => ({
+			target: e.target.name ?? "카메라",
+			presetId: e.presetId,
+			filters: e.filters.length + [...e.children].reduce((sum, key) => sum + (entries.get(key)?.filters.length ?? 0), 0),
+			sprites: e.visuals.length + [...e.children].reduce((sum, key) => sum + (entries.get(key)?.visuals.length ?? 0), 0),
+			activeItems: e.children.size ? [...e.children].filter((key) => entries.has(key)).length : undefined
+		})),
+		destroy: () => {
+			for (const key of [...entries.keys()]) clear(key);
+		}
+	};
+	return api;
+},function createGameplayRuntime(project, definition, host) {
+	const actors = new Map();
+	let elapsed = 0, routeBudget = 4, obstacleTime = -Infinity, obstacleRects = [], destroyed = false, inUpdate = false;
+	const targetCells = new Map();
+	const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+	const anchor = (go) => go?.getData?.("forgeAnchor") ?? go;
+	const position = (go) => {
+		go = anchor(go);
+		if (go.parentContainer && go.getWorldTransformMatrix) {
+			const m = go.getWorldTransformMatrix();
+			return {
+				x: m.tx,
+				y: m.ty
+			};
+		};
+		return {
+			x: finite(go.x),
+			y: finite(go.y)
+		};
+	};
+	const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+	const actorSetting = (actor) => actor.def.gameplay?.agent;
+	const combatSetting = (actor) => actor.def.gameplay?.combat;
+	const team = (actor) => host.factions?.()?.team(actor.def.id) ?? actor.def.gameplay?.faction ?? combatSetting(actor)?.team ?? "";
+	const relation = (actor, target) => host.factions?.()?.relation(team(actor), team(target)) ?? (team(actor) === team(target) ? "friendly" : "hostile");
+	const attackable = (actor, target) => {
+		const value = relation(actor, target), settings = combatSetting(actor);
+		return value === "hostile" || value === "friendly" && !!settings?.friendlyFire || value === "neutral" && !!settings?.attackNeutral;
+	};
+	const isPlayer = (target) => ["topdown", "platformer"].includes(target.def.behavior) || team(target) === "player";
+	const matchesTarget = (actor, target, settings, explicit = false) => (settings.targetMode ?? "team") === "team" ? explicit || team(target) === settings.targetTeam : settings.targetMode === "player" ? isPlayer(target) : relation(actor, target) === settings.targetMode;
+	const data = (actor, key, value) => actor.go.setData?.(key, value);
+	const state = (actor, key, value, trigger = false) => {
+		for (const binding of actor.def.stateMachines ?? []) {
+			const machine = project.stateMachines?.find((m) => m.id === binding.machineId);
+			if (!machine?.parameters.some((p) => p.key === key || p.id === key)) continue;
+			if (trigger) host.states()?.trigger(actor.def.id, key, machine.id);
+			else host.states()?.set(actor.def.id, key, value, machine.id);
+		}
+	};
+	const invoke = (id, owner, args = {}) => {
+		if (id) host.run(id, args, owner.def.id);
+	};
+	const stats = (actor) => {
+		const c = combatSetting(actor);
+		const result = {
+			maxHp: c?.maxHp ?? 100,
+			attack: c?.attack ?? 0,
+			defense: c?.defense ?? 0,
+			maxEnergy: c?.maxEnergy ?? 0
+		};
+		const record = project.definitions?.find((d) => d.id === c?.definitionId);
+		for (const field of record?.fields ?? []) if (field.type === "number" && field.key in result) result[field.key] = Math.max(0, finite(field.value, result[field.key]));
+		if (c?.useEquipment) {
+			const equipment = host.equipment?.() ?? {};
+			for (const key of Object.keys(result)) result[key] += finite(equipment[key]);
+			result.attack += finite(equipment["공격력"]);
+			result.defense += finite(equipment["방어력"]);
+			result.maxHp += finite(equipment["최대 체력"]);
+		};
+		result.maxHp = Math.max(1, result.maxHp);
+		result.maxEnergy = Math.max(0, result.maxEnergy);
+		return result;
+	};
+	function publish(actor) {
+		const s = stats(actor);
+		actor.hp = Math.max(0, Math.min(s.maxHp, actor.hp));
+		actor.energy = Math.max(0, Math.min(s.maxEnergy, actor.energy));
+		data(actor, "hp", actor.hp);
+		data(actor, "maxHp", s.maxHp);
+		data(actor, "energy", actor.energy);
+		data(actor, "combatStatus", actor.effects.map((e) => ({
+			id: e.id,
+			name: e.name,
+			remaining: e.remaining,
+			stacks: e.stacks
+		})));
+		data(actor, "aiState", actor.ai);
+		data(actor, "aiTarget", actor.target);
+		data(actor, "gameplayBlocked", actor.hp <= 0 || actor.effects.some((e) => e.kind === "stun"));
+		state(actor, "hp", actor.hp);
+		state(actor, "energy", actor.energy);
+		state(actor, "aiState", actor.ai);
+		const c = combatSetting(actor), a = actorSetting(actor);
+		if (c?.healthVariableId) host.write?.(c.healthVariableId, actor.hp);
+		if (c?.energyVariableId) host.write?.(c.energyVariableId, actor.energy);
+		if (a?.stateVariableId) host.write?.(a.stateVariableId, actor.ai);
+		if (!a || !actor.enabled) {
+			const velocity = anchor(actor.go).body?.velocity;
+			if (velocity) {
+				state(actor, "moving", Math.hypot(velocity.x, velocity.y) > .5);
+				if (Math.abs(velocity.x) > .5) state(actor, "facing", velocity.x < 0 ? "left" : "right");
+			}
+		}
+	}
+	function sync() {
+		const live = new Set();
+		const entries = host.actors(), required = new Set(entries.map((e) => e.def.gameplay?.agent?.targetId).filter(Boolean));
+		const playerTargets = entries.some((entry) => entry.def.gameplay?.agent?.targetMode === "player");
+		for (const a of actors.values()) if (a.forcedTarget) required.add(a.forcedTarget);
+		for (const entry of entries) {
+			if (!entry.go?.active || !entry.def.gameplay && !required.has(entry.def.id) && !(playerTargets && isPlayer(entry)) || entry.go.getData?.("forgeUiTransient")) continue;
+			live.add(entry.def.id);
+			if (actors.get(entry.def.id)?.go === entry.go) continue;
+			const actor = {
+				...entry,
+				home: position(entry.go),
+				hp: 100,
+				energy: 0,
+				cooldowns: {},
+				effects: [],
+				invulnerable: 0,
+				ai: "idle",
+				enabled: entry.def.gameplay?.agent?.enabled ?? false,
+				target: "",
+				lostFor: 0,
+				wait: 0,
+				waypoint: 0,
+				route: [],
+				repath: 0,
+				facing: {
+					x: 1,
+					y: 0
+				},
+				blocked: false,
+				seen: "",
+				decisionAt: 0,
+				decisionRevision: -1,
+				decisions: 0
+			};
+			const s = stats(actor);
+			actor.hp = s.maxHp;
+			actor.energy = s.maxEnergy;
+			actors.set(entry.def.id, actor);
+			publish(actor);
+		};
+		for (const id of actors.keys()) if (!live.has(id)) actors.delete(id);
+	}
+	function obstacles() {
+		if (elapsed - obstacleTime < 200) return obstacleRects;
+		obstacleTime = elapsed;
+		obstacleRects = [];
+		for (const { def, go } of host.actors()) {
+			if (!go?.active || def.physics !== "static" || def.fixed) continue;
+			if (def.kind === "tilemap" && go.layer?.data) {
+				for (const row of go.layer.data) for (const tile of row) if (tile.collides) obstacleRects.push({
+					id: def.id,
+					rect: {
+						x: go.x + tile.pixelX * go.scaleX,
+						y: go.y + tile.pixelY * go.scaleY,
+						width: tile.width * go.scaleX,
+						height: tile.height * go.scaleY
+					}
+				});
+			} else {
+				const physical = anchor(go), body = physical.body;
+				const rect = body ? {
+					x: body.x,
+					y: body.y,
+					width: body.width,
+					height: body.height
+				} : go.getBounds?.();
+				if (rect?.width > 0 && rect.height > 0) obstacleRects.push({
+					id: def.id,
+					rect
+				});
+			}
+		};
+		return obstacleRects;
+	}
+	const segmentRect = (from, to, rect) => {
+		let low = 0, high = 1;
+		for (const [a, b, min, max] of [[
+			from.x,
+			to.x,
+			rect.x,
+			rect.x + rect.width
+		], [
+			from.y,
+			to.y,
+			rect.y,
+			rect.y + rect.height
+		]]) {
+			const delta = b - a;
+			if (Math.abs(delta) < 1e-9) {
+				if (a < min || a > max) return false;
+				continue;
+			};
+			const q = (min - a) / delta, r = (max - a) / delta;
+			low = Math.max(low, Math.min(q, r));
+			high = Math.min(high, Math.max(q, r));
+			if (low > high) return false;
+		};
+		return true;
+	};
+	const clearLine = (from, to, owner = "", target = "") => !obstacles().some((o) => o.id !== owner && o.id !== target && segmentRect(from, to, o.rect));
+	function findPath(actor, destination, settings) {
+		const size = settings.cellSize, width = Math.max(1, Math.ceil((definition.worldWidth || project.width) / size)), height = Math.max(1, Math.ceil((definition.worldHeight || project.height) / size));
+		if (width * height > 262144) {
+			host.error("이동 격자가 너무 큽니다. AI의 경로 칸 크기를 늘리세요.");
+			return null;
+		};
+		const sx = Math.max(0, Math.min(width - 1, Math.floor(position(actor.go).x / size))), sy = Math.max(0, Math.min(height - 1, Math.floor(position(actor.go).y / size)));
+		let gx = Math.max(0, Math.min(width - 1, Math.floor(destination.x / size))), gy = Math.max(0, Math.min(height - 1, Math.floor(destination.y / size)));
+		const blocked = new Uint8Array(width * height), radius = settings.radius;
+		for (const o of obstacles()) if (o.id !== actor.def.id && o.id !== actor.target) {
+			const left = Math.max(0, Math.ceil((o.rect.x - radius) / size - .5)), right = Math.min(width - 1, Math.floor((o.rect.x + o.rect.width + radius) / size - .5));
+			const top = Math.max(0, Math.ceil((o.rect.y - radius) / size - .5)), bottom = Math.min(height - 1, Math.floor((o.rect.y + o.rect.height + radius) / size - .5));
+			for (let y = top; y <= bottom; y++) for (let x = left; x <= right; x++) blocked[y * width + x] = 1;
+		};
+		if (blocked[gy * width + gx]) {
+			let best = Infinity, candidate;
+			for (let y = Math.max(0, gy - 4); y <= Math.min(height - 1, gy + 4); y++) for (let x = Math.max(0, gx - 4); x <= Math.min(width - 1, gx + 4); x++) {
+				const d = Math.hypot(x - gx, y - gy);
+				if (!blocked[y * width + x] && d < best) {
+					candidate = {
+						x,
+						y
+					};
+					best = d;
+				}
+			};
+			if (!candidate) return null;
+			gx = candidate.x;
+			gy = candidate.y;
+		};
+		const start = sy * width + sx, goal = gy * width + gx;
+		const costs = new Float64Array(width * height);
+		costs.fill(Infinity);
+		costs[start] = 0;
+		const previous = new Int32Array(width * height);
+		previous.fill(-1);
+		const closed = new Uint8Array(width * height);
+		const queue = [];
+		const push = (key, score) => {
+			let i = queue.length;
+			queue.push({
+				key,
+				score
+			});
+			while (i) {
+				const parent = i - 1 >> 1;
+				if (queue[parent].score <= score) break;
+				queue[i] = queue[parent];
+				i = parent;
+			};
+			queue[i] = {
+				key,
+				score
+			};
+		};
+		const pop = () => {
+			const first = queue[0], last = queue.pop();
+			if (queue.length) {
+				let i = 0;
+				while (i * 2 + 1 < queue.length) {
+					let child = i * 2 + 1;
+					if (child + 1 < queue.length && queue[child + 1].score < queue[child].score) child++;
+					if (queue[child].score >= last.score) break;
+					queue[i] = queue[child];
+					i = child;
+				};
+				queue[i] = last;
+			};
+			return first.key;
+		};
+		push(start, 0);
+		let expanded = 0;
+		while (queue.length && expanded++ < 12e3) {
+			const key = pop();
+			if (closed[key]) continue;
+			if (key === goal) {
+				const path = [];
+				let n = key;
+				while (n !== start) {
+					path.push({
+						x: (n % width + .5) * size,
+						y: (Math.floor(n / width) + .5) * size
+					});
+					n = previous[n];
+					if (n < 0) return null;
+				};
+				path.reverse();
+				if (!path.length) path.push({ ...destination });
+				return path;
+			};
+			closed[key] = 1;
+			const x = key % width, y = Math.floor(key / width);
+			for (const [nx, ny] of [
+				[x - 1, y],
+				[x + 1, y],
+				[x, y - 1],
+				[x, y + 1]
+			]) {
+				if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+				const next = ny * width + nx, cost = costs[key] + 1;
+				if (blocked[next] || closed[next] || cost >= costs[next]) continue;
+				costs[next] = cost;
+				previous[next] = key;
+				push(next, cost + Math.abs(nx - gx) + Math.abs(ny - gy));
+			}
+		};
+		return null;
+	}
+	const stunned = (actor) => actor.effects.some((e) => e.kind === "stun");
+	function move(actor, direction, speed, delta) {
+		const go = anchor(actor.go), length = Math.hypot(direction.x, direction.y), vx = length ? direction.x / length * speed : 0, vy = length ? direction.y / length * speed : 0;
+		if (go.body?.setVelocity) go.body.setVelocity(vx, vy);
+		else {
+			const pos = position(go), dest = {
+				x: pos.x + vx * delta / 1e3,
+				y: pos.y + vy * delta / 1e3
+			};
+			if (go.parentContainer?.getWorldTransformMatrix) {
+				const local = go.parentContainer.getWorldTransformMatrix().applyInverse(dest.x, dest.y);
+				go.x = local.x;
+				go.y = local.y;
+			} else {
+				go.x = dest.x;
+				go.y = dest.y;
+			}
+		};
+		if (length) actor.facing = {
+			x: direction.x / length,
+			y: direction.y / length
+		};
+		state(actor, "moving", speed > 0 && length > 0);
+		if (Math.abs(vx) > .01) state(actor, "facing", vx < 0 ? "left" : "right");
+	}
+	const basicSkill = (c) => ({
+		id: "basic",
+		name: "기본 공격",
+		power: 0,
+		attackScale: 1,
+		defenseScale: 1,
+		element: "physical",
+		range: c.range,
+		cost: 0,
+		castMs: c.castMs,
+		cooldownMs: c.cooldownMs,
+		statusId: "",
+		onHit: ""
+	});
+	function changeHealth(actor, amount, source = "", allowInvulnerable = false) {
+		if (!combatSetting(actor)?.enabled || actor.hp <= 0 || amount < 0 && actor.invulnerable > 0 && !allowInvulnerable) return 0;
+		const previous = actor.hp;
+		actor.hp = Math.max(0, Math.min(stats(actor).maxHp, actor.hp + amount));
+		if (actor.hp < previous) {
+			if (!allowInvulnerable) actor.invulnerable = combatSetting(actor).invulnerableMs;
+			state(actor, "hurt", true, true);
+			invoke(combatSetting(actor)?.onHurt, actor, {
+				sourceId: source,
+				damage: previous - actor.hp,
+				hp: actor.hp
+			});
+		};
+		if (actor.hp === 0) {
+			actor.ai = "dead";
+			actor.cast = undefined;
+			move(actor, {
+				x: 0,
+				y: 0
+			}, 0, 0);
+			invoke(combatSetting(actor)?.onDeath, actor, { sourceId: source });
+		};
+		publish(actor);
+		return Math.abs(actor.hp - previous);
+	}
+	function applyStatus(targetId, status, source = "") {
+		const actor = actors.get(targetId);
+		if (!actor || actor.hp <= 0) return false;
+		const existing = actor.effects.find((e) => e.id === status.id);
+		if (!existing) actor.effects.push({
+			...status,
+			remaining: status.duration,
+			tick: 0,
+			stacks: 1,
+			source
+		});
+		else if (status.stacking === "replace") Object.assign(existing, status, {
+			remaining: status.duration,
+			tick: 0,
+			stacks: 1,
+			source
+		});
+		else {
+			existing.remaining = status.duration;
+			if (status.stacking === "stack") existing.stacks = Math.min(status.maxStacks, existing.stacks + 1);
+		};
+		if (status.kind === "stun") actor.cast = undefined;
+		publish(actor);
+		return true;
+	}
+	function hit(actor, target, skill) {
+		if (actor.hp <= 0 || target.hp <= 0 || !target.go.active || !attackable(actor, target) || distance(position(actor.go), position(target.go)) > skill.range || !clearLine(position(actor.go), position(target.go), actor.def.id, target.def.id)) return false;
+		const offense = stats(actor), defense = stats(target), resistance = combatSetting(target)?.resistances[skill.element] ?? 0;
+		const critical = Math.random() < (combatSetting(actor)?.criticalChance ?? 0);
+		if (resistance >= 1) return false;
+		const damage = Math.max(1, Math.round(Math.max(1, offense.attack * skill.attackScale + skill.power - defense.defense * skill.defenseScale) * (1 - resistance) * (critical ? combatSetting(actor).criticalScale : 1)));
+		const changed = changeHealth(target, -damage, actor.def.id);
+		if (!changed) return false;
+		const status = combatSetting(actor)?.statuses.find((s) => s.id === skill.statusId);
+		if (status && target.hp > 0) applyStatus(target.def.id, status, actor.def.id);
+		invoke(skill.onHit || combatSetting(actor)?.onHit, actor, {
+			targetId: target.def.id,
+			damage: changed,
+			critical
+		});
+		return true;
+	}
+	function attack(owner, targetId, skillId = "basic") {
+		if (!inUpdate) sync();
+		const actor = actors.get(owner), c = actor && combatSetting(actor);
+		if (!actor || !c?.enabled || actor.hp <= 0 || actor.cast || stunned(actor)) return false;
+		const skill = skillId === "basic" ? basicSkill(c) : c.skills.find((s) => s.id === skillId);
+		if (!skill || (actor.cooldowns[skill.id] ?? 0) > 0 || actor.energy < skill.cost) return false;
+		if (host.skillAllowed && !host.skillAllowed(skill, owner)) return false;
+		let target = actors.get(targetId || actor.target);
+		if (!target) target = [...actors.values()].filter((a) => a !== actor && combatSetting(a)?.enabled && attackable(actor, a) && a.hp > 0).sort((a, b) => distance(position(actor.go), position(a.go)) - distance(position(actor.go), position(b.go)))[0];
+		if (!target || !combatSetting(target)?.enabled || target === actor || !attackable(actor, target) || distance(position(actor.go), position(target.go)) > skill.range || !clearLine(position(actor.go), position(target.go), owner, target.def.id)) return false;
+		actor.energy -= skill.cost;
+		actor.cooldowns[skill.id] = skill.cooldownMs;
+		state(actor, "attack", true, true);
+		if (skill.castMs > 0) actor.cast = {
+			target: target.def.id,
+			skill: { ...skill },
+			remaining: skill.castMs
+		};
+		else hit(actor, target, skill);
+		publish(actor);
+		return true;
+	}
+	function updateAgent(actor, delta) {
+		const a = actorSetting(actor);
+		if (!a || !actor.enabled) return;
+		if (actor.hp <= 0 || stunned(actor)) {
+			move(actor, {
+				x: 0,
+				y: 0
+			}, 0, delta);
+			return;
+		};
+		const current = position(actor.go), candidates = [];
+		const explicitTarget = actor.forcedTarget ?? a.targetId;
+		const previousTarget = actors.get(actor.target);
+		if (previousTarget && !matchesTarget(actor, previousTarget, a, !!explicitTarget)) {
+			invoke(a.onLost, actor, { targetId: actor.target });
+			actor.target = "";
+			actor.lastSeen = undefined;
+			actor.lostFor = 0;
+			actor.route = [];
+			actor.pathGoal = undefined;
+			actor.seen = "";
+			actor.decisionAt = 0;
+		};
+		const revision = host.factions?.()?.revision ?? 0, decide = elapsed >= actor.decisionAt || actor.decisionRevision !== revision;
+		if (decide) {
+			if (explicitTarget) {
+				const target = actors.get(explicitTarget);
+				if (target) candidates.push(target);
+			} else {
+				const radius = Math.ceil(a.detectionRange / 128), cx = Math.floor(current.x / 128), cy = Math.floor(current.y / 128);
+				if (radius > 16) candidates.push(...[...actors.values()].filter((t) => t !== actor && matchesTarget(actor, t, a)));
+				else for (let y = cy - radius; y <= cy + radius; y++) for (let x = cx - radius; x <= cx + radius; x++) candidates.push(...targetCells.get(x + ":" + y) ?? []);
+			};
+			const canSee = (target) => {
+				if (target === actor || !target.go.active || target.hp <= 0 || target.go.visible === false || !matchesTarget(actor, target, a, !!explicitTarget)) return false;
+				const p = position(target.go), d = distance(current, p);
+				if (d > a.detectionRange) return false;
+				if (a.fieldOfView < 360 && d > .001) {
+					const dot = (actor.facing.x * (p.x - current.x) + actor.facing.y * (p.y - current.y)) / d;
+					if (dot < Math.cos(a.fieldOfView * Math.PI / 360)) return false;
+				};
+				return !a.lineOfSight || clearLine(current, p, actor.def.id, target.def.id);
+			};
+			let nearest, nearestDistance = Infinity;
+			for (const target of candidates) if (canSee(target)) {
+				const d = distance(current, position(target.go));
+				if (d < nearestDistance) {
+					nearest = target;
+					nearestDistance = d;
+				}
+			};
+			actor.seen = nearest?.def.id ?? "";
+			actor.decisionRevision = revision;
+			const interval = a.decisionIntervalMs ?? 100;
+			// 첫 판단은 즉시 실행하고 다음 시각부터 오브젝트 ID별로 분산한다.
+			if (actor.decisions === 0) {
+				let phase = 0;
+				for (let n = 0; n < actor.def.id.length; n++) phase = phase * 31 + actor.def.id.charCodeAt(n) >>> 0;
+				actor.decisionAt = elapsed + Math.max(16, phase % interval);
+			} else actor.decisionAt = elapsed + interval;
+			actor.decisions++;
+		};
+		let seen = actors.get(actor.seen);
+		if (seen && (!seen.go.active || seen.hp <= 0 || seen.go.visible === false || !matchesTarget(actor, seen, a, !!explicitTarget) || distance(current, position(seen.go)) > a.detectionRange)) {
+			seen = undefined;
+			actor.seen = "";
+		};
+		let goal, stop = a.stopDistance;
+		if (actor.forcedHome || a.leashRange > 0 && distance(current, actor.home) > a.leashRange) {
+			actor.forcedHome = true;
+			actor.target = "";
+			actor.lastSeen = undefined;
+			actor.ai = "return";
+			goal = actor.home;
+			stop = 5;
+			if (distance(current, actor.home) <= stop) actor.forcedHome = false;
+		} else if (seen) {
+			if (actor.target !== seen.def.id) invoke(a.onDetect, actor, { targetId: seen.def.id });
+			actor.target = seen.def.id;
+			actor.lastSeen = position(seen.go);
+			actor.lostFor = 0;
+			actor.wait = 0;
+			actor.ai = "chase";
+			goal = actor.lastSeen;
+			if (a.autoAttack && combatSetting(actor)?.enabled && attack(actor.def.id, seen.def.id, a.autoAttackSkillId || "basic")) actor.ai = "attack";
+		} else if (actor.lastSeen) {
+			if (actor.lostFor === 0) invoke(a.onLost, actor, { targetId: actor.target });
+			actor.lostFor += delta;
+			actor.ai = "search";
+			goal = actor.lastSeen;
+			stop = 5;
+			if (actor.lostFor > a.memoryMs + a.searchMs) {
+				actor.lastSeen = undefined;
+				actor.target = "";
+				actor.route = [];
+				goal = actor.home;
+				actor.ai = "return";
+			}
+		} else if (a.mode === "follow" && explicitTarget && actors.get(explicitTarget)?.go.active && matchesTarget(actor, actors.get(explicitTarget), a, true)) goal = position(actors.get(explicitTarget).go);
+		else if (a.mode === "patrol" && a.waypoints.length) {
+			actor.ai = "patrol";
+			goal = a.waypoints[actor.waypoint % a.waypoints.length];
+			stop = 5;
+			if (distance(current, goal) <= stop) {
+				actor.wait += delta;
+				if (actor.wait >= a.patrolWaitMs) {
+					actor.waypoint = (actor.waypoint + 1) % a.waypoints.length;
+					actor.wait = 0;
+					actor.route = [];
+				}
+			}
+		} else {
+			goal = actor.home;
+			stop = 5;
+			actor.ai = distance(current, actor.home) > stop ? "return" : "idle";
+		};
+		if (!goal || distance(current, goal) <= stop || actor.cast) {
+			actor.route = [];
+			move(actor, {
+				x: 0,
+				y: 0
+			}, 0, delta);
+			publish(actor);
+			return;
+		};
+		actor.repath -= delta;
+		if ((actor.repath <= 0 || !actor.pathGoal || distance(goal, actor.pathGoal) > a.cellSize) && routeBudget > 0) {
+			routeBudget--;
+			const path = findPath(actor, goal, a);
+			actor.repath = a.repathMs;
+			actor.pathGoal = { ...goal };
+			if (!path) {
+				if (!actor.blocked) invoke(a.onPathFailed, actor, { targetId: actor.target });
+				actor.blocked = true;
+				actor.route = [];
+				actor.ai = "blocked";
+			} else {
+				actor.blocked = false;
+				actor.route = path;
+			}
+		};
+		while (actor.route.length && distance(current, actor.route[0]) < Math.max(2, a.speed * delta / 1e3)) actor.route.shift();
+		const next = actor.route[0], slow = actor.effects.filter((e) => e.kind === "slow").reduce((n, e) => Math.min(n, Math.max(.05, 1 - e.power * e.stacks / 100)), 1);
+		if (actor.blocked && !next) actor.ai = "blocked";
+		move(actor, next ? {
+			x: next.x - current.x,
+			y: next.y - current.y
+		} : {
+			x: 0,
+			y: 0
+		}, next ? a.speed * slow : 0, delta);
+		publish(actor);
+	}
+	const graphics = host.scene.add?.graphics?.();
+	if (graphics) {
+		graphics.setDepth?.(9998);
+		graphics.setName?.("AI 경로·시야");
+	};
+	function update(delta) {
+		if (destroyed) return;
+		delta = Math.max(0, Math.min(250, finite(delta)));
+		elapsed += delta;
+		routeBudget = 4;
+		sync();
+		inUpdate = true;
+		targetCells.clear();
+		for (const actor of actors.values()) {
+			const p = position(actor.go), key = Math.floor(p.x / 128) + ":" + Math.floor(p.y / 128);
+			const list = targetCells.get(key) ?? [];
+			list.push(actor);
+			targetCells.set(key, list);
+		};
+		for (const actor of actors.values()) {
+			const c = combatSetting(actor);
+			actor.invulnerable = Math.max(0, actor.invulnerable - delta);
+			for (const id of Object.keys(actor.cooldowns)) actor.cooldowns[id] = Math.max(0, actor.cooldowns[id] - delta);
+			if (c?.enabled && actor.hp > 0) actor.energy = Math.min(stats(actor).maxEnergy, actor.energy + c.energyRegen * delta / 1e3);
+			for (const effect of actor.effects) {
+				const activeDelta = Math.min(delta, effect.remaining);
+				effect.remaining -= delta;
+				effect.tick += activeDelta;
+				while (effect.tick >= effect.tickMs && actor.hp > 0) {
+					effect.tick -= effect.tickMs;
+					const amount = effect.power * effect.stacks;
+					if (effect.kind === "regen") changeHealth(actor, amount, effect.source, true);
+					else if (effect.kind === "poison" || effect.kind === "burn") changeHealth(actor, -amount * (1 - (c?.resistances[effect.kind === "burn" ? "fire" : "poison"] ?? 0)), effect.source, true);
+				}
+			};
+			actor.effects = actor.effects.filter((e) => e.remaining > 0);
+		};
+		// 모든 기존 상태의 시간을 먼저 진행한다. 이 프레임의 적중으로 생긴 상태는 다음 프레임부터 시간을 센다.
+		for (const actor of actors.values()) {
+			if (actor.cast) {
+				actor.cast.remaining -= delta;
+				if (actor.cast.remaining <= 0) {
+					const cast = actor.cast;
+					actor.cast = undefined;
+					const target = actors.get(cast.target);
+					if (target) hit(actor, target, cast.skill);
+				}
+			};
+			updateAgent(actor, delta);
+			publish(actor);
+		};
+		inUpdate = false;
+		if (graphics) {
+			graphics.clear();
+			for (const actor of actors.values()) if (actorSetting(actor)?.debug) {
+				const p = position(actor.go);
+				graphics.lineStyle(1, 8302561, .5);
+				graphics.strokeCircle(p.x, p.y, actorSetting(actor).detectionRange);
+				graphics.lineStyle(2, actor.blocked ? 15628151 : 11782639, .85);
+				graphics.beginPath();
+				graphics.moveTo(p.x, p.y);
+				for (const point of actor.route) graphics.lineTo(point.x, point.y);
+				graphics.strokePath();
+			}
+		}
+	}
+	sync();
+	return {
+		update,
+		attack,
+		damage: (id, amount, source = "") => {
+			sync();
+			const actor = actors.get(id);
+			return actor ? changeHealth(actor, -Math.max(0, finite(amount)), source) : 0;
+		},
+		heal: (id, amount) => {
+			sync();
+			const actor = actors.get(id);
+			return actor ? changeHealth(actor, Math.max(0, finite(amount))) : 0;
+		},
+		revive: (id) => {
+			sync();
+			const actor = actors.get(id);
+			if (!actor) return false;
+			actor.hp = stats(actor).maxHp;
+			actor.energy = stats(actor).maxEnergy;
+			actor.effects = [];
+			actor.cooldowns = {};
+			actor.cast = undefined;
+			actor.invulnerable = 0;
+			actor.ai = "idle";
+			host.states()?.reset(id);
+			publish(actor);
+			return true;
+		},
+		status: (id, statusId, source = id) => {
+			sync();
+			const owner = actors.get(source), status = owner && combatSetting(owner)?.statuses.find((s) => s.id === statusId);
+			return status ? applyStatus(id, status, source) : false;
+		},
+		clearStatus: (id, statusId = "") => {
+			const actor = actors.get(id);
+			if (actor) {
+				actor.effects = actor.effects.filter((e) => statusId && e.id !== statusId);
+				publish(actor);
+			}
+		},
+		agent: (id, command, target = "") => {
+			sync();
+			const actor = actors.get(id);
+			if (!actor?.def.gameplay?.agent) return false;
+			if (command === "enable" && actor.go.getData?.("forgeMotionPath")) {
+				host.error("이동 경로를 제어 중인 오브젝트에는 AI 이동을 함께 켤 수 없습니다.");
+				return false;
+			};
+			if (command === "enable" || command === "disable") {
+				actor.enabled = command === "enable";
+				actor.decisionAt = 0;
+				if (!actor.enabled) move(actor, {
+					x: 0,
+					y: 0
+				}, 0, 0);
+			} else if (command === "target") {
+				actor.forcedTarget = target;
+				actor.target = target;
+				actor.seen = "";
+				actor.decisionAt = 0;
+				actor.repath = 0;
+			} else if (command === "return") {
+				actor.lastSeen = undefined;
+				actor.target = "";
+				actor.seen = "";
+				actor.decisionAt = 0;
+				actor.forcedHome = true;
+				actor.route = [];
+				actor.repath = 0;
+			};
+			return true;
+		},
+		inspect: () => [...actors.values()].map((a) => ({
+			id: a.def.id,
+			name: a.def.name,
+			team: team(a),
+			targetRelation: actors.has(a.target) ? relation(a, actors.get(a.target)) : "",
+			ai: a.ai,
+			target: a.target,
+			decisions: a.decisions,
+			hp: a.hp,
+			maxHp: stats(a).maxHp,
+			energy: a.energy,
+			path: a.route.map((p) => ({ ...p })),
+			cooldowns: { ...a.cooldowns },
+			statuses: a.effects.map((e) => ({ ...e }))
+		})),
+		snapshot: () => [...actors.values()].map((a) => ({
+			id: a.def.id,
+			hp: a.hp,
+			energy: a.energy,
+			cooldowns: { ...a.cooldowns },
+			effects: a.effects.map((e) => ({ ...e })),
+			invulnerable: a.invulnerable,
+			cast: a.cast ? JSON.parse(JSON.stringify(a.cast)) : undefined,
+			ai: a.ai,
+			enabled: a.enabled,
+			target: a.target,
+			forcedTarget: a.forcedTarget,
+			forcedHome: a.forcedHome,
+			home: { ...a.home },
+			lastSeen: a.lastSeen ? { ...a.lastSeen } : undefined,
+			lostFor: a.lostFor,
+			waypoint: a.waypoint,
+			wait: a.wait
+		})),
+		restore: (values) => {
+			sync();
+			if (!Array.isArray(values)) return;
+			const point = (value) => value && Number.isFinite(value.x) && Number.isFinite(value.y) ? {
+				x: Math.max(-32768, Math.min(32768, value.x)),
+				y: Math.max(-32768, Math.min(32768, value.y))
+			} : undefined;
+			for (const value of values.slice(0, 5e3)) {
+				const a = actors.get(value?.id), c = a && combatSetting(a);
+				if (!a || !Number.isFinite(value.hp) || !Number.isFinite(value.energy)) continue;
+				a.hp = value.hp;
+				a.energy = value.energy;
+				const skills = c ? [basicSkill(c), ...c.skills] : [];
+				a.cooldowns = Object.fromEntries(skills.map((s) => [s.id, Math.max(0, Math.min(6e5, finite(value.cooldowns?.[s.id])))]));
+				a.effects = (Array.isArray(value.effects) ? value.effects : []).slice(0, 64).flatMap((e) => {
+					if (!e || ![
+						"poison",
+						"burn",
+						"regen",
+						"stun",
+						"slow"
+					].includes(e.kind) || typeof e.id !== "string" || !Number.isFinite(e.power) || e.power < 0 || !Number.isFinite(e.remaining) || e.remaining <= 0 || !Number.isFinite(e.tickMs) || e.tickMs < 50) return [];
+					const tickMs = Math.min(6e4, e.tickMs), maxStacks = Math.max(1, Math.min(100, Math.floor(finite(e.maxStacks, 1))));
+					return [{
+						id: e.id.slice(0, 200),
+						name: String(e.name ?? "").slice(0, 200),
+						kind: e.kind,
+						power: Math.min(1e6, e.power),
+						duration: Math.min(36e5, Math.max(1, finite(e.duration, e.remaining))),
+						tickMs,
+						maxStacks,
+						stacking: [
+							"refresh",
+							"stack",
+							"replace"
+						].includes(e.stacking) ? e.stacking : "refresh",
+						remaining: Math.min(36e5, e.remaining),
+						tick: Math.max(0, finite(e.tick)) % tickMs,
+						stacks: Math.max(1, Math.min(maxStacks, Math.floor(finite(e.stacks, 1)))),
+						source: typeof e.source === "string" ? e.source.slice(0, 200) : ""
+					}];
+				});
+				a.invulnerable = Math.max(0, Math.min(6e4, finite(value.invulnerable)));
+				const castSkill = skills.find((s) => s.id === value.cast?.skill?.id);
+				a.cast = castSkill && actors.has(value.cast?.target) && Number.isFinite(value.cast.remaining) ? {
+					target: value.cast.target,
+					skill: { ...castSkill },
+					remaining: Math.max(0, Math.min(castSkill.castMs, value.cast.remaining))
+				} : undefined;
+				a.enabled = typeof value.enabled === "boolean" ? value.enabled : a.enabled;
+				a.target = typeof value.target === "string" && actors.has(value.target) ? value.target : "";
+				a.forcedTarget = typeof value.forcedTarget === "string" && host.objects.has(value.forcedTarget) ? value.forcedTarget : undefined;
+				a.forcedHome = value.forcedHome === true;
+				a.home = point(value.home) ?? a.home;
+				a.lastSeen = point(value.lastSeen);
+				a.ai = [
+					"idle",
+					"patrol",
+					"chase",
+					"search",
+					"return",
+					"blocked",
+					"attack",
+					"dead"
+				].includes(value.ai) ? value.ai : "idle";
+				a.lostFor = Math.max(0, Math.min(12e5, finite(value.lostFor)));
+				a.waypoint = Math.max(0, Math.floor(finite(value.waypoint)));
+				a.wait = Math.max(0, Math.min(6e4, finite(value.wait)));
+				a.route = [];
+				a.repath = 0;
+				a.seen = "";
+				a.decisionAt = 0;
+				a.decisionRevision = -1;
+				publish(a);
+			}
+		},
+		destroy: () => {
+			destroyed = true;
+			graphics?.destroy();
+			actors.clear();
+		}
+	};
+},function createGameUiRuntime(project, scene, host) {
+	const definitions = new Map(scene.objects.map((o) => [o.id, o]));
+	const assetMap = new Map(project.assets.map((asset) => [asset.id, asset]));
+	const entries = new Map(), byObject = new Map(), transient = new Set(), templates = new Set();
+	const repeaters = new Map();
+	const cleanup = new Map(), warned = new Set();
+	const keyEvents = new WeakMap();
+	const controls = new Map();
+	let focused = "", keyboardNavigation = false, destroyed = false, lastData = -Infinity, padHeld = new Set(), layoutEntries = [], layoutSize = -1, autoFocusSuppressed = false;
+	const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+	const imageFrames = (asset) => {
+		if (asset.atlas) return asset.atlas.frames.length;
+		if (asset.frameTotal) return asset.frameTotal;
+		if (asset.pixelRuns) return asset.pixelRuns.frames.length;
+		if (asset.type !== "spritesheet") return 1;
+		if (asset.spriteDocument) return asset.spriteDocument.frames.length;
+		if (asset.composition && !asset.compositionDirty) return asset.composition.frames;
+		const margin = asset.grid?.margin ?? 0, spacing = asset.grid?.spacing ?? 0;
+		return Math.max(1, Math.floor((asset.width - 2 * margin + spacing) / (asset.frameWidth + spacing)) * Math.floor((asset.height - 2 * margin + spacing) / (asset.frameHeight + spacing)));
+	};
+	const path = (value, key) => {
+		if (!key) return value;
+		for (const part of key.replace(/\[(\d+)\]/g, ".$1").split(".").filter(Boolean)) {
+			if ([
+				"__proto__",
+				"constructor",
+				"prototype"
+			].includes(part) || value == null || typeof value !== "object") return undefined;
+			value = Object.prototype.hasOwnProperty.call(value, part) ? value[part] : undefined;
+		};
+		return value;
+	};
+	const decode = (value) => {
+		if (typeof value !== "string") return value;
+		try {
+			return JSON.parse(value);
+		} catch {
+			return value;
+		}
+	};
+	const read = (binding, item, index = 0) => {
+		let value;
+		if (binding.source === "item") value = binding.path === "$index" ? index : item;
+		else if (binding.source === "variable") value = decode(host.variable(binding.variableId));
+		else if (binding.source === "inventory") value = host.inventory?.() ?? [];
+		else {
+			const definition = project.definitions?.find((d) => d.id === binding.definitionId || d.key === binding.definitionId), field = definition?.fields.find((f) => f.id === binding.fieldId || f.key === binding.fieldId);
+			value = definition?.published && field?.published ? decode(field.value) : undefined;
+		};
+		return binding.source === "item" && binding.path === "$index" ? value : path(value, binding.path);
+	};
+	const warn = (key, message) => {
+		if (!warned.has(key)) {
+			warned.add(key);
+			host.error(message);
+		}
+	};
+	const buttonDisabled = (entry) => !!entry.def.gameUi?.buttonFrames?.isDisabled || !!(entry.def.gameUi?.buttonFrames?.disabledVariableId && decode(host.variable(entry.def.gameUi.buttonFrames.disabledVariableId))) || !!(entry.def.gameUi?.buttonColors?.enabled && (entry.def.gameUi.buttonColors.isDisabled || entry.def.gameUi.buttonColors.disabledVariableId && decode(host.variable(entry.def.gameUi.buttonColors.disabledVariableId))));
+	const clearFocus = () => {
+		const previous = entries.get(focused);
+		if (previous) {
+			previous.go.setData?.("forgeUiFocused", false);
+			host.focus?.(previous.go, false);
+		};
+		focused = "";
+	};
+	const focus = (id, source = "keyboard") => {
+		const entry = entries.get(id);
+		if (!entry || !entry.visible || !entry.def.gameUi?.navigation.enabled || buttonDisabled(entry)) return false;
+		keyboardNavigation = source !== "pointer";
+		if (focused === id) return true;
+		clearFocus();
+		focused = id;
+		entry.go.setData?.("forgeUiFocused", true);
+		const ownFocusStyle = entry.def.gameUi?.buttonColors?.enabled && typeof entry.go.setFillStyle === "function" && typeof entry.go.setStrokeStyle === "function" && !(entry.def.gameUi.buttonFrames?.enabled && typeof entry.go.setTexture === "function");
+		host.focus?.(entry.go, !ownFocusStyle);
+		return true;
+	};
+	const isVisible = (entry) => {
+		if (!entry.visible || entry.go.active === false) return false;
+		for (let parent = entry.go.parentContainer; parent; parent = parent.parentContainer) if (parent.visible === false) return false;
+		return true;
+	};
+	const active = () => [...entries.values()].filter((entry) => !buttonDisabled(entry) && entry.def.gameUi?.navigation.enabled && isVisible(entry) && !templates.has(entry.def.id)).sort((a, b) => finite(a.def.gameUi?.navigation.order) - finite(b.def.gameUi?.navigation.order) || a.index - b.index);
+	const activate = (entry) => {
+		const id = entry.def.gameUi?.navigation.functionId;
+		if (!entry.visible || !id || !entry.def.gameUi?.navigation.enabled || buttonDisabled(entry)) return false;
+		const item = entry.item, args = {
+			index: entry.index,
+			item: typeof item === "object" ? JSON.stringify(item) : item ?? "",
+			value: item ?? ""
+		};
+		if (item && typeof item === "object" && !Array.isArray(item)) {
+			for (const [key, value] of Object.entries(item)) if (![
+				"index",
+				"item",
+				"value",
+				"__proto__",
+				"constructor",
+				"prototype"
+			].includes(key)) args[key] = value;
+		};
+		host.run(id, args, entry.def.id);
+		return true;
+	};
+	const add = (definition, go, context, isTransient = false) => {
+		if (!go || !definition.gameUi?.enabled && !definition.gameUi?.buttonFrames?.enabled && !definition.gameUi?.buttonColors?.enabled) return;
+		const entry = {
+			def: definition,
+			go,
+			item: context?.item,
+			index: context?.index ?? 0,
+			offsetX: context?.offsetX ?? 0,
+			offsetY: context?.offsetY ?? 0,
+			transient: isTransient,
+			visible: definition.visible !== false
+		};
+		entries.set(definition.id, entry);
+		byObject.set(go, entry);
+		layoutSize = -1;
+		if (definition.gameUi.enabled) {
+			go.setScrollFactor?.(0);
+			go.setData?.("forgeGameUi", true);
+			if (go.body) go.body.enable = false;
+		};
+		if (isTransient) {
+			transient.add(definition.id);
+			go.setData?.("forgeUiTransient", true);
+		};
+		if (definition.gameUi.enabled && definition.gameUi.control && typeof document !== "undefined") {
+			const control = definition.gameUi.control, element = document.createElement("input"), kind = control.kind;
+			element.type = kind === "slider" ? "range" : kind === "input" ? "text" : "checkbox";
+			element.setAttribute("aria-label", definition.name);
+			if (kind === "toggle") element.setAttribute("role", "switch");
+			element.min = String(control.minimum);
+			element.max = String(control.maximum);
+			element.step = String(control.step);
+			element.maxLength = control.maxLength;
+			element.placeholder = control.placeholder;
+			Object.assign(element.style, {
+				position: "fixed",
+				zIndex: "50",
+				margin: "0",
+				boxSizing: "border-box",
+				accentColor: "#91abc8",
+				background: "#1b2736",
+				color: "#e1ebf5",
+				border: "1px solid #61758e",
+				borderRadius: kind === "toggle" ? "18px" : "4px",
+				padding: kind === "input" ? "5px 9px" : "0",
+				fontFamily: "sans-serif",
+				pointerEvents: "auto",
+				display: "none"
+			});
+			document.body.append(element);
+			const commit = () => {
+				if (element.disabled || !isVisible(entry)) return;
+				const variable = project.variables.find((v) => v.id === control.variableId), value = kind === "input" ? element.value.slice(0, control.maxLength) : kind === "slider" ? Number(element.value) : element.checked, type = kind === "input" ? "string" : kind === "slider" ? "number" : "boolean";
+				if (kind === "slider" && (!Number.isFinite(value) || Number(value) < control.minimum || Number(value) > control.maximum)) return;
+				if (Object.is(host.variable(control.variableId), value)) return;
+				if (variable?.type !== type || !host.writeVariable?.(control.variableId, value)) {
+					warn(definition.id + ".control", "UI 입력의 연결 변수를 확인하세요.");
+					return;
+				};
+				if (definition.gameUi?.navigation.enabled && definition.gameUi.navigation.functionId) host.run(definition.gameUi.navigation.functionId, { value }, definition.id);
+			};
+			const change = () => commit(), key = (event) => {
+				event.stopPropagation();
+				if (event.key === "Escape") {
+					event.preventDefault();
+					element.blur();
+				} else if (event.key === "Enter" && kind === "input") {
+					event.preventDefault();
+					commit();
+					element.blur();
+				}
+			}, stop = (event) => event.stopPropagation(), hide = () => {
+				element.style.display = "none";
+				if (document.activeElement === element) element.blur();
+			};
+			element.addEventListener(kind === "slider" ? "input" : "change", change);
+			element.addEventListener("keydown", key);
+			for (const name of [
+				"pointerdown",
+				"pointerup",
+				"click",
+				"keyup",
+				"wheel"
+			]) element.addEventListener(name, stop);
+			go.scene?.events?.on?.("sleep", hide);
+			const remove = () => {
+				go.scene?.events?.off?.("sleep", hide);
+				element.remove();
+			};
+			controls.set(definition.id, {
+				element,
+				entry,
+				remove
+			});
+			go.once?.("destroy", () => {
+				remove();
+				controls.delete(definition.id);
+			});
+		};
+		if (definition.gameUi.navigation.enabled || definition.gameUi.buttonFrames?.enabled || definition.gameUi.buttonColors?.enabled) {
+			go.setInteractive?.({ useHandCursor: true });
+			const over = () => {
+				keyboardNavigation = false;
+				entry.hovered = true;
+				if (!buttonDisabled(entry)) focus(definition.id, "pointer");
+			}, out = () => {
+				entry.hovered = false;
+				entry.pressed = false;
+				if (focused === definition.id) clearFocus();
+			}, up = () => {
+				entry.pressed = false;
+			}, down = () => {
+				keyboardNavigation = false;
+				if (buttonDisabled(entry)) return;
+				entry.pressed = true;
+				focus(definition.id, "pointer");
+				activate(entry);
+			};
+			go.on?.("pointerover", over);
+			go.on?.("pointerdown", down);
+			go.on?.("pointerout", out);
+			go.on?.("pointerup", up);
+			cleanup.set(definition.id, () => {
+				go.off?.("pointerover", over);
+				go.off?.("pointerdown", down);
+				go.off?.("pointerout", out);
+				go.off?.("pointerup", up);
+			});
+		}
+	};
+	const subtree = (root) => {
+		const found = new Set([root]);
+		for (let size = -1; size !== found.size;) {
+			size = found.size;
+			for (const definition of definitions.values()) if (definition.parentId && found.has(definition.parentId)) found.add(definition.id);
+		};
+		return [...found].map((id) => definitions.get(id)).filter(Boolean);
+	};
+	for (const definition of scene.objects) {
+		if (!definition.gameUi?.enabled && !definition.gameUi?.buttonFrames?.enabled && !definition.gameUi?.buttonColors?.enabled) continue;
+		add(definition, host.objects.get(definition.id));
+		if (definition.gameUi.repeat.enabled) {
+			const hidden = subtree(definition.id).map((o) => o.id);
+			repeaters.set(definition.id, {
+				source: definition,
+				instances: new Map(),
+				hidden
+			});
+			hidden.forEach((id) => {
+				templates.add(id);
+				const go = host.objects.get(id);
+				go?.setVisible?.(false);
+				if (go?.body) go.body.enable = false;
+			});
+		}
+	};
+	const dispose = (instance) => {
+		if (instance.ids.includes(focused)) clearFocus();
+		for (const id of instance.ids) {
+			controls.get(id)?.remove();
+			controls.delete(id);
+			cleanup.get(id)?.();
+			cleanup.delete(id);
+			const go = host.objects.get(id);
+			go?.destroy?.();
+			byObject.delete(go);
+			host.objects.delete(id);
+			entries.delete(id);
+			transient.delete(id);
+			layoutSize = -1;
+		}
+	};
+	const synchronize = () => {
+		for (const { source, instances } of repeaters.values()) {
+			const settings = source.gameUi.repeat, raw = read(settings.binding), data = Array.isArray(raw) ? raw : [];
+			if (!Array.isArray(raw) && raw != null) warn(source.id + ".array", `UI '${source.name}': 반복 자료가 배열이 아닙니다.`);
+			const sourceTree = subtree(source.id), alive = new Set(), duplicates = new Map();
+			for (let index = 0; index < data.length; index++) {
+				const item = data[index], rawKey = path(item, settings.keyPath), base = rawKey == null ? String(index) : String(rawKey), occurrence = duplicates.get(base) ?? 0;
+				duplicates.set(base, occurrence + 1);
+				const key = `${base.length}:${base}:${occurrence}`;
+				alive.add(key);
+				let instance = instances.get(key);
+				const column = settings.direction === "row" ? index : settings.direction === "grid" ? index % settings.columns : 0, row = settings.direction === "column" ? index : settings.direction === "grid" ? Math.floor(index / settings.columns) : 0, offsetX = column * ((settings.itemWidth || source.width) + settings.gapX), offsetY = row * ((settings.itemHeight || source.height) + settings.gapY);
+				if (!instance) {
+					if (host.objects.size + sourceTree.length > 5e3) {
+						warn(source.id + ".limit", `UI '${source.name}': 반복 항목을 포함한 씬 노드는 5,000개 이내로 구성하세요.`);
+						break;
+					};
+					const remap = new Map(sourceTree.map((o) => [o.id, "ui." + crypto.randomUUID()]));
+					const clones = sourceTree.map((original) => {
+						const clone = JSON.parse(JSON.stringify(original));
+						clone.id = remap.get(original.id);
+						clone.parentId = remap.get(original.parentId ?? "") ?? original.parentId;
+						clone.fixed = true;
+						clone.physics = "none";
+						clone.behavior = "none";
+						clone.stateMachines = [];
+						clone.events = clone.events?.map((event) => ({
+							...event,
+							id: crypto.randomUUID(),
+							otherObjectId: remap.get(event.otherObjectId ?? "") ?? event.otherObjectId,
+							args: Object.fromEntries(Object.entries(event.args).map(([key, value]) => [key, value.replace(/\{\{(index|item(?:\.[\w.]+)?)\}\}/g, (_match, expression) => String(expression === "index" ? index : path(item, expression === "item" ? "" : expression.slice(5)) ?? ""))]))
+						}));
+						if (clone.gameUi) clone.gameUi.repeat.enabled = false;
+						return clone;
+					});
+					const created = host.create(clones);
+					instance = {
+						ids: [...remap.values()],
+						root: remap.get(source.id)
+					};
+					instances.set(key, instance);
+					for (let i = 0; i < clones.length; i++) {
+						const clone = clones[i], go = created.get(clone.id) ?? host.objects.get(clone.id);
+						if (!go) continue;
+						go.setData?.("forgeUiTransient", true);
+						transient.add(clone.id);
+						add(clone, go, {
+							item,
+							index,
+							offsetX: i === 0 ? offsetX : 0,
+							offsetY: i === 0 ? offsetY : 0
+						}, true);
+					}
+				};
+				for (const id of instance.ids) {
+					const entry = entries.get(id);
+					if (entry) {
+						entry.item = item;
+						entry.index = index;
+						if (id === instance.root) {
+							entry.offsetX = offsetX;
+							entry.offsetY = offsetY;
+						}
+					}
+				}
+			};
+			for (const [key, instance] of instances) if (!alive.has(key)) {
+				dispose(instance);
+				instances.delete(key);
+			}
+		}
+	};
+	const layout = () => {
+		const viewport = host.viewport();
+		if (layoutSize !== entries.size) {
+			const depth = (entry) => {
+				let count = 0;
+				for (let parent = entry.go.parentContainer; parent; parent = parent.parentContainer) count++;
+				return count;
+			};
+			layoutEntries = [...entries.values()].sort((a, b) => depth(a) - depth(b));
+			layoutSize = entries.size;
+		};
+		for (const entry of layoutEntries) {
+			const id = entry.def.id;
+			const options = entry.def.gameUi, go = entry.go;
+			const framed = !!options.buttonFrames?.enabled && typeof go.setTexture === "function";
+			if (options.buttonColors?.enabled && !framed && typeof go.setFillStyle === "function" && typeof go.setStrokeStyle === "function") {
+				const colors = options.buttonColors, state = buttonDisabled(entry) ? "disabled" : entry.pressed || (entry.pressedUntil ?? 0) > Date.now() ? "pressed" : entry.hovered ? "hover" : focused === id ? "focused" : "normal", paint = colors[state], lineWidth = state === "focused" ? colors.focusStrokeWidth : colors.strokeWidth, signature = JSON.stringify([
+					state,
+					paint.fill,
+					paint.stroke,
+					lineWidth
+				]);
+				if (!entry.basePaint) entry.basePaint = {
+					fillColor: go.fillColor,
+					fillAlpha: go.fillAlpha,
+					strokeColor: go.strokeColor,
+					strokeAlpha: go.strokeAlpha,
+					lineWidth: go.lineWidth,
+					isFilled: !!go.isFilled,
+					isStroked: !!go.isStroked
+				};
+				if (entry.paintSignature !== signature) {
+					go.setFillStyle(parseInt(paint.fill.slice(1), 16), 1);
+					go.setStrokeStyle(lineWidth, parseInt(paint.stroke.slice(1), 16), 1);
+					go.setData?.("forgeUiButtonState", state);
+					entry.paintSignature = signature;
+				}
+			} else if (entry.basePaint) {
+				const base = entry.basePaint;
+				go.setFillStyle?.(base.fillColor, base.fillAlpha);
+				go.setStrokeStyle?.(base.lineWidth, base.strokeColor, base.strokeAlpha);
+				go.isFilled = base.isFilled;
+				go.isStroked = base.isStroked;
+				go.setData?.("forgeUiButtonState", "");
+				entry.basePaint = undefined;
+				entry.paintSignature = undefined;
+			};
+			if (options.buttonFrames?.enabled && typeof go.setTexture === "function") {
+				const states = options.buttonFrames, state = buttonDisabled(entry) ? "disabled" : entry.pressed || (entry.pressedUntil ?? 0) > Date.now() ? "pressed" : entry.hovered || focused === entry.def.id ? "hover" : "normal", index = states[state], assetId = states[`${state}AssetId`] || entry.def.assetId, asset = assetMap.get(assetId);
+				const count = asset ? imageFrames(asset) : 0;
+				if (!asset || asset.type === "audio") {
+					if (assetId) warn("button-image:" + id + ":" + state, entry.def.name + ": 버튼 상태의 이미지 리소스를 확인하세요.");
+				} else if (!Number.isInteger(index) || index < 0 || index >= count) {
+					warn("button-frame:" + id + ":" + state, entry.def.name + ": 버튼 상태의 프레임 번호를 확인하세요.");
+				} else {
+					const frame = asset.atlas?.frames[index], texture = frame?.pageId ?? asset.id, name = frame ? frame.pageId ? `${asset.id}:${index}` : frame.name : asset.type === "image" ? "__BASE" : index, signature = JSON.stringify([texture, name]);
+					if (entry.texture !== signature) {
+						const slice = !!go.getData?.("forgeNineSlice"), width = slice ? go.width : go.displayWidth, height = slice ? go.height : go.displayHeight, sx = go.scaleX, sy = go.scaleY, bx = go.getData?.("forgeScaleX"), by = go.getData?.("forgeScaleY"), logicalWidth = go.width, logicalHeight = go.height;
+						go.setTexture(texture, name);
+						if (Number.isFinite(width) && Number.isFinite(height)) {
+							if (slice) go.setNineSliceSize?.(width, height);
+							else {
+								go.setDisplaySize?.(width, height);
+								if (sx < 0 && go.scaleX > 0) go.scaleX *= -1;
+								if (sy < 0 && go.scaleY > 0) go.scaleY *= -1;
+							}
+						};
+						if (!slice) {
+							if (Number.isFinite(bx) && Number.isFinite(logicalWidth) && go.width > 0) go.setData?.("forgeScaleX", bx * logicalWidth / go.width);
+							if (Number.isFinite(by) && Number.isFinite(logicalHeight) && go.height > 0) go.setData?.("forgeScaleY", by * logicalHeight / go.height);
+							const hitArea = go.input?.hitArea;
+							if (hitArea && !go.input.customHitArea && Number.isFinite(hitArea.width) && Number.isFinite(hitArea.height)) {
+								hitArea.x = 0;
+								hitArea.y = 0;
+								hitArea.width = go.width;
+								hitArea.height = go.height;
+							}
+						};
+						entry.texture = signature;
+					};
+					go.setData?.("forgeUiButtonState", state);
+				}
+			};
+			if (!options.enabled) continue;
+			if (templates.has(id)) {
+				go.setVisible?.(false);
+				entry.visible = false;
+				continue;
+			};
+			const parent = go.parentContainer, parentEntry = parent && byObject.get(parent), area = parentEntry ? {
+				width: finite(parent.width),
+				height: finite(parent.height),
+				x: -finite(parent.width) / 2,
+				y: -finite(parent.height) / 2
+			} : viewport;
+			const width = options.relativeWidth ? area.width * options.relativeWidth : entry.def.width, height = options.relativeHeight ? area.height * options.relativeHeight : entry.def.height, size = `${width}/${height}/${entry.def.kind === "text" ? options.text.align ?? "center" : ""}`;
+			go.setPosition?.(finite(area.x) + area.width * options.anchorX + options.offsetX + entry.offsetX + (finite(go.originX, .5) - options.anchorX) * width, finite(area.y) + area.height * options.anchorY + options.offsetY + entry.offsetY + (finite(go.originY, .5) - options.anchorY) * height);
+			if ((options.relativeWidth || options.relativeHeight || entry.def.kind === "text") && size !== entry.size) {
+				if (typeof go.setText === "function") {
+					go.setAlign?.(options.text.align ?? "center");
+					go.setWordWrapWidth?.(width);
+					go.setFixedSize?.(width, height);
+					const lineSpacing = finite(go.lineSpacing), lineHeight = finite(go.style?.metrics?.fontSize, entry.def.fontSize * 1.2) + finite(go.style?.strokeThickness), available = height - finite(go.padding?.top) - finite(go.padding?.bottom);
+					go.setMaxLines?.(Math.max(1, Math.floor((available + lineSpacing) / Math.max(1, lineHeight + lineSpacing))));
+				} else if (entry.def.kind === "group") go.setSize?.(width, height);
+				else go.setDisplaySize?.(width, height);
+				entry.size = size;
+			};
+			let visible = entry.def.visible !== false;
+			if (options.visibility.enabled) {
+				const value = read(options.visibility.binding, entry.item, entry.index), compare = options.visibility.compare, expected = decode(options.visibility.value);
+				visible &&= compare === "truthy" ? !!value : compare === "eq" ? String(value) === String(expected) : compare === "ne" ? String(value) !== String(expected) : compare === "gt" ? Number(value) > Number(expected) : compare === "gte" ? Number(value) >= Number(expected) : compare === "lt" ? Number(value) < Number(expected) : Number(value) <= Number(expected);
+			};
+			if (options.image?.enabled && typeof go.setTexture === "function") {
+				const value = read(options.image.binding, entry.item, entry.index), assetId = typeof value === "string" ? value : String(path(value, options.image.assetPath) ?? path(value, "assetId") ?? ""), index = Math.max(0, Math.floor(finite(path(value, options.image.framePath) ?? path(value, "frame")))), asset = assetMap.get(assetId);
+				if (!asset || asset.type === "audio") visible = false;
+				else {
+					const frame = asset.atlas?.frames[index], texture = frame?.pageId ?? asset.id, name = frame ? frame.pageId ? `${asset.id}:${index}` : frame.name : asset.type === "image" ? "__BASE" : index, signature = JSON.stringify([texture, name]);
+					if (entry.texture !== signature) {
+						go.setTexture(texture, name);
+						go.setDisplaySize?.(width, height);
+						entry.texture = signature;
+					}
+				}
+			};
+			if (options.progress?.enabled && typeof go.setDisplaySize === "function" && entry.def.kind !== "group" && entry.def.kind !== "text") {
+				const settings = options.progress, maximum = settings.useMaximumBinding ? finite(read(settings.maximumBinding, entry.item, entry.index), settings.maximum) : settings.maximum, fraction = Math.max(0, Math.min(1, finite(read(settings.binding, entry.item, entry.index)) / Math.max(1e-6, maximum)));
+				const originX = finite(go.originX, .5), originY = finite(go.originY, .5);
+				if (settings.direction === "horizontal") {
+					go.setDisplaySize(width * fraction, height);
+					go.x += width * (1 - fraction) * (settings.inverted ? 1 - originX : -originX);
+				} else {
+					go.setDisplaySize(width, height * fraction);
+					go.y += height * (1 - fraction) * (settings.inverted ? -originY : 1 - originY);
+				};
+				visible &&= fraction > 0;
+			};
+			entry.visible = visible;
+			go.setVisible?.(visible);
+			if (options.text.enabled && typeof go.setText === "function") {
+				const value = read(options.text.binding, entry.item, entry.index), content = typeof value === "number" ? value.toFixed(options.text.decimals) : value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value), text = options.text.prefix + content + options.text.suffix;
+				if (text !== entry.text) {
+					go.setText(text);
+					entry.text = text;
+				}
+			}
+		};
+		const focusedEntry = entries.get(focused);
+		if (focusedEntry && (!isVisible(focusedEntry) || buttonDisabled(focusedEntry))) clearFocus();
+	};
+	const navigate = (direction, acrossGroups = false, reverse = false) => {
+		let candidates = active();
+		if (!candidates.length) return false;
+		const current = entries.get(focused);
+		if (!current || !candidates.includes(current)) return focus(candidates[0].def.id);
+		if (!acrossGroups) candidates = candidates.filter((entry) => entry.def.gameUi.navigation.group === current.def.gameUi.navigation.group);
+		if (acrossGroups) {
+			const next = (candidates.indexOf(current) + (reverse ? -1 : 1) + candidates.length) % candidates.length;
+			return focus(candidates[next].def.id);
+		};
+		const horizontal = direction === "left" || direction === "right", sign = direction === "left" || direction === "up" ? -1 : 1;
+		const point = (entry) => {
+			const matrix = entry.go.getWorldTransformMatrix?.();
+			return matrix ? {
+				x: matrix.tx,
+				y: matrix.ty
+			} : {
+				x: finite(entry.go.x),
+				y: finite(entry.go.y)
+			};
+		};
+		const center = point(current);
+		const ranked = candidates.filter((entry) => entry !== current).map((entry) => {
+			const p = point(entry), major = (horizontal ? p.x - center.x : p.y - center.y) * sign, minor = Math.abs(horizontal ? p.y - center.y : p.x - center.x);
+			return {
+				entry,
+				major,
+				score: major + minor * 3
+			};
+		}).filter((item) => item.major > .01).sort((a, b) => a.score - b.score);
+		return ranked[0] ? focus(ranked[0].entry.def.id) : false;
+	};
+	const keyDown = (event) => {
+		const handledBefore = keyEvents.get(event);
+		if (handledBefore !== undefined) return handledBefore;
+		if (destroyed || !active().length) return false;
+		const direction = {
+			ArrowLeft: "left",
+			ArrowRight: "right",
+			ArrowUp: "up",
+			ArrowDown: "down"
+		};
+		let handled = false;
+		const selected = entries.get(focused), acceptsKeyboard = !!selected && (keyboardNavigation || selected.def.gameUi.navigation.captureInput !== false || selected.def.gameUi.navigation.autoFocus);
+		if (event.key === "Tab") {
+			handled = navigate("down", true, event.shiftKey);
+			keyboardNavigation = handled;
+			autoFocusSuppressed = false;
+		} else if (event.key === "Escape" && focused && acceptsKeyboard) {
+			clearFocus();
+			keyboardNavigation = false;
+			autoFocusSuppressed = true;
+			handled = true;
+		} else if (direction[event.key] && focused && acceptsKeyboard) {
+			navigate(direction[event.key]);
+			handled = true;
+		} else if ((event.key === "Enter" || event.key === " ") && acceptsKeyboard) {
+			const entry = entries.get(focused);
+			if (entry) {
+				handled = true;
+				if (!event.repeat) {
+					entry.pressedUntil = Date.now() + 130;
+					activate(entry);
+				}
+			}
+		};
+		if (handled) event.preventDefault?.();
+		keyEvents.set(event, handled);
+		return handled;
+	};
+	const pollGamepad = () => {
+		const next = new Set();
+		let pads = [];
+		try {
+			pads = host.gamepads?.() ?? (typeof navigator !== "undefined" ? [...navigator.getGamepads?.() ?? []].filter(Boolean) : []);
+		} catch {
+			return;
+		};
+		for (const pad of pads) {
+			const buttons = pad?.buttons ?? [], axes = pad?.axes ?? [], pressed = (index) => !!buttons[index]?.pressed;
+			if (pressed(12) || finite(axes[1]) < -.55) next.add("ArrowUp");
+			if (pressed(13) || finite(axes[1]) > .55) next.add("ArrowDown");
+			if (pressed(14) || finite(axes[0]) < -.55) next.add("ArrowLeft");
+			if (pressed(15) || finite(axes[0]) > .55) next.add("ArrowRight");
+			if (pressed(0)) next.add("Enter");
+		};
+		for (const key of next) if (!padHeld.has(key)) {
+			keyboardNavigation = true;
+			const hadFocus = !!focused;
+			if (!hadFocus) navigate("down");
+			if (hadFocus || key === "Enter") keyDown({ key });
+		};
+		padHeld = next;
+	};
+	return {
+		update(time, _delta = 0) {
+			if (destroyed) return;
+			if (time - lastData >= 80 || !Number.isFinite(lastData)) {
+				synchronize();
+				lastData = time;
+			};
+			layout();
+			for (const { element, entry } of controls.values()) {
+				const bounds = entry.go.getBounds?.(), canvas = entry.go.scene?.game?.canvas?.getBoundingClientRect?.(), control = entry.def.gameUi?.control, camera = entry.go.scene?.cameras?.cameras?.find((camera) => camera.name === "?? UI"), shown = camera?.visible !== false && isVisible(entry) && entry.go.visible !== false && !templates.has(entry.def.id) && !!bounds && !!canvas;
+				if (!shown || !control) {
+					element.style.display = "none";
+					if (document.activeElement === element) element.blur();
+					continue;
+				};
+				const game = entry.go.scene.game, sx = canvas.width / game.scale.width, sy = canvas.height / game.scale.height, current = host.variable(control.variableId);
+				Object.assign(element.style, {
+					display: "block",
+					left: canvas.left + ((camera?.x ?? 0) + bounds.x) * sx + "px",
+					top: canvas.top + ((camera?.y ?? 0) + bounds.y) * sy + "px",
+					width: Math.max(1, bounds.width * sx) + "px",
+					height: Math.max(1, bounds.height * sy) + "px",
+					fontSize: Math.max(8, Math.min(18, bounds.height * .45) * sy) + "px"
+				});
+				element.disabled = buttonDisabled(entry) || !host.writeVariable;
+				const variable = project.variables.find((v) => v.id === control.variableId), expected = control.kind === "slider" ? "number" : control.kind === "input" ? "string" : "boolean";
+				element.disabled ||= variable?.type !== expected || control.kind === "slider" && control.minimum >= control.maximum;
+				if (control.kind === "toggle") {
+					element.style.appearance = "none";
+					element.style.background = "radial-gradient(circle at " + (current === true ? "75%" : "25%") + " 50%,#d3dfed 0 9px,transparent 10px)," + (current === true ? "#567493" : "#26384c");
+				};
+				if (document.activeElement !== element) {
+					if (control.kind === "checkbox" || control.kind === "toggle") element.checked = current === true;
+					else element.value = String(current ?? "");
+				}
+			};
+			const automatic = active().filter((entry) => entry.def.gameUi.navigation.autoFocus);
+			if (!automatic.length) autoFocusSuppressed = false;
+			else if (!focused && !autoFocusSuppressed) focus(automatic[0].def.id, "auto");
+			pollGamepad();
+		},
+		keyDown,
+		focus,
+		isDisabled(id) {
+			const entry = entries.get(id);
+			return !!entry && buttonDisabled(entry);
+		},
+		blur() {
+			clearFocus();
+			keyboardNavigation = false;
+			autoFocusSuppressed = true;
+		},
+		hasFocus() {
+			const entry = entries.get(focused);
+			return !!entry && isVisible(entry);
+		},
+		capturesInput() {
+			if (typeof document !== "undefined" && [...controls.values()].some((control) => control.element === document.activeElement)) return true;
+			const entry = entries.get(focused);
+			return !!entry && isVisible(entry) && (entry.def.gameUi.navigation.captureInput !== false || keyboardNavigation || entry.def.gameUi.navigation.autoFocus);
+		},
+		capturesPoint(x, y) {
+			if (destroyed || !Number.isFinite(x) || !Number.isFinite(y)) return false;
+			// Disabled controls still occupy their screen area; a click must not reach the world below.
+			for (const entry of entries.values()) {
+				if (!entry.def.gameUi?.navigation.enabled && !entry.def.gameUi?.control || !isVisible(entry)) continue;
+				const bounds = entry.go.getBounds?.();
+				if (bounds && x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height) return true;
+			};
+			return false;
+		},
+		get focusedId() {
+			return focused;
+		},
+		get transientIds() {
+			return [...transient];
+		},
+		destroy() {
+			if (destroyed) return;
+			destroyed = true;
+			for (const control of controls.values()) control.remove();
+			controls.clear();
+			clearFocus();
+			for (const group of repeaters.values()) for (const instance of group.instances.values()) dispose(instance);
+			for (const fn of cleanup.values()) fn();
+			cleanup.clear();
+			entries.clear();
+			byObject.clear();
+			repeaters.clear();
+			transient.clear();
+		}
+	};
+},(function(runtime,meshFactory,attachmentFactory){return function(project,scene,hooks){return runtime(project,scene,hooks,meshFactory,attachmentFactory);};})(function createRigRuntime(project, scene, hooks, meshFactory = __vite_ssr_import_0__.createRigMeshTools, attachmentFactory = __vite_ssr_import_1__.createRigAttachmentTools) {
+	let meshTools;
+	const mesh = () => meshTools ??= meshFactory();
+	let attachmentTools;
+	const images = () => attachmentTools ??= attachmentFactory();
+	let meshWarnings, visibleMeshCells = 0;
+	const meshVisible = (go) => {
+		if (!go.visible || go.alpha === 0) return false;
+		for (let p = go.parentContainer; p; p = p.parentContainer) if (!p.visible || p.alpha === 0) return false;
+		const cameras = scene.cameras?.cameras;
+		if (!cameras?.length) return true;
+		const bounds = go.getBounds?.();
+		return cameras.some((camera) => {
+			if (camera.visible === false || camera.alpha === 0 || go.willRender && !go.willRender(camera)) return false;
+			const view = camera.worldView;
+			return !bounds || !view || bounds.right >= view.x && bounds.x <= view.right && bounds.bottom >= view.y && bounds.y <= view.bottom;
+		});
+	};
+	const rad = Math.PI / 180, properties = [
+		"x",
+		"y",
+		"rotation",
+		"length",
+		"opacity"
+	];
+	// 독립 HTML에서도 외부 함수 없이 같은 원본축·뼈축 변환을 사용한다.
+	const partSizing = (part, length) => {
+		const ratio = part.lengthScale ? length / part.lengthScale.reference : 1;
+		return {
+			x: part.scaleX * (part.stretchWithBone ? length : 1) * (part.lengthScale?.axis === "x" ? ratio : 1),
+			y: part.scaleY * (part.lengthScale?.axis === "y" ? ratio : 1),
+			bone: part.lengthScale?.axis === "bone" ? ratio : 1
+		};
+	};
+	const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+	const angle = (n) => ((n + 180) % 360 + 360) % 360 - 180;
+	const mixAngle = (a, b, t) => a + angle(b - a) * t;
+	const fade = (value, target, ms, dt, span = 1) => ms > 0 ? value + Math.sign(target - value) * Math.min(Math.abs(target - value), dt / ms * span) : target;
+	const assets = new Map(project.assets.map((a) => [a.id, a]));
+	const states = new Map(), paletteTextures = new Map();
+	const documents = new Map();
+	const tracksByClip = new WeakMap();
+	const failures = new Set();
+	let serial = 0, destroyed = false;
+	const report = (message) => {
+		if (!failures.has(message)) {
+			failures.add(message);
+			hooks.error?.(message);
+		}
+	};
+	const enabled = (c) => {
+		if (!c?.variableId) return true;
+		const v = hooks.variable(c.variableId), raw = c.value;
+		const b = typeof v === "number" ? Number(raw) : typeof v === "boolean" ? raw === "true" || raw === "1" : raw;
+		switch (c.compare) {
+			case "eq": return v === b;
+			case "ne": return v !== b;
+			case "lt": return Number(v) < Number(b);
+			case "lte": return Number(v) <= Number(b);
+			case "gt": return Number(v) > Number(b);
+			case "gte": return Number(v) >= Number(b);
+			default: return !!v;
+		}
+	};
+	const sample = (doc, clip, time) => {
+		const local = {}, t = clip ? Math.max(0, clip.loop ? time % clip.duration : Math.min(time, clip.duration)) : 0;
+		let tracks = clip && tracksByClip.get(clip);
+		if (clip && !tracks) {
+			tracks = new Map(clip.tracks.map((track) => [track.boneId, Object.fromEntries(properties.map((p) => [p, track.keys.filter((k) => k[p] !== undefined)]))]));
+			tracksByClip.set(clip, tracks);
+		};
+		for (const bone of doc.bones) {
+			const track = tracks?.get(bone.id), pose = {};
+			for (const p of properties) {
+				const keys = track?.[p] ?? [];
+				if (!keys.length) {
+					pose[p] = bone[p];
+					continue;
+				};
+				let i = 0;
+				while (i < keys.length && keys[i].time <= t) i++;
+				if (!i) pose[p] = keys[0][p];
+				else if (i === keys.length) pose[p] = keys[i - 1][p];
+				else {
+					const a = keys[i - 1], b = keys[i];
+					let blend = (t - a.time) / Math.max(.001, b.time - a.time);
+					if (a.interpolation === "step") blend = 0;
+					else if (a.interpolation === "smooth") blend = blend * blend * (3 - 2 * blend);
+					// 여러 바퀴 회전하도록 작성한 키는 편집기와 같은 경로로 보간한다.
+					pose[p] = a[p] + (b[p] - a[p]) * blend;
+				}
+			};
+			pose.rotation = clamp(pose.rotation, bone.minAngle, bone.maxAngle);
+			local[bone.id] = pose;
+		};
+		return local;
+	};
+	const world = (doc, local) => {
+		const result = {}, bones = new Map(doc.bones.map((b) => [b.id, b])), visiting = new Set();
+		const solve = (id) => {
+			if (result[id]) return result[id];
+			if (visiting.has(id)) {
+				report(doc.name + ": 뼈 연결이 순환합니다.");
+				return;
+			};
+			const bone = bones.get(id);
+			if (!bone) return;
+			visiting.add(id);
+			const p = local[id] ?? bone, parent = bone.parentId ? solve(bone.parentId) : undefined;
+			let { x, y, opacity, length } = p, rotation = clamp(p.rotation, bone.minAngle, bone.maxAngle);
+			if (parent) {
+				const a = parent.rotation * rad, dx = x + parent.length * bone.anchor;
+				x = parent.x + Math.cos(a) * dx - Math.sin(a) * y;
+				y = parent.y + Math.sin(a) * dx + Math.cos(a) * y;
+				rotation += parent.rotation;
+				opacity *= parent.opacity;
+			};
+			if (bone.aimAt) {
+				const target = solve(bone.aimAt.boneId);
+				if (target) {
+					const a = target.rotation * rad, dx = target.x + Math.cos(a) * bone.aimAt.offsetX - Math.sin(a) * bone.aimAt.offsetY - x;
+					const dy = target.y + Math.sin(a) * bone.aimAt.offsetX + Math.cos(a) * bone.aimAt.offsetY - y;
+					length = Math.max(.01, Math.hypot(dx, dy));
+					if (length > .010001) rotation = Math.atan2(dy, dx) / rad;
+				}
+			};
+			result[id] = {
+				x,
+				y,
+				rotation,
+				length,
+				opacity,
+				endX: x + Math.cos(rotation * rad) * length,
+				endY: y + Math.sin(rotation * rad) * length
+			};
+			visiting.delete(id);
+			return result[id];
+		};
+		doc.bones.forEach((b) => solve(b.id));
+		return result;
+	};
+	const mix = (a, b, weight) => ({
+		x: a.x + (b.x - a.x) * weight,
+		y: a.y + (b.y - a.y) * weight,
+		rotation: mixAngle(a.rotation, b.rotation, weight),
+		length: a.length + (b.length - a.length) * weight,
+		opacity: a.opacity + (b.opacity - a.opacity) * weight
+	});
+	const copy = (pose) => Object.fromEntries(Object.entries(pose).map(([id, t]) => [id, { ...t }]));
+	const point = (go, x, y, doc, undoFlip = true) => {
+		const p = go.getWorldTransformMatrix().applyInverse(x, y), ox = go.displayOriginX ?? go.width * (go.originX ?? .5), oy = go.displayOriginY ?? go.height * (go.originY ?? .5);
+		let px = p.x + ox, py = p.y + oy;
+		if (undoFlip && go.flipX) px = doc.width - px;
+		if (undoFlip && go.flipY) py = doc.height - py;
+		return {
+			x: px,
+			y: py
+		};
+	};
+	const pointer = () => {
+		const p = scene.input?.activePointer;
+		if (!p) return;
+		// 카메라 이동과 확대를 반영한 월드 위치로 변환한다.
+		return p.positionToCamera?.(scene.cameras.main) ?? {
+			x: p.worldX ?? p.x,
+			y: p.worldY ?? p.y
+		};
+	};
+	const target = (rule) => {
+		if (rule.source === "pointer") return pointer();
+		if (rule.source !== "object") return;
+		const o = hooks.objects.get(rule.targetId);
+		if (!o?.active) return;
+		const matrix = o.getWorldTransformMatrix?.();
+		return matrix ? {
+			x: matrix.tx,
+			y: matrix.ty
+		} : {
+			x: o.x,
+			y: o.y
+		};
+	};
+	const sourceTexture = (asset, index, doc, untrim = false) => {
+		const source = hooks.texture(asset, index), mapping = doc.paletteMapping;
+		if (!untrim && (!mapping || !Object.keys(mapping).length) && !doc.sampling) return source;
+		if (!untrim && (!mapping || !Object.keys(mapping).length) && doc.sampling) {
+			const original = scene.textures.getFrame(source.key, source.frame);
+			if (!original) return source;
+			if (original.source.scaleMode === (doc.sampling === "linear" ? 0 : 1)) return source;
+			const signature = "page:" + source.key + ":" + original.sourceIndex + ":" + doc.sampling;
+			let key = paletteTextures.get(signature), texture = key ? scene.textures.get(key) : undefined;
+			if (!texture) {
+				key = `__forge_rig_palette_${scene.sys.settings.key}_${++serial}`;
+				const image = original.source.image;
+				texture = scene.textures.createCanvas(key, original.source.width, original.source.height);
+				texture.context.drawImage(image, 0, 0);
+				texture.refresh();
+				texture.setFilter(doc.sampling === "linear" ? 0 : 1);
+				paletteTextures.set(signature, key);
+			};
+			if (!texture.has(original.name)) {
+				// 같은 원본 페이지의 픽셀·UV·잘림 정보를 재사용해 파츠마다 텍스처를 늘리지 않는다.
+				const frame = original.clone();
+				frame.texture = texture;
+				frame.sourceIndex = 0;
+				frame.source = texture.source[0];
+				frame.u0 = original.u0;
+				frame.v0 = original.v0;
+				frame.u1 = original.u1;
+				frame.v1 = original.v1;
+				texture.frames[original.name] = frame;
+				texture.frameTotal++;
+			};
+			return {
+				key,
+				frame: original.name
+			};
+		};
+		const signature = (untrim ? "mesh:" : "") + asset.id + ":" + index + ":" + JSON.stringify(mapping ?? {}) + ":" + (doc.sampling ?? "");
+		const existing = paletteTextures.get(signature);
+		if (existing) return {
+			key: existing,
+			frame: "__BASE"
+		};
+		const frame = scene.textures.getFrame(source.key, source.frame);
+		if (!frame) return source;
+		const key = `__forge_rig_palette_${scene.sys.settings.key}_${++serial}`;
+		const texture = scene.textures.createCanvas(key, frame.realWidth, frame.realHeight), ctx = texture.context;
+		const f = frame.data.spriteSourceSize;
+		ctx.save();
+		ctx.translate(f.x, f.y);
+		ctx.scale(f.w / (frame.rotated ? frame.cutHeight : frame.cutWidth), f.h / (frame.rotated ? frame.cutWidth : frame.cutHeight));
+		if (frame.rotated) {
+			ctx.translate(0, frame.cutWidth);
+			ctx.rotate(-Math.PI / 2);
+		};
+		ctx.drawImage(frame.source.image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, 0, 0, frame.cutWidth, frame.cutHeight);
+		ctx.restore();
+		if (mapping && Object.keys(mapping).length) {
+			const pixels = ctx.getImageData(0, 0, frame.realWidth, frame.realHeight), replacements = new Map();
+			for (const [from, to] of Object.entries(mapping ?? {})) {
+				const parse = (hex) => [
+					1,
+					3,
+					5,
+					7
+				].map((at, i) => i === 3 && hex.length < 9 ? 255 : parseInt(hex.slice(at, at + 2), 16));
+				const a = parse(from), b = parse(to);
+				replacements.set((a[0] << 24 | a[1] << 16 | a[2] << 8 | a[3]) >>> 0, b);
+			};
+			for (let i = 0; i < pixels.data.length; i += 4) {
+				const d = pixels.data, replacement = replacements.get((d[i] << 24 | d[i + 1] << 16 | d[i + 2] << 8 | d[i + 3]) >>> 0);
+				if (replacement) d.set(replacement, i);
+			};
+			ctx.putImageData(pixels, 0, 0);
+		};
+		texture.refresh();
+		if (doc.sampling) texture.setFilter(doc.sampling === "linear" ? 0 : 1);
+		paletteTextures.set(signature, key);
+		return {
+			key,
+			frame: "__BASE"
+		};
+	};
+	const resizeCoordinates = (go, sx, sy) => {
+		for (const [key, scale] of [["forgeScaleX", sx], ["forgeScaleY", sy]]) {
+			const value = go.getData?.(key);
+			if (typeof value === "number") go.setData(key, value * scale);
+		};
+		const b = go.body;
+		if (b && Number.isFinite(b.sourceWidth) && Number.isFinite(b.sourceHeight)) {
+			b.sourceWidth /= sx;
+			b.sourceHeight /= sy;
+			if (b.radius) b.radius /= Math.abs(sx);
+			if (b.offset) {
+				b.offset.x /= sx;
+				b.offset.y /= sy;
+			};
+			b.updateBounds?.();
+		}
+	};
+	const remove = (state, restore = false) => {
+		for (const part of state.parts) {
+			if (part.container) {
+				part.container.remove(part.image);
+				part.container.destroy();
+			};
+			part.image.destroy();
+		};
+		if (state.animation && state.animation.setCurrentFrame === state.wrappedFrame) state.animation.setCurrentFrame = state.originalFrame;
+		if (restore && state.go.active) {
+			const asset = assets.get(state.def.assetId);
+			if (asset) {
+				const source = hooks.texture(asset, state.def.frame);
+				state.go.setTexture(source.key, source.frame);
+			};
+			state.go.setScale(state.go.scaleX / state.scaleX, state.go.scaleY / state.scaleY);
+			resizeCoordinates(state.go, 1 / state.scaleX, 1 / state.scaleY);
+		};
+		if (state.go.active) state.go.setData("forgeLiveRig", false);
+		scene.textures.remove(state.key);
+		states.delete(state.def.id);
+	};
+	const install = (def, go, settings, source) => {
+		const original = source.rigDocument;
+		let meshCells = 0, meshParts = 0, meshPixels = 0, meshFrames;
+		for (const part of original.attachments) {
+			if (!part.visible || !part.mesh?.enabled && !original.clips.some((clip) => clip.attachmentTracks?.some((track) => track.attachmentId === part.id))) continue;
+			const variants = [part];
+			for (const clip of original.clips) for (const track of clip.attachmentTracks ?? []) if (track.attachmentId === part.id) for (const key of track.keys) variants.push(key);
+			if (part.mesh?.enabled) {
+				meshParts++;
+				meshCells += part.mesh.columns * part.mesh.rows;
+			};
+			let width = 0, height = 0;
+			for (const variant of variants) {
+				const asset = assets.get(variant.assetId);
+				if (!asset || asset.type === "audio" || variant !== part && asset.rigDocument) throw Error(part.name + ": 그림 키의 원본 이미지가 없습니다.");
+				const ref = hooks.texture(asset, variant.frame), frame = scene.textures.getFrame(ref.key, ref.frame);
+				if (!frame) throw Error(part.name + ": 그림 키의 프레임이 없습니다.");
+				if (!part.mesh?.enabled) continue;
+				if (!width) {
+					width = frame.realWidth;
+					height = frame.realHeight;
+				} else if (width !== frame.realWidth || height !== frame.realHeight) throw Error(part.name + ": 변형 파츠의 그림 키는 같은 논리 프레임 크기를 사용하세요.");
+				const pixels = frame.realWidth * frame.realHeight, id = variant.assetId + ":" + variant.frame;
+				if (pixels > 1048576) throw Error(part.name + ": 변형 파츠의 논리 프레임은 100만 픽셀 이내로 맞추세요.");
+				meshFrames ??= new Set();
+				if (!meshFrames.has(id)) {
+					meshFrames.add(id);
+					meshPixels += pixels;
+				}
+			}
+		};
+		if (meshParts > 32 || meshCells > 512 || meshPixels > 8388608) throw Error("격자 변형은 리그당 32파츠·512칸·원본 전체 800만 픽셀 이내로 맞추세요.");
+		// 트랙은 처음 한 번만 정렬한다.
+		let doc = documents.get(source.id);
+		if (!doc) {
+			doc = {
+				...original,
+				clips: original.clips.map((c) => ({
+					...c,
+					tracks: c.tracks.map((t) => ({
+						...t,
+						keys: [...t.keys].sort((a, b) => a.time - b.time)
+					}))
+				}))
+			};
+			documents.set(source.id, doc);
+		};
+		const key = `__forge_live_rig_${scene.sys.settings.key}_${++serial}`;
+		const texture = scene.textures.addDynamicTexture(key, doc.width, doc.height);
+		if (!texture) {
+			report(def.name + ": 리그 출력 텍스처를 만들 수 없습니다.");
+			return;
+		};
+		if (doc.sampling) texture.setFilter?.(doc.sampling === "linear" ? 0 : 1);
+		const parts = [];
+		for (const attachment of [...doc.attachments].sort((a, b) => a.order - b.order)) {
+			const asset = assets.get(attachment.assetId);
+			if (!asset || !attachment.visible) continue;
+			const deform = attachment.mesh?.enabled, src = sourceTexture(asset, attachment.frame, doc, !!deform);
+			if (!scene.textures.exists(src.key) || !scene.textures.get(src.key).has(src.frame)) {
+				report(def.name + " / " + attachment.name + ": 파츠 프레임을 찾을 수 없습니다.");
+				continue;
+			};
+			const geometry = deform ? mesh().geometry(attachment.mesh) : undefined, logical = geometry ? scene.textures.getFrame(src.key, src.frame) : undefined, webgl = !texture.context;
+			const image = geometry && webgl ? scene.make.mesh2d({
+				key: src.key,
+				vertices: () => geometry.vertices,
+				indices: () => geometry.indices,
+				add: false
+			}) : scene.make.image({
+				key: src.key,
+				frame: src.frame,
+				add: false
+			});
+			// 4.2의 quad 결합은 셀의 대각선을 바꿔 비선형 변형이 달라진다. 세 경로 모두 같은 삼각형을 유지한다.
+			if (geometry && webgl) {
+				image.setSize(logical.realWidth, logical.realHeight).setOrigin(0, 0);
+				image.flipV = true;
+				image.setRenderAsTriangles(true);
+			} else image.setOrigin(attachment.pivotX / image.frame.realWidth, attachment.pivotY / image.frame.realHeight);
+			const container = attachment.lengthScale?.axis === "bone" ? scene.make.container({
+				children: [image],
+				add: false
+			}) : undefined;
+			const part = {
+				attachment,
+				image,
+				container
+			};
+			if (doc.clips.some((clip) => clip.attachmentTracks?.some((track) => track.attachmentId === attachment.id))) {
+				part.variants = new Map([[attachment.assetId + ":" + attachment.frame, src]]);
+				part.variant = attachment.assetId + ":" + attachment.frame;
+				for (const clip of doc.clips) for (const track of clip.attachmentTracks ?? []) if (track.attachmentId === attachment.id) for (const key of track.keys) {
+					const id = key.assetId + ":" + key.frame;
+					if (!part.variants.has(id)) part.variants.set(id, sourceTexture(assets.get(key.assetId), key.frame, doc, !!deform));
+				}
+			};
+			if (geometry) {
+				part.mesh = {
+					...geometry,
+					width: logical.realWidth,
+					height: logical.realHeight,
+					values: new Float32Array(attachment.mesh.points.length * 2),
+					layer: new Float32Array(attachment.mesh.points.length * 2),
+					source: logical.source.image,
+					canvas: !webgl
+				};
+				if (!webgl) part.canvasDraw = () => {
+					const ctx = texture.context, b = state.world[attachment.boneId];
+					if (!b) return;
+					const sizing = partSizing(attachment, b.length), angle = b.rotation * rad, rotation = attachment.rotation * rad, cos = Math.cos(rotation), sin = Math.sin(rotation);
+					ctx.save();
+					ctx.globalAlpha = attachment.opacity * b.opacity;
+					ctx.imageSmoothingEnabled = doc.sampling === "linear";
+					ctx.translate(b.x, b.y);
+					ctx.rotate(angle);
+					ctx.transform(sizing.bone * cos * sizing.x, sin * sizing.x, -sizing.bone * sin * sizing.y, cos * sizing.y, sizing.bone * attachment.offsetX, attachment.offsetY);
+					mesh().draw(ctx, part.mesh.source, part.mesh.width, part.mesh.height, part.mesh.vertices, part.mesh.indices);
+					ctx.restore();
+				};
+			};
+			parts.push(part);
+		};
+		const scaleX = (go.width || doc.width) / doc.width, scaleY = (go.height || doc.height) / doc.height;
+		go.setTexture(key);
+		go.setScale(go.scaleX * scaleX, go.scaleY * scaleY);
+		resizeCoordinates(go, scaleX, scaleY);
+		const state = {
+			def,
+			go,
+			settings,
+			sourceId: source.id,
+			doc,
+			parts,
+			texture,
+			key,
+			time: 0,
+			clipId: "",
+			local: {},
+			world: {},
+			aims: new Map(),
+			layers: new Map(),
+			paused: false,
+			manualClip: "",
+			aimOverride: new Map(),
+			elapsed: 0,
+			transition: settings.transition,
+			scaleX,
+			scaleY,
+			meshCells,
+			meshParts,
+			meshPixels
+		};
+		if (go.anims?.setCurrentFrame) {
+			state.animation = go.anims;
+			state.originalFrame = go.anims.setCurrentFrame;
+			state.wrappedFrame = function(...args) {
+				const result = state.originalFrame.apply(this, args);
+				// 애니메이션 시계와 이벤트를 유지하되 물리 갱신 전에 리그 크기·원점을 복구한다.
+				if (go.active && scene.textures.exists(key)) go.setTexture(key);
+				return result;
+			};
+			go.anims.setCurrentFrame = state.wrappedFrame;
+		};
+		states.set(def.id, state);
+		return state;
+	};
+	const correspondingClip = (doc, id, previous) => {
+		const exact = doc.clips.find((c) => c.id === id);
+		if (exact) return exact;
+		const motion = previous?.human?.linkedMotions[id]?.motionId;
+		const old = previous?.clips.find((c) => c.id === id);
+		const action = (s) => [
+			["idle", /idle|대기/],
+			["walk", /walk|걷기|보행/],
+			["run", /run|달리기|질주/],
+			["attack", /attack|action|공격/],
+			["hurt", /hurt|피격/],
+			["death", /death|쓰러짐|사망/],
+			["cast", /cast|시전/],
+			["jump", /jump|점프/]
+		].find(([, p]) => p.test(s.toLowerCase()))?.[0];
+		return doc.clips.find((c) => motion && doc.human?.linkedMotions[c.id]?.motionId === motion || old && c.name === old.name || action(id) && action(c.id + " " + c.name) === action(id)) ?? doc.clips.find((c) => /idle|대기/.test(c.id + " " + c.name)) ?? doc.clips[0];
+	};
+	const directionSource = (def, go, r, state) => {
+		const config = r.directions;
+		let direction = state?.direction ?? config?.initial ?? "right";
+		if (!config?.enabled) return {
+			source: assets.get(r.assetId),
+			direction,
+			flip: undefined,
+			fallback: false
+		};
+		const vx = go.body?.velocity?.x ?? 0, vy = go.body?.velocity?.y ?? 0, moving = Math.hypot(vx, vy) > 1, p = pointer();
+		const vector = config.priority === "pointer" && p ? (() => {
+			const m = go.getWorldTransformMatrix?.(), origin = m?.transformPoint(0, 0) ?? go;
+			return {
+				x: p.x - origin.x,
+				y: p.y - origin.y
+			};
+		})() : moving ? {
+			x: vx,
+			y: vy
+		} : undefined;
+		if (vector && Math.hypot(vector.x, vector.y) > 1) {
+			const x = Math.abs(vector.x), y = Math.abs(vector.y), vertical = direction === "up" || direction === "down";
+			// 대각선 경계에서 매 프레임 방향이 떨리지 않게 현재 축에 작은 여유를 둔다.
+			if (x > y * (vertical ? 1.12 : .88)) direction = vector.x < 0 ? "left" : "right";
+			else direction = vector.y < 0 ? "up" : "down";
+		};
+		const own = assets.get(config.assets[direction]), base = assets.get(r.assetId);
+		if (own?.rigDocument) return {
+			source: own,
+			direction,
+			flip: false,
+			fallback: false
+		};
+		if (direction === "right" || direction === "left") {
+			if (config.mirrorHorizontal) {
+				const opposite = assets.get(config.assets[direction === "left" ? "right" : "left"]);
+				if (opposite?.rigDocument) return {
+					source: opposite,
+					direction,
+					flip: true,
+					fallback: false
+				};
+			};
+			return {
+				source: base,
+				direction,
+				flip: config.mirrorHorizontal && direction === "left",
+				fallback: direction === "left" && !config.mirrorHorizontal
+			};
+		};
+		return {
+			source: base,
+			direction,
+			flip: false,
+			fallback: true
+		};
+	};
+	const clipFor = (state) => {
+		const { settings: r, doc, go } = state;
+		if (state.manualClip) return correspondingClip(doc, state.manualClip, assets.get(r.assetId)?.rigDocument)?.id;
+		const animId = go.anims?.currentAnim?.key;
+		if (r.followAnimation && animId) {
+			const explicit = r.animationMap.find((m) => m.animationId === animId);
+			if (explicit && doc.clips.some((c) => c.id === explicit.clipId)) return explicit.clipId;
+			const a = project.animations.find((a) => a.id === animId);
+			if (a) {
+				const category = (s) => [
+					["idle", /\bidle\b|대기|서있기/i],
+					["walk", /\bwalk\b|걷기|보행/i],
+					["run", /\brun\b|달리기|질주/i],
+					["action", /\baction\b|\battack\b|직업 동작|공격|베기/i],
+					["hurt", /\bhurt\b|피격|경직/i],
+					["death", /\bdeath\b|쓰러짐|사망|죽음/i],
+					["jump", /\bjump\b|점프|도약/i],
+					["cast", /\bcast\b|시전/i]
+				].find(([, pattern]) => pattern.test(s))?.[0];
+				const candidate = (a.action || a.id.split(/[.\/:]/).reverse().find((s) => /idle|walk|run|attack|hurt|death|jump|cast|action/i.test(s)) || a.name || "").toLowerCase(), action = category(candidate);
+				const found = doc.clips.find((c) => c.id.toLowerCase() === candidate || c.name.toLowerCase() === candidate || c.id.toLowerCase().endsWith("." + candidate) || action && category(c.id + " " + c.name) === action);
+				if (found) return found.id;
+			}
+		};
+		if (r.locomotion?.enabled && go.body?.velocity) {
+			const speed = Math.hypot(go.body.velocity.x ?? 0, go.body.velocity.y ?? 0), id = speed > r.locomotion.runSpeed ? r.locomotion.runClipId : speed > 1 ? r.locomotion.walkClipId : r.locomotion.idleClipId;
+			return correspondingClip(doc, id, assets.get(r.assetId)?.rigDocument)?.id;
+		};
+		return correspondingClip(doc, r.clipId)?.id;
+	};
+	const aimPose = (state, rule, dt, local, current) => {
+		const { go, doc } = state, bone = doc.bones.find((b) => b.id === rule.boneId);
+		if (!bone || bone.aimAt || !current[bone.id]) return;
+		let s = state.aims.get(rule.id);
+		if (!s) {
+			s = {
+				weight: 0,
+				heading: current[bone.id].rotation
+			};
+			state.aims.set(rule.id, s);
+		};
+		let valid = enabled(rule.condition) && (state.aimOverride.get(rule.id) ?? state.aimOverride.get("") ?? true), desired;
+		if (rule.source === "angle" || rule.source === "variable") {
+			const v = rule.source === "angle" ? rule.angle : Number(hooks.variable(rule.variableId));
+			if (Number.isFinite(v)) {
+				// 숫자 각도도 마우스와 동일한 게임 월드 좌표계를 사용한다.
+				const m = go.getWorldTransformMatrix(), origin = m.transformPoint(0, 0), p = point(go, origin.x + Math.cos(v * rad) * 1e3, origin.y + Math.sin(v * rad) * 1e3, doc);
+				const center = point(go, origin.x, origin.y, doc);
+				desired = Math.atan2(p.y - center.y, p.x - center.x) / rad + rule.angleOffset;
+			} else valid = false;
+		} else {
+			const t = target(rule);
+			if (t && Number.isFinite(t.x) && Number.isFinite(t.y)) {
+				const p = point(go, t.x, t.y, doc), b = current[bone.id];
+				if (Math.hypot(p.x - b.x, p.y - b.y) > .01) desired = Math.atan2(p.y - b.y, p.x - b.x) / rad + rule.angleOffset;
+				else valid = false;
+			} else valid = false;
+		};
+		const targetWeight = valid && Number.isFinite(desired) ? rule.weight : 0;
+		if (targetWeight > 0) {
+			if (s.weight < .001) s.heading = current[bone.id].rotation;
+			s.heading = mixAngle(s.heading, desired, rule.smoothing > 0 ? 1 - Math.exp(-dt / rule.smoothing) : 1);
+		};
+		s.weight = fade(s.weight, targetWeight, targetWeight ? rule.smoothing : rule.returnTime, dt, rule.weight || 1);
+		if (s.weight < 1e-4) return;
+		const parent = bone.parentId ? current[bone.parentId] : undefined, base = local[bone.id].rotation;
+		let desiredLocal = s.heading - (parent?.rotation ?? 0);
+		const delta = clamp(angle(desiredLocal - base), rule.minAngle, rule.maxAngle);
+		desiredLocal = base + delta;
+		const parentBone = doc.bones.find((b) => b.id === bone.parentId);
+		const directChain = doc.ik.find((ik) => ik.lowerBoneId === bone.parentId);
+		const hand = directChain ? bone : parentBone;
+		const fore = hand && doc.bones.find((b) => b.id === hand.parentId);
+		const upper = fore && doc.bones.find((b) => b.id === fore.parentId);
+		const chain = fore && upper && doc.ik.find((ik) => ik.upperBoneId === upper.id && ik.lowerBoneId === fore.id);
+		const namedArm = hand && fore && upper && /hand|손/i.test(hand.id + " " + hand.name) && /arm|팔/i.test(fore.id + " " + fore.name) && /arm|팔/i.test(upper.id + " " + upper.name);
+		if (rule.followArm && hand && fore && upper && (chain || namedArm) && hand.anchor === 1 && fore.anchor === 1 && Math.abs(hand.x) + Math.abs(hand.y) + Math.abs(fore.x) + Math.abs(fore.y) < .01) {
+			const u = current[upper.id], f = current[fore.id], h = current[hand.id];
+			const l1 = u.length, l2 = f.length, reach = clamp(Math.hypot(h.x - u.x, h.y - u.y), Math.abs(l1 - l2) + .1, (l1 + l2) * .94);
+			// 현재 동작의 팔꿈치 굽힘 방향을 유지한다.
+			const bendValue = Math.sin(local[fore.id].rotation * rad), bend = Math.abs(bendValue) < .001 ? chain?.bend ?? -1 : bendValue < 0 ? -1 : 1;
+			const desiredWeapon = (parent?.rotation ?? 0) + desiredLocal;
+			const theta = (desiredWeapon - rule.angleOffset) * rad;
+			const elbow = Math.acos(clamp((reach * reach - l1 * l1 - l2 * l2) / (2 * l1 * l2), -1, 1)) * bend;
+			const shoulder = theta - Math.atan2(l2 * Math.sin(elbow), l1 + l2 * Math.cos(elbow));
+			const ancestor = upper.parentId ? current[upper.parentId]?.rotation ?? 0 : 0;
+			const shoulderLocal = clamp(shoulder / rad - ancestor, upper.minAngle, upper.maxAngle);
+			local[upper.id].rotation = mixAngle(local[upper.id].rotation, shoulderLocal, s.weight);
+			local[fore.id].rotation = mixAngle(local[fore.id].rotation, clamp(elbow / rad, fore.minAngle, fore.maxAngle), s.weight);
+			const updated = world(doc, local), handParent = updated[fore.id];
+			// 손과 장비의 부모 연결을 유지한 채 손목 각도를 맞춘다.
+			local[hand.id].rotation = mixAngle(local[hand.id].rotation, clamp(desiredWeapon - (bone.id === hand.id ? 0 : base) - handParent.rotation, hand.minAngle, hand.maxAngle), s.weight);
+		} else local[bone.id].rotation = mixAngle(base, clamp(desiredLocal, bone.minAngle, bone.maxAngle), s.weight);
+	};
+	const render = (state, dt) => {
+		const { doc, go, settings: r } = state;
+		if (go.texture.key !== state.key) go.setTexture(state.key);
+		const nextId = clipFor(state), next = doc.clips.find((c) => c.id === nextId) ?? doc.clips[0];
+		if (next.id !== state.clipId) {
+			if (state.meshParts) {
+				for (const part of state.parts) if (part.mesh) part.mesh.from = part.mesh.ready ? part.mesh.values.slice() : undefined;
+			};
+			state.from = Object.keys(state.local).length ? copy(state.local) : undefined;
+			state.clipId = next.id;
+			state.time = 0;
+			state.elapsed = 0;
+			state.fade = state.transition ?? r.transition;
+			state.transition = undefined;
+		};
+		if (!state.paused) {
+			let advance = dt * r.speed;
+			const motion = doc.human?.linkedMotions?.[next.id], velocity = go.body?.velocity;
+			if (r.movementSync && motion?.travel > 0 && velocity) {
+				const speed = Math.hypot(velocity.x ?? 0, velocity.y ?? 0), matrix = go.getWorldTransformMatrix?.(), scale = matrix && Number.isFinite(matrix.a) && Number.isFinite(matrix.b) ? Math.hypot(matrix.a, matrix.b) : Math.abs(go.scaleX ?? 1);
+				if (speed > 1 && scale > 1e-5) advance = dt * speed / (motion.travel * scale) * next.duration / 1e3;
+			};
+			state.time += advance;
+			state.elapsed += dt;
+		};
+		const local = sample(doc, next, state.time);
+		if (state.from && state.fade > 0 && state.elapsed < state.fade) for (const b of doc.bones) local[b.id] = mix(state.from[b.id] ?? local[b.id], local[b.id], clamp(state.elapsed / state.fade, 0, 1));
+		else state.from = undefined;
+		for (const layer of r.layers) {
+			const clip = doc.clips.find((c) => c.id === layer.clipId);
+			if (!clip) continue;
+			let l = state.layers.get(layer.id);
+			if (!l) {
+				l = {
+					weight: 0,
+					time: 0,
+					active: false
+				};
+				state.layers.set(layer.id, l);
+			};
+			const active = enabled(layer.condition);
+			if (active && !l.active) l.time = 0;
+			l.active = active;
+			if (!state.paused) {
+				l.time += dt * layer.speed;
+				l.weight = fade(l.weight, active ? layer.weight : 0, layer.fade, dt, layer.weight || 1);
+			};
+			if (l.weight > 1e-4) {
+				const pose = sample(doc, clip, l.time);
+				for (const id of layer.boneIds) if (local[id] && pose[id]) local[id] = mix(local[id], pose[id], l.weight);
+			}
+		};
+		if (r.directions?.enabled) go.setFlipX(!!state.directionFlip);
+		else if (r.facing === "animation") {
+			const a = project.animations.find((a) => a.id === go.anims?.currentAnim?.key);
+			if (a?.direction === "left" || /[.\/:]left$/.test(a?.id ?? "")) go.setFlipX(true);
+			else if (a?.direction === "right" || /[.\/:]right$/.test(a?.id ?? "")) go.setFlipX(false);
+		} else if (r.facing === "pointer") {
+			const p = pointer();
+			if (p) {
+				const v = point(go, p.x, p.y, doc, false);
+				if (Math.abs(v.x - doc.width * (go.originX ?? .5)) > .5) go.setFlipX(v.x < doc.width * (go.originX ?? .5));
+			}
+		} else if (r.facing === "movement") {
+			const vx = go.body?.velocity?.x;
+			if (Math.abs(vx ?? 0) > 1) go.setFlipX(vx < 0);
+		};
+		let current = world(doc, local);
+		if (!state.paused) for (const rule of r.aims) {
+			aimPose(state, rule, dt, local, current);
+			current = world(doc, local);
+		}
+		else if (state.local && Object.keys(state.local).length) {
+			Object.assign(local, copy(state.local));
+			current = world(doc, local);
+		};
+		state.local = local;
+		state.world = current;
+		const meshOnscreen = !state.meshParts || meshVisible(go);
+		for (const part of state.parts) {
+			const a = part.attachment, b = current[a.boneId];
+			if (!b) {
+				part.image.setVisible(false);
+				continue;
+			};
+			if (part.variants) {
+				let selected = images().sample(a, next, state.time);
+				for (const layer of r.layers) {
+					const l = state.layers.get(layer.id), clip = doc.clips.find((clip) => clip.id === layer.clipId);
+					if (l?.weight >= .5 && layer.boneIds.includes(a.boneId) && clip?.attachmentTracks?.some((track) => track.attachmentId === a.id)) selected = images().sample(a, clip, l.time);
+				};
+				const id = selected.assetId + ":" + selected.frame;
+				if (id !== part.variant) {
+					const source = part.variants.get(id);
+					if (!source) throw Error(a.name + ": 그림 키의 준비된 프레임이 없습니다.");
+					part.image.setTexture(source.key, source.frame);
+					part.variant = id;
+					if (part.mesh) {
+						const frame = scene.textures.getFrame(source.key, source.frame);
+						part.mesh.source = frame.source.image;
+					} else part.image.setOrigin(a.pivotX / part.image.frame.realWidth, a.pivotY / part.image.frame.realHeight);
+				}
+			};
+			if (part.mesh && meshOnscreen) {
+				const m = part.mesh;
+				mesh().sample(a, next, state.time, true, m.values);
+				if (m.from && state.from && state.fade > 0 && state.elapsed < state.fade) {
+					const weight = clamp(state.elapsed / state.fade, 0, 1);
+					for (let i = 0; i < m.values.length; i++) m.values[i] = m.from[i] + (m.values[i] - m.from[i]) * weight;
+				} else m.from = undefined;
+				for (const layer of r.layers) {
+					const l = state.layers.get(layer.id), clip = doc.clips.find((clip) => clip.id === layer.clipId);
+					if (!l || l.weight < 1e-4 || !layer.boneIds.includes(a.boneId) || !clip?.meshTracks?.some((track) => track.attachmentId === a.id)) continue;
+					mesh().sample(a, clip, l.time, true, m.layer);
+					for (let i = 0; i < m.values.length; i++) m.values[i] += (m.layer[i] - m.values[i]) * l.weight;
+				};
+				mesh().write(m.vertices, m.values, m.width, m.height, a.pivotX, a.pivotY);
+				m.ready = true;
+			};
+			const rotation = b.rotation * rad, sizing = partSizing(a, b.length);
+			if (part.container) {
+				part.container.setPosition(b.x, b.y).setAngle(b.rotation).setScale(sizing.bone, 1);
+				part.image.setVisible(true).setPosition(a.offsetX, a.offsetY).setAngle(a.rotation).setScale(sizing.x, sizing.y).setAlpha(a.opacity * b.opacity);
+			} else part.image.setVisible(true).setPosition(b.x + Math.cos(rotation) * a.offsetX - Math.sin(rotation) * a.offsetY, b.y + Math.sin(rotation) * a.offsetX + Math.cos(rotation) * a.offsetY).setAngle(b.rotation + a.rotation).setScale(sizing.x, sizing.y).setAlpha(a.opacity * b.opacity);
+		};
+		if (!go.visible || go.alpha === 0 || !meshOnscreen) state.rendered = false;
+		else if (!state.paused || !state.rendered) {
+			state.texture.clear();
+			const nodes = state.texture.renderer?.renderNodes;
+			let previousTexture = "";
+			for (const part of state.parts) {
+				if (!part.image.visible) continue;
+				if (part.mesh?.canvas) {
+					state.texture.callback(part.canvasDraw);
+					continue;
+				};
+				const key = part.image.texture.key;
+				// 서로 다른 파츠 원본의 배치를 나눠 WebGL 다중 텍스처의 빈 삼각형을 막는다.
+				// 같은 아틀라스의 연속 파츠는 한 배치로 유지하며 전역 렌더러 설정은 바꾸지 않는다.
+				if (previousTexture && previousTexture !== key && nodes?.finishBatch && state.texture.callback) state.texture.callback(() => nodes.finishBatch());
+				state.texture.draw(part.container ?? part.image);
+				previousTexture = key;
+			};
+			state.texture.render();
+			state.rendered = true;
+		};
+		// 원래 스프라이트의 애니메이션·상태·물리를 유지하고 최종 그림만 갱신한다.
+		if (go.texture.key !== state.key) go.setTexture(state.key);
+		go.setData("forgeLiveRig", true);
+	};
+	const update = (delta) => {
+		if (destroyed) return;
+		const live = new Set(), dt = clamp(Number.isFinite(delta) ? delta : 0, 0, 250);
+		visibleMeshCells = 0;
+		for (const { def, go } of hooks.actors()) {
+			if (!go?.active || def.kind !== "sprite") continue;
+			let s = states.get(def.id);
+			const r = def.rigPlayback, selected = r?.enabled ? directionSource(def, go, r, s) : undefined, source = selected?.source;
+			if (!r?.enabled || !source?.rigDocument) {
+				if (s) remove(s, true);
+				continue;
+			};
+			live.add(def.id);
+			if (s && s.go !== go) {
+				remove(s, true);
+				s = undefined;
+			};
+			try {
+				if (s && s.sourceId !== source.id) {
+					const previous = s, oldClip = previous.doc.clips.find((c) => c.id === previous.clipId), phase = oldClip ? previous.time / oldClip.duration : 0;
+					remove(previous, true);
+					s = install(def, go, r, source);
+					if (s) {
+						const clip = correspondingClip(s.doc, previous.clipId, previous.doc);
+						s.clipId = clip?.id ?? "";
+						s.time = phase * (clip?.duration ?? 1e3);
+						s.elapsed = previous.elapsed;
+						s.paused = previous.paused;
+						s.manualClip = previous.manualClip;
+						s.aimOverride = previous.aimOverride;
+						s.aims = previous.aims;
+						s.layers = previous.layers;
+						s.from = undefined;
+						s.fade = 0;
+					}
+				};
+				s ??= install(def, go, r, source);
+				if (s) {
+					s.settings = r;
+					s.direction = selected.direction;
+					s.directionFlip = selected.flip;
+					s.directionFallback = selected.fallback;
+					if (s.meshCells && meshVisible(go)) visibleMeshCells += s.meshCells;
+					render(s, dt);
+				}
+			} catch (error) {
+				report(def.name + ": 실시간 리그를 재생할 수 없습니다. " + String(error));
+				if (s) remove(s, true);
+			}
+		};
+		for (const [id, s] of states) if (!live.has(id) || !s.go.active) remove(s, false);
+		if (visibleMeshCells > 4096) {
+			const message = "화면의 변형 격자가 권장 4,096칸을 넘었습니다. 현재 " + visibleMeshCells + "칸입니다.";
+			meshWarnings ??= new Set();
+			if (!meshWarnings.has("visible-cells")) {
+				meshWarnings.add("visible-cells");
+				if (hooks.warning) hooks.warning(message);
+				else console.warn(message);
+			}
+		}
+	};
+	const stateFor = (id) => {
+		if (!states.has(id) && !destroyed) update(0);
+		return states.get(id);
+	};
+	return {
+		update,
+		play: (id, clipId, transition) => {
+			const s = stateFor(id);
+			if (!s || ![s.doc, assets.get(s.settings.assetId)?.rigDocument].some((doc) => doc?.clips.some((c) => c.id === clipId))) return false;
+			s.manualClip = clipId;
+			s.clipId = "";
+			s.transition = transition === undefined ? s.settings.transition : clamp(transition, 0, 5e3);
+			s.paused = false;
+			return true;
+		},
+		auto: (id) => {
+			const s = stateFor(id);
+			if (!s) return false;
+			s.manualClip = "";
+			return true;
+		},
+		aim: (id, active, ruleId = "") => {
+			const s = stateFor(id);
+			if (!s) return false;
+			s.aimOverride.set(ruleId, active);
+			return true;
+		},
+		pause: (id, active = true) => {
+			const s = stateFor(id);
+			if (!s) return false;
+			s.paused = active;
+			return true;
+		},
+		reset: (id) => {
+			const s = stateFor(id);
+			if (!s) return false;
+			s.manualClip = "";
+			s.clipId = "";
+			s.time = 0;
+			s.paused = false;
+			s.aims.clear();
+			s.layers.clear();
+			s.aimOverride.clear();
+			return true;
+		},
+		status: (id) => {
+			const s = states.get(id);
+			return s ? {
+				clipId: s.clipId,
+				time: s.time,
+				paused: s.paused,
+				flipX: !!s.go.flipX,
+				assetId: s.sourceId,
+				direction: s.direction,
+				directionFallback: !!s.directionFallback,
+				...s.meshParts ? { mesh: {
+					parts: s.meshParts,
+					cells: s.meshCells,
+					vertices: s.parts.reduce((sum, part) => sum + (part.mesh?.vertices.length ?? 0) / 4, 0),
+					sourcePixels: s.meshPixels,
+					sceneVisibleCells: visibleMeshCells,
+					offscreen: !meshVisible(s.go)
+				} } : {},
+				local: copy(s.local),
+				world: copy(s.world),
+				aims: Object.fromEntries([...s.aims].map(([id, a]) => [id, {
+					weight: a.weight,
+					heading: a.heading
+				}]))
+			} : undefined;
+		},
+		snapshot: () => [...states.values()].map((s) => ({
+			id: s.def.id,
+			clipId: s.clipId,
+			manualClip: s.manualClip,
+			time: s.time,
+			elapsed: s.elapsed,
+			paused: s.paused,
+			direction: s.direction,
+			local: copy(s.local),
+			from: s.from ? copy(s.from) : undefined,
+			...s.meshParts ? { meshFrom: Object.fromEntries(s.parts.filter((part) => part.mesh?.from).map((part) => [part.attachment.id, Array.from(part.mesh.from)])) } : {},
+			fade: s.fade,
+			aims: Object.fromEntries([...s.aims].map(([id, v]) => [id, { ...v }])),
+			layers: Object.fromEntries([...s.layers].map(([id, v]) => [id, { ...v }])),
+			aimOverride: Object.fromEntries(s.aimOverride)
+		})),
+		restore: (data) => {
+			if (!Array.isArray(data)) return;
+			for (const entry of data.slice(0, 5e3)) {
+				if (!entry || typeof entry.id !== "string") continue;
+				let s = stateFor(entry.id);
+				if (!s) continue;
+				if ([
+					"right",
+					"left",
+					"up",
+					"down"
+				].includes(entry.direction)) {
+					s.direction = entry.direction;
+					update(0);
+					s = states.get(entry.id);
+					if (!s) continue;
+				};
+				const finite = (n, fallback, max = 0xe8d4a51000) => typeof n === "number" && Number.isFinite(n) ? clamp(n, 0, max) : fallback;
+				if (s.doc.clips.some((c) => c.id === entry.clipId)) s.clipId = entry.clipId;
+				s.manualClip = s.doc.clips.some((c) => c.id === entry.manualClip) ? entry.manualClip : "";
+				s.time = finite(entry.time, 0);
+				s.elapsed = finite(entry.elapsed, 0);
+				s.paused = entry.paused === true;
+				s.fade = finite(entry.fade, 0, 5e3);
+				const restorePose = (value) => {
+					if (!value || typeof value !== "object") return undefined;
+					const pose = {};
+					for (const bone of s.doc.bones) {
+						const p = value[bone.id];
+						if (!p || !properties.every((k) => typeof p[k] === "number" && Number.isFinite(p[k]) && Math.abs(p[k]) <= 1e5)) return undefined;
+						pose[bone.id] = Object.fromEntries(properties.map((k) => [k, p[k]]));
+					};
+					return pose;
+				};
+				s.local = restorePose(entry.local) ?? s.local;
+				s.from = restorePose(entry.from);
+				if (s.meshParts) for (const part of s.parts) {
+					const values = entry.meshFrom?.[part.attachment.id];
+					if (part.mesh && Array.isArray(values) && values.length === part.mesh.values.length && values.every((value) => Number.isFinite(value) && Math.abs(value) <= 2)) part.mesh.from = new Float32Array(values);
+				};
+				for (const aim of s.settings.aims) {
+					const a = entry.aims?.[aim.id];
+					if (a && Number.isFinite(a.heading) && Number.isFinite(a.weight)) s.aims.set(aim.id, {
+						heading: a.heading,
+						weight: clamp(a.weight, 0, 1)
+					});
+				};
+				for (const layer of s.settings.layers) {
+					const l = entry.layers?.[layer.id];
+					if (l) s.layers.set(layer.id, {
+						time: finite(l.time, 0),
+						weight: finite(l.weight, 0, 1),
+						active: l.active === true
+					});
+				};
+				for (const key of ["", ...s.settings.aims.map((a) => a.id)]) if (typeof entry.aimOverride?.[key] === "boolean") s.aimOverride.set(key, entry.aimOverride[key]);
+				s.rendered = false;
+				render(s, 0);
+			}
+		},
+		destroy: () => {
+			destroyed = true;
+			for (const s of [...states.values()]) remove(s, true);
+			for (const key of paletteTextures.values()) scene.textures.remove(key);
+			paletteTextures.clear();
+			documents.clear();
+		}
+	};
+},function createRigMeshTools() {
+	const sorted = new WeakMap();
+	const zero = (columns = 2, rows = 2) => ({
+		enabled: true,
+		columns,
+		rows,
+		points: Array.from({ length: (columns + 1) * (rows + 1) }, () => ({
+			x: 0,
+			y: 0
+		}))
+	});
+	const sample = (part, clip, time, wrap = true, output) => {
+		const mesh = part.mesh;
+		if (!mesh?.enabled) return undefined;
+		const out = output ?? new Float32Array(mesh.points.length * 2), track = clip?.meshTracks?.find((track) => track.attachmentId === part.id);
+		let keys = track && sorted.get(track.keys);
+		if (track && !keys) {
+			keys = [...track.keys].sort((a, b) => a.time - b.time);
+			sorted.set(track.keys, keys);
+		};
+		let a, b, blend = 0;
+		if (keys?.length) {
+			const t = Math.max(0, clip.loop && wrap ? time % clip.duration : Math.min(time, clip.duration));
+			let low = 0, high = keys.length;
+			while (low < high) {
+				const mid = low + high >>> 1;
+				if (keys[mid].time <= t) low = mid + 1;
+				else high = mid;
+			};
+			a = keys[Math.max(0, low - 1)];
+			b = keys[Math.min(keys.length - 1, low)];
+			blend = a === b ? 0 : (t - a.time) / (b.time - a.time);
+			if (a.interpolation === "step") blend = 0;
+			else if (a.interpolation === "smooth") blend = blend * blend * (3 - 2 * blend);
+		};
+		for (let i = 0; i < mesh.points.length; i++) {
+			const p = a?.points[i] ?? mesh.points[i], q = b?.points[i] ?? p;
+			out[i * 2] = p.x + (q.x - p.x) * blend;
+			out[i * 2 + 1] = p.y + (q.y - p.y) * blend;
+		};
+		return out;
+	};
+	const geometry = (mesh) => {
+		const vertices = new Array((mesh.columns + 1) * (mesh.rows + 1) * 4).fill(0), indices = [];
+		for (let y = 0; y <= mesh.rows; y++) for (let x = 0; x <= mesh.columns; x++) {
+			const at = (y * (mesh.columns + 1) + x) * 4;
+			vertices[at + 2] = x / mesh.columns;
+			vertices[at + 3] = y / mesh.rows;
+		};
+		for (let y = 0; y < mesh.rows; y++) for (let x = 0; x < mesh.columns; x++) {
+			const a = y * (mesh.columns + 1) + x, b = a + 1, c = a + mesh.columns + 1, d = c + 1;
+			indices.push(a, b, c, 0, b, c, d, 0);
+		};
+		return {
+			vertices,
+			indices
+		};
+	};
+	const write = (vertices, points, width, height, pivotX = 0, pivotY = 0) => {
+		for (let i = 0; i < vertices.length; i += 4) {
+			vertices[i] = (vertices[i + 2] + points[i / 2]) * width - pivotX;
+			vertices[i + 1] = (vertices[i + 3] + points[i / 2 + 1]) * height - pivotY;
+		}
+	};
+	const draw = (ctx, image, width, height, vertices, indices) => {
+		for (let at = 0; at < indices.length; at += 4) {
+			const p = indices[at] * 4, q = indices[at + 1] * 4, r = indices[at + 2] * 4, x0 = vertices[p], y0 = vertices[p + 1], x1 = vertices[q], y1 = vertices[q + 1], x2 = vertices[r], y2 = vertices[r + 1];
+			if (Math.abs((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)) < 1e-8) continue;
+			const sx0 = vertices[p + 2] * width, sy0 = vertices[p + 3] * height, sx1 = vertices[q + 2] * width - sx0, sy1 = vertices[q + 3] * height - sy0, sx2 = vertices[r + 2] * width - sx0, sy2 = vertices[r + 3] * height - sy0, det = sx1 * sy2 - sx2 * sy1;
+			if (Math.abs(det) < 1e-8) continue;
+			const a = ((x1 - x0) * sy2 - (x2 - x0) * sy1) / det, b = ((y1 - y0) * sy2 - (y2 - y0) * sy1) / det, c = ((x2 - x0) * sx1 - (x1 - x0) * sx2) / det, d = ((y2 - y0) * sx1 - (y1 - y0) * sx2) / det;
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(x0, y0);
+			ctx.lineTo(x1, y1);
+			ctx.lineTo(x2, y2);
+			ctx.closePath();
+			ctx.clip();
+			ctx.transform(a, b, c, d, x0 - a * sx0 - c * sy0, y0 - b * sx0 - d * sy0);
+			ctx.drawImage(image, 0, 0);
+			ctx.restore();
+		}
+	};
+	const resample = (mesh, points, columns, rows) => {
+		const out = [];
+		for (let y = 0; y <= rows; y++) for (let x = 0; x <= columns; x++) {
+			const u = x / columns * mesh.columns, v = y / rows * mesh.rows, cx = Math.min(mesh.columns - 1, Math.floor(u)), cy = Math.min(mesh.rows - 1, Math.floor(v)), tx = u - cx, ty = v - cy, a = points[cy * (mesh.columns + 1) + cx], b = points[cy * (mesh.columns + 1) + cx + 1], c = points[(cy + 1) * (mesh.columns + 1) + cx], d = points[(cy + 1) * (mesh.columns + 1) + cx + 1];
+			out.push({
+				x: (a.x * (1 - tx) + b.x * tx) * (1 - ty) + (c.x * (1 - tx) + d.x * tx) * ty,
+				y: (a.y * (1 - tx) + b.y * tx) * (1 - ty) + (c.y * (1 - tx) + d.y * tx) * ty
+			});
+		};
+		return out;
+	};
+	return {
+		zero,
+		sample,
+		geometry,
+		write,
+		draw,
+		resample
+	};
+},function createRigAttachmentTools() {
+	const sorted = new WeakMap();
+	const sample = (part, clip, time, wrap = true) => {
+		const track = clip?.attachmentTracks?.find((track) => track.attachmentId === part.id);
+		if (!track?.keys.length) return part;
+		let keys = sorted.get(track.keys);
+		if (!keys) {
+			keys = [...track.keys].sort((a, b) => a.time - b.time);
+			sorted.set(track.keys, keys);
+		};
+		const t = Math.max(0, clip.loop && wrap ? time % clip.duration : Math.min(time, clip.duration));
+		let low = 0, high = keys.length;
+		while (low < high) {
+			const mid = low + high >>> 1;
+			if (keys[mid].time <= t) low = mid + 1;
+			else high = mid;
+		};
+		return low ? keys[low - 1] : part;
+	};
+	return { sample };
+}),function createNineSliceObject(scene, textureKey, frameName, width, height, settings, grid) {
+	const root = scene.add.container(0, 0), parts = [];
+	let texture = textureKey, frame = frameName, originX = .5, originY = .5, flipX = false, flipY = false, tint, blend;
+	Object.defineProperties(root, {
+		originX: {
+			get: () => originX,
+			configurable: true
+		},
+		originY: {
+			get: () => originY,
+			configurable: true
+		}
+	});
+	// Container.getBounds includes invisible spare slices. Report the authored
+	// rectangle so 3-slice buttons, trimmed frames and state changes keep the
+	// same bounds as their input area. Keep this inside the serialized factory.
+	const Bounds = root.getBounds().constructor;
+	root.getBounds = (output) => {
+		const bounds = output ?? new Bounds(), matrix = root.getWorldTransformMatrix(), center = matrix.transformPoint((.5 - originX) * width, (.5 - originY) * height), worldWidth = Math.abs(matrix.a) * width + Math.abs(matrix.c) * height, worldHeight = Math.abs(matrix.b) * width + Math.abs(matrix.d) * height;
+		return bounds.setTo(center.x - worldWidth / 2, center.y - worldHeight / 2, worldWidth, worldHeight);
+	};
+	const syncHitArea = () => {
+		const input = root.input;
+		if (!input?.hitArea || input.customHitArea) return;
+		// Container 입력 좌표에는 Phaser가 항상 width/height의 절반을 더한다.
+		input.hitArea.x = (.5 - originX) * width;
+		input.hitArea.y = (.5 - originY) * height;
+		input.hitArea.width = width;
+		input.hitArea.height = height;
+	};
+	const originalInteractive = root.setInteractive.bind(root);
+	root.setInteractive = (...args) => {
+		originalInteractive(...args);
+		syncHitArea();
+		return root;
+	};
+	root.setData("forgeNineSlice", true);
+	const draw = () => {
+		const source = scene.textures.get(texture), base = source?.get(frame);
+		if (!base) return;
+		const region = settings.regions?.[String(frame)] ?? settings.region, rx = Math.max(0, region.x), ry = Math.max(0, region.y), rw = region.width || base.realWidth, rh = region.height || base.realHeight;
+		const layout = grid(rw, rh, width, height, settings);
+		width = layout.width;
+		height = layout.height;
+		root.setSize(width, height);
+		const trimX = base.x ?? 0, trimY = base.y ?? 0, trimWidth = base.cutWidth, trimHeight = base.cutHeight;
+		while (parts.length < 9) {
+			const part = scene.make.image({
+				key: texture,
+				frame,
+				add: false
+			}).setOrigin(0, 0);
+			root.add(part);
+			parts.push(part);
+		};
+		parts.forEach((part) => part.setVisible(false));
+		for (const [index, cell] of layout.cells.entries()) {
+			const x = Math.max(rx + cell.sx, trimX), y = Math.max(ry + cell.sy, trimY), right = Math.min(rx + cell.sx + cell.sw, trimX + trimWidth), bottom = Math.min(ry + cell.sy + cell.sh, trimY + trimHeight);
+			if (right <= x || bottom <= y) continue;
+			const name = "__forge-nine:" + JSON.stringify([
+				frame,
+				x,
+				y,
+				right,
+				bottom
+			]);
+			if (!source.has(name)) source.add(name, base.sourceIndex, base.cutX + x - trimX, base.cutY + y - trimY, right - x, bottom - y);
+			const dw = (right - x) * cell.dw / cell.sw, dh = (bottom - y) * cell.dh / cell.sh, dx = cell.dx + (x - rx - cell.sx) * cell.dw / cell.sw, dy = cell.dy + (y - ry - cell.sy) * cell.dh / cell.sh;
+			const part = parts[index].setTexture(texture, name).setVisible(true).setDisplaySize(dw, dh).setPosition((flipX ? width - dx - dw : dx) - originX * width, (flipY ? height - dy - dh : dy) - originY * height).setFlip(flipX, flipY);
+			if (tint !== undefined) part.setTint(tint);
+			if (blend !== undefined) part.setBlendMode(blend);
+		};
+		syncHitArea();
+	};
+	root.setOrigin = (x, y = x) => {
+		originX = x;
+		originY = y;
+		draw();
+		return root;
+	};
+	root.setFlip = (x, y) => {
+		if (flipX !== x || flipY !== y) {
+			flipX = x;
+			flipY = y;
+			draw();
+		};
+		return root;
+	};
+	root.setTint = (color) => {
+		tint = color;
+		parts.forEach((p) => p.setTint(color));
+		return root;
+	};
+	root.clearTint = () => {
+		tint = undefined;
+		parts.forEach((p) => p.clearTint());
+		return root;
+	};
+	const originalBlend = root.setBlendMode?.bind(root);
+	root.setBlendMode = (mode) => {
+		blend = mode;
+		originalBlend?.(mode);
+		parts.forEach((p) => p.setBlendMode(mode));
+		return root;
+	};
+	root.setNineSliceSize = (w, h) => {
+		if (width !== w || height !== h) {
+			width = w;
+			height = h;
+			draw();
+		};
+		return root;
+	};
+	root.setDisplaySize = (w, h) => root.setNineSliceSize(w, h);
+	root.setTexture = (key, name) => {
+		if (texture !== key || frame !== name) {
+			texture = key;
+			frame = name;
+			draw();
+		};
+		return root;
+	};
+	root.setFrame = (name) => root.setTexture(texture, name);
+	draw();
+	return root;
+},function nineSliceGrid(sourceWidth, sourceHeight, width, height, options) {
+	const left = Math.max(0, Math.min(options.left, sourceWidth - 1)), right = Math.max(0, Math.min(options.right, sourceWidth - left - 1)), top = Math.max(0, Math.min(options.top, sourceHeight - 1)), bottom = Math.max(0, Math.min(options.bottom, sourceHeight - top - 1));
+	width = Math.max(left + right + 1, width);
+	height = Math.max(top + bottom + 1, height);
+	const sx = [
+		0,
+		left,
+		sourceWidth - right,
+		sourceWidth
+	], sy = [
+		0,
+		top,
+		sourceHeight - bottom,
+		sourceHeight
+	], dx = [
+		0,
+		left,
+		width - right,
+		width
+	], dy = [
+		0,
+		top,
+		height - bottom,
+		height
+	];
+	return {
+		width,
+		height,
+		cells: Array.from({ length: 9 }, (_, n) => {
+			const x = n % 3, y = Math.floor(n / 3);
+			return {
+				sx: sx[x],
+				sy: sy[y],
+				sw: sx[x + 1] - sx[x],
+				sh: sy[y + 1] - sy[y],
+				dx: dx[x],
+				dy: dy[y],
+				dw: dx[x + 1] - dx[x],
+				dh: dy[y + 1] - dy[y]
+			};
+		}).filter((cell) => cell.sw > 0 && cell.sh > 0 && cell.dw > 0 && cell.dh > 0)
+	};
+},function createGameFrameworkRuntime(project, host) {
+	const config = project.framework, enabled = !!config?.enabled, events = new Map(), variables = new Map(project.variables.map((variable) => [variable.id, variable]));
+	const copy = (value) => JSON.parse(JSON.stringify(value)), defaults = config?.settings ?? {
+		masterVolume: .8,
+		musicVolume: .7,
+		effectsVolume: .8,
+		muted: false,
+		pixelated: false,
+		controls: {
+			up: "ArrowUp",
+			down: "ArrowDown",
+			left: "ArrowLeft",
+			right: "ArrowRight",
+			jump: "Space",
+			action: "KeyZ",
+			menu: "Escape"
+		}
+	};
+	let settings = copy(defaults), disposed = false, view = "", busy = false, paused = false, lastFocus = null, dialogueId = "", nodeId = "", dialogueTrail = 0, gamepadRequest = 0, held = new Set(), toastTimer;
+	let root, overlay, panel, body, heading, status;
+	const prefix = config?.storagePrefix ?? "framework", slotKey = (id) => prefix + ".slot." + id, indexKey = prefix + ".slots", settingsKey = prefix + ".settings";
+	const novel = config?.dialogueOptions?.presentation === "novel";
+	let choiceGuard;
+	const choiceAllowed = (choice) => {
+		if (choice.enabledVariableId && !value(choice.enabledVariableId)) return false;
+		try {
+			return choiceGuard?.({
+				dialogueId,
+				nodeId,
+				choiceId: choice.id
+			}) !== false;
+		} catch (error) {
+			fail(error);
+			return false;
+		}
+	};
+	const refreshChoices = () => {
+		if (view !== "dialogue" || !body) return;
+		const current = node();
+		if (!current) return;
+		for (const item of body.querySelectorAll(".fgf-dialogue-options button[data-choice]")) {
+			const choice = current.choices.find((c) => c.id === item.dataset.choice);
+			if (choice) item.disabled = !choiceAllowed(choice);
+		}
+	};
+	let reading = {
+		textSpeed: config?.dialogueOptions?.textSpeed ?? 0,
+		autoDelay: config?.dialogueOptions?.autoDelay ?? 2500,
+		auto: false,
+		skipRead: false
+	}, readingPaused = false, readingFrame = 0, readingTimer, readingToken = 0, revealing = false, revealAll, readingLog;
+	const readSeen = new Set(), readingHistory = [];
+	const readingKey = () => {
+		const text = node()?.text ?? "";
+		let hash = 2166136261;
+		for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 16777619);
+		return dialogueId + "/" + nodeId + "/" + (hash >>> 0).toString(36);
+	};
+	let rescheduleReading, refreshReadingControls, readSaveTimer, readDirty = false;
+	const flushReadSeen = () => {
+		clearTimeout(readSaveTimer);
+		readSaveTimer = undefined;
+		if (!readDirty) return;
+		readDirty = false;
+		void host.storage.save(prefix + ".read-lines", [...readSeen].slice(-6e4)).catch(fail);
+	};
+	const queueReadSave = () => {
+		readDirty = true;
+		clearTimeout(readSaveTimer);
+		readSaveTimer = setTimeout(flushReadSeen, 250);
+	};
+	const closeReadingLog = () => {
+		readingLog?.remove();
+		readingLog = undefined;
+		if (!revealing) rescheduleReading?.();
+	};
+	const stopReading = () => {
+		readingToken++;
+		cancelFrame(readingFrame);
+		readingFrame = 0;
+		clearTimeout(readingTimer);
+		readingTimer = undefined;
+		revealing = false;
+		revealAll = undefined;
+		rescheduleReading = undefined;
+		refreshReadingControls = undefined;
+		readingLog?.remove();
+		readingLog = undefined;
+	};
+	const cancelFrame = (id) => {
+		if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(id);
+	};
+	const value = (id) => host.vars[variables.get(id)?.name ?? ""];
+	const write = (id, input) => {
+		const variable = variables.get(id);
+		if (!variable) return;
+		host.vars[variable.name] = variable.type === "number" ? Number(input) || 0 : variable.type === "boolean" ? Boolean(input) : String(input ?? "");
+	};
+	const notify = (message) => {
+		if (status) {
+			status.textContent = message;
+			status.hidden = false;
+			clearTimeout(toastTimer);
+			toastTimer = setTimeout(() => {
+				if (status) status.hidden = true;
+			}, 3500);
+		}
+	};
+	const emit = (event, data = {}) => {
+		for (const listener of events.get(event) ?? []) try {
+			listener(data);
+		} catch (error) {
+			host.error(String(error));
+		};
+		const fn = event === "dialogueNodeChanged" ? undefined : config?.hooks[event];
+		if (fn) host.run(fn, data);
+	};
+	const fail = (error) => {
+		const message = String(error instanceof Error ? error.message : error);
+		notify(message);
+		host.error(message);
+		return false;
+	};
+	const normalize = (input) => {
+		const next = copy(settings);
+		if (!input || typeof input !== "object") return next;
+		for (const key of [
+			"masterVolume",
+			"musicVolume",
+			"effectsVolume"
+		]) if (Number.isFinite(input[key])) next[key] = Math.max(0, Math.min(1, input[key]));
+		for (const key of ["muted", "pixelated"]) if (typeof input[key] === "boolean") next[key] = input[key];
+		for (const key of Object.keys(next.controls)) if (typeof input.controls?.[key] === "string" && /^[A-Za-z0-9]{1,40}$/.test(input.controls[key])) next.controls[key] = input.controls[key];
+		return next;
+	};
+	const applySettings = async (input, persist = true) => {
+		if (disposed) return false;
+		try {
+			const next = normalize(input);
+			settings = next;
+			await host.applySettings(next);
+			if (persist) await host.storage.save(settingsKey, copy(settings));
+			emit("settingsChanged", { settings: copy(settings) });
+			return true;
+		} catch (error) {
+			return fail(error);
+		}
+	};
+	const ready = enabled && config?.modules.settings ? host.storage.load(settingsKey).then((saved) => {
+		if (disposed) return;
+		return applySettings(saved ?? defaults, false);
+	}).catch(fail) : Promise.resolve();
+	const readingReady = novel ? Promise.all([host.storage.load(prefix + ".reading"), host.storage.load(prefix + ".read-lines")]).then(([options, seen]) => {
+		if (disposed) return;
+		if (options && typeof options === "object") {
+			if (Number.isFinite(options.textSpeed)) reading.textSpeed = Math.max(0, Math.min(150, options.textSpeed));
+			if (Number.isFinite(options.autoDelay)) reading.autoDelay = Math.max(500, Math.min(15e3, options.autoDelay));
+		};
+		if (Array.isArray(seen)) seen.slice(-6e4).forEach((key) => {
+			if (typeof key === "string" && key.length < 700) readSeen.add(key);
+		});
+	}).catch(fail) : Promise.resolve();
+	const slots = async () => {
+		const raw = await host.storage.load(indexKey, []);
+		return Array.isArray(raw) ? raw.filter((slot) => slot && typeof slot.id === "string" && /^[1-9][0-9]?$/.test(slot.id) && Number(slot.id) <= Number(config?.saveSlots ?? 3) && typeof slot.savedAt === "string" && typeof slot.name === "string").map((slot) => ({
+			id: slot.id,
+			name: slot.name.slice(0, 100),
+			sceneId: String(slot.sceneId ?? ""),
+			sceneName: String(slot.sceneName ?? ""),
+			savedAt: slot.savedAt
+		})) : [];
+	};
+	const validSlot = (id) => {
+		if (!/^[1-9][0-9]?$/.test(id) || Number(id) > Number(config?.saveSlots ?? 3)) throw Error("저장 슬롯을 확인하세요.");
+	};
+	const save = async (id = "1", name = "") => {
+		if (!enabled || !config?.modules.save || busy) return false;
+		busy = true;
+		try {
+			validSlot(id);
+			const scene = host.scene();
+			if (!scene) throw Error("저장할 게임 씬이 없습니다.");
+			const menuValue = value(config.variables.menuOpen), dialogueValue = value(config.variables.dialogueId);
+			let ok;
+			write(config.variables.menuOpen, false);
+			write(config.variables.dialogueId, "");
+			try {
+				ok = await host.progress("save", slotKey(id));
+			} finally {
+				write(config.variables.menuOpen, menuValue);
+				write(config.variables.dialogueId, dialogueValue);
+			};
+			if (ok === false) throw Error("게임을 저장하지 못했습니다.");
+			const list = await slots(), slot = {
+				id,
+				name: name.trim().slice(0, 100) || "저장 " + id,
+				sceneId: scene.id,
+				sceneName: scene.name,
+				savedAt: new Date().toISOString()
+			};
+			await host.storage.save(indexKey, [...list.filter((item) => item.id !== id), slot]);
+			write(config.variables.lastSlot, id);
+			emit("saved", {
+				slotId: id,
+				slotName: slot.name
+			});
+			notify(slot.name + " 저장 완료");
+			return true;
+		} catch (error) {
+			return fail(error);
+		} finally {
+			busy = false;
+		}
+	};
+	const close = (finishDialogue = true) => {
+		if (disposed) return;
+		const wasDialogue = view === "dialogue", oldDialogue = dialogueId;
+		stopReading();
+		view = "";
+		dialogueId = "";
+		nodeId = "";
+		if (overlay) overlay.hidden = true;
+		if (paused) {
+			paused = false;
+			host.pause(false);
+		};
+		if (config) {
+			write(config.variables.menuOpen, false);
+			if (wasDialogue) write(config.variables.dialogueId, "");
+		};
+		cancelFrame(gamepadRequest);
+		gamepadRequest = 0;
+		held.clear();
+		lastFocus?.focus?.();
+		if (wasDialogue && finishDialogue) emit("dialogueFinished", {
+			dialogueId: oldDialogue,
+			cancelled: true
+		});
+	};
+	const load = async (id = "1") => {
+		if (!enabled || !config?.modules.save || busy) return false;
+		busy = true;
+		try {
+			validSlot(id);
+			const exists = (await slots()).some((slot) => slot.id === id);
+			if (!exists) {
+				notify("비어 있는 저장 슬롯입니다.");
+				return false;
+			};
+			close();
+			const ok = await host.progress("load", slotKey(id));
+			if (ok === false) throw Error("저장된 게임을 읽지 못했습니다.");
+			write(config.variables.lastSlot, id);
+			emit("loaded", { slotId: id });
+			notify("불러오기 완료");
+			return true;
+		} catch (error) {
+			return fail(error);
+		} finally {
+			busy = false;
+		}
+	};
+	const remove = async (id) => {
+		if (!enabled || !config?.modules.save || busy) return false;
+		busy = true;
+		try {
+			validSlot(id);
+			await host.progress("remove", slotKey(id));
+			await host.storage.save(indexKey, (await slots()).filter((slot) => slot.id !== id));
+			notify("저장을 삭제했습니다.");
+			return true;
+		} catch (error) {
+			return fail(error);
+		} finally {
+			busy = false;
+		}
+	};
+	const make = (tag, text = "", parent) => {
+		const element = document.createElement(tag);
+		element.textContent = text;
+		parent?.append(element);
+		return element;
+	};
+	const button = (label, run, parent = body) => {
+		const element = make("button", label, parent);
+		element.type = "button";
+		element.addEventListener("click", () => {
+			void Promise.resolve().then(run).catch(fail);
+		});
+		return element;
+	};
+	const focusable = () => panel ? [...panel.querySelectorAll("button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex=\"0\"]")].filter((element) => !element.hidden && element.getClientRects().length) : [];
+	const moveFocus = (delta) => {
+		const items = focusable(), index = items.indexOf(document.activeElement);
+		items[(index + delta + items.length) % items.length]?.focus();
+	};
+	const pollGamepad = () => {
+		if (disposed || !view) return;
+		const pad = [...navigator.getGamepads?.() ?? []].find(Boolean), next = new Set();
+		if (pad) {
+			pad.buttons.forEach((button, index) => {
+				if (button.pressed) next.add(index);
+			});
+			if (pad.axes[1] < -.55) next.add(12);
+			if (pad.axes[1] > .55) next.add(13);
+			if (pad.axes[0] < -.55) next.add(14);
+			if (pad.axes[0] > .55) next.add(15);
+			for (const key of next) if (!held.has(key)) {
+				const active = document.activeElement;
+				if (key === 12 || key === 13) moveFocus(key === 12 ? -1 : 1);
+				else if ((key === 14 || key === 15) && active instanceof HTMLInputElement && active.type === "range") {
+					key === 14 ? active.stepDown() : active.stepUp();
+					active.dispatchEvent(new Event("input", { bubbles: true }));
+				} else if (key === 0 && active instanceof HTMLElement) active.click();
+				else if (key === 1) close();
+			}
+		};
+		held = next;
+		gamepadRequest = requestAnimationFrame(pollGamepad);
+	};
+	const open = (mode, title) => {
+		if (!root || !overlay || !body || !heading || disposed) return false;
+		stopReading();
+		overlay.dataset.view = mode;
+		if (!view) lastFocus = document.activeElement;
+		view = mode;
+		heading.textContent = title;
+		body.replaceChildren();
+		overlay.hidden = false;
+		if (!paused) {
+			paused = true;
+			host.pause(true);
+		};
+		if (config) write(config.variables.menuOpen, true);
+		cancelFrame(gamepadRequest);
+		gamepadRequest = requestAnimationFrame(pollGamepad);
+		return true;
+	};
+	const finishRender = () => {
+		queueMicrotask(() => {
+			const readingAction = view === "dialogue" ? body?.querySelector(".fgf-dialogue-options button:not(:disabled)") : null;
+			(readingAction ?? focusable()[0])?.focus({ preventScroll: true });
+		});
+	};
+	const openSlots = async (mode) => {
+		if (!config?.modules.save || !open(mode, mode === "save" ? "게임 저장" : "게임 불러오기")) return false;
+		const expected = view, list = await slots().catch((error) => {
+			fail(error);
+			return [];
+		});
+		if (view !== expected || disposed) return false;
+		for (let n = 1; n <= config.saveSlots; n++) {
+			const id = String(n), slot = list.find((slot) => slot.id === id), row = make("div", "", body);
+			row.className = "fgf-slot";
+			const summary = make("div", "", row);
+			make("strong", slot?.name ?? "슬롯 " + id, summary);
+			make("small", slot ? slot.sceneName + " · " + new Date(slot.savedAt).toLocaleString("ko-KR") : "비어 있음", summary);
+			const action = button(mode === "save" ? "여기에 저장" : "불러오기", async () => {
+				if (mode === "save") {
+					if (await save(id)) void openSlots(mode);
+				} else await load(id);
+			}, row);
+			action.disabled = mode === "load" && !slot;
+			if (slot) button("삭제", async () => {
+				if (await remove(id)) void openSlots(mode);
+			}, row);
+		};
+		finishRender();
+		return true;
+	};
+	const openSettings = async () => {
+		await ready;
+		if (!config?.modules.settings || !open("settings", "게임 설정")) return false;
+		const volumeLabels = {
+			masterVolume: "전체 음량",
+			musicVolume: "배경음",
+			effectsVolume: "효과음"
+		};
+		for (const key of Object.keys(volumeLabels)) {
+			const label = make("label", volumeLabels[key], body), output = make("output", Math.round(settings[key] * 100) + "%", label), input = make("input", "", label);
+			input.type = "range";
+			input.min = "0";
+			input.max = "100";
+			input.value = String(Math.round(settings[key] * 100));
+			input.setAttribute("aria-label", volumeLabels[key]);
+			input.addEventListener("input", () => {
+				output.textContent = input.value + "%";
+				void applySettings({ [key]: Number(input.value) / 100 }, false);
+			});
+		};
+		for (const [key, labelText] of [["muted", "모든 소리 끄기"], ["pixelated", "픽셀 경계 선명하게"]]) {
+			const label = make("label", labelText, body), input = make("input", "", label);
+			input.type = "checkbox";
+			input.checked = settings[key];
+			input.addEventListener("change", () => {
+				void applySettings({ [key]: input.checked }, false);
+			});
+		};
+		if (host.fullscreen) button(document.fullscreenElement ? "전체 화면 끝내기" : "전체 화면", () => host.fullscreen(!document.fullscreenElement));
+		const keys = make("details", "", body);
+		make("summary", "키보드 조작", keys);
+		for (const [key, labelText] of [
+			["up", "위"],
+			["down", "아래"],
+			["left", "왼쪽"],
+			["right", "오른쪽"],
+			["jump", "점프"],
+			["action", "행동"],
+			["menu", "메뉴"]
+		]) {
+			const label = make("label", labelText, keys), input = make("input", "", label);
+			input.readOnly = true;
+			input.value = settings.controls[key];
+			input.setAttribute("aria-label", labelText + " 조작 키");
+			input.addEventListener("keydown", (event) => {
+				if ([
+					"Tab",
+					"Shift",
+					"Control",
+					"Alt",
+					"Meta"
+				].includes(event.key)) return;
+				event.preventDefault();
+				event.stopPropagation();
+				if (Object.entries(settings.controls).some(([name, code]) => name !== key && code === event.code)) {
+					notify("다른 조작에 쓰는 키입니다.");
+					return;
+				};
+				input.value = event.code;
+				void applySettings({ controls: {
+					...settings.controls,
+					[key]: event.code
+				} }, false);
+			});
+		};
+		const actions = make("div", "", body);
+		actions.className = "fgf-actions";
+		button("기본값", async () => {
+			await applySettings(defaults, true);
+			openSettings();
+		}, actions);
+		button("설정 저장", async () => {
+			if (await applySettings(settings, true)) {
+				notify("설정을 저장했습니다.");
+				close();
+			}
+		}, actions);
+		finishRender();
+		return true;
+	};
+	const node = () => config?.dialogues.find((dialogue) => dialogue.id === dialogueId)?.nodes.find((node) => node.id === nodeId);
+	const renderDialogue = () => {
+		const current = node();
+		if (!current || !body || !heading) {
+			close(false);
+			return false;
+		};
+		heading.textContent = current.speaker || (novel ? "" : "대화");
+		stopReading();
+		const token = readingToken, key = readingKey(), readBefore = readSeen.has(key);
+		if (reading.skipRead && !readBefore) reading.skipRead = false;
+		body.replaceChildren();
+		const copyBody = novel ? make("div", "", body) : body;
+		if (novel) {
+			copyBody.className = "fgf-dialogue-copy";
+			copyBody.tabIndex = 0;
+			copyBody.setAttribute("aria-label", "대사 본문");
+			copyBody.addEventListener("keydown", (event) => {
+				if ([
+					"ArrowUp",
+					"ArrowDown",
+					"PageUp",
+					"PageDown",
+					"Home",
+					"End"
+				].includes(event.key)) event.stopPropagation();
+			});
+		};
+		if (current.portraitAssetId && (!novel || config?.dialogueOptions?.portraitMode !== "hidden")) {
+			const asset = project.assets.find((asset) => asset.id === current.portraitAssetId);
+			if (asset && asset.type !== "audio") {
+				const index = current.portraitFrame, margin = asset.grid?.margin ?? 0, spacing = asset.grid?.spacing ?? 0, w = asset.type === "spritesheet" ? asset.frameWidth : asset.width, h = asset.type === "spritesheet" ? asset.frameHeight : asset.height, cols = Math.max(1, Math.floor((asset.width - margin * 2 + spacing) / (w + spacing))), f = asset.atlas?.frames[index] ?? {
+					x: asset.type === "spritesheet" ? margin + index % cols * (w + spacing) : 0,
+					y: asset.type === "spritesheet" ? margin + Math.floor(index / cols) * (h + spacing) : 0,
+					width: w,
+					height: h,
+					sourceWidth: w,
+					sourceHeight: h,
+					offsetX: 0,
+					offsetY: 0,
+					rotated: false
+				};
+				const canvas = make("canvas", "", copyBody);
+				canvas.className = "fgf-portrait";
+				canvas.width = f.sourceWidth;
+				canvas.height = f.sourceHeight;
+				canvas.setAttribute("role", "img");
+				canvas.setAttribute("aria-label", current.speaker);
+				const image = new Image();
+				image.onload = () => {
+					if (!canvas.isConnected) return;
+					const context = canvas.getContext("2d");
+					if (!context) return;
+					context.imageSmoothingEnabled = !settings.pixelated;
+					context.translate(f.offsetX, f.offsetY);
+					context.scale((("displayWidth" in f ? Number(f.displayWidth) : 0) || (f.rotated ? f.height : f.width)) / (f.rotated ? f.height : f.width), (("displayHeight" in f ? Number(f.displayHeight) : 0) || (f.rotated ? f.width : f.height)) / (f.rotated ? f.width : f.height));
+					if (f.rotated) {
+						context.translate(0, f.width);
+						context.rotate(-Math.PI / 2);
+					};
+					context.drawImage(image, f.x, f.y, f.width, f.height, 0, 0, f.width, f.height);
+				};
+				image.onerror = () => canvas.remove();
+				image.src = ("pageId" in f && f.pageId ? project.atlasPages?.find((page) => page.id === f.pageId)?.data : undefined) ?? asset.data;
+			}
+		};
+		const text = make("p", current.text.replace(/\{\{([A-Za-z_$][\w$]*)\}\}/g, (_, name) => String(host.vars[name] ?? "")), copyBody);
+		text.className = "fgf-dialogue-text";
+		text.setAttribute("aria-live", novel ? "off" : "polite");
+		const fullText = text.textContent ?? "";
+		const entry = {
+			dialogueId,
+			nodeId,
+			speaker: current.speaker,
+			text: fullText
+		};
+		const previous = readingHistory.at(-1);
+		if (!previous || previous.dialogueId !== dialogueId || previous.nodeId !== nodeId || previous.text !== fullText) {
+			readingHistory.push(entry);
+			if (readingHistory.length > 2e4) readingHistory.shift();
+		};
+		const choices = make("div", "", body);
+		choices.className = "fgf-dialogue-options";
+		if (current.choices.length) for (const choice of current.choices) {
+			const item = button(choice.text, () => choose(choice.id), choices);
+			item.dataset.choice = choice.id;
+			item.disabled = !choiceAllowed(choice);
+		}
+		else {
+			const advance = button("▸", next, choices);
+			advance.className = "fgf-dialogue-advance";
+			advance.setAttribute("aria-label", current.nextNodeId ? "대사 넘기기" : "대화 마치기");
+		};
+		const scheduleAdvance = () => {
+			clearTimeout(readingTimer);
+			if (!novel || current.choices.length || !reading.auto && !reading.skipRead) return;
+			const wait = reading.skipRead && readBefore ? 70 : reading.autoDelay;
+			readingTimer = setTimeout(() => {
+				if (disposed || token !== readingToken || view !== "dialogue") return;
+				if (document.hidden || readingPaused || readingLog) {
+					scheduleAdvance();
+					return;
+				};
+				next();
+			}, wait);
+		};
+		rescheduleReading = scheduleAdvance;
+		const complete = () => {
+			if (token !== readingToken) return;
+			text.textContent = fullText;
+			revealing = false;
+			revealAll = undefined;
+			if (!readSeen.has(key)) {
+				readSeen.add(key);
+				if (novel) queueReadSave();
+			};
+			refreshReadingControls?.();
+			scheduleAdvance();
+		};
+		if (novel) {
+			const controls = make("div", "", body);
+			controls.className = "fgf-reading-controls";
+			const automatic = button(reading.auto ? "자동 진행 켜짐" : "자동 진행", () => {
+				reading.auto = !reading.auto;
+				refreshReadingControls?.();
+				if (!revealing) scheduleAdvance();
+			}, controls);
+			const skip = button("읽은 내용 넘기기", () => {
+				if (!readSeen.has(key)) {
+					notify("처음 읽는 대사는 건너뛰지 않습니다.");
+					return;
+				};
+				reading.skipRead = !reading.skipRead;
+				skip.textContent = reading.skipRead ? "넘기기 중단" : "읽은 내용 넘기기";
+				if (!revealing) scheduleAdvance();
+			}, controls);
+			const logButton = button("대화 기록", () => {
+				clearTimeout(readingTimer);
+				readingLog?.remove();
+				readingLog = make("section", "", overlay);
+				readingLog.className = "fgf-reading-log";
+				readingLog.setAttribute("role", "dialog");
+				readingLog.setAttribute("aria-modal", "true");
+				readingLog.setAttribute("aria-label", "대화 기록");
+				make("h2", "대화 기록", readingLog);
+				const search = make("input", "", readingLog);
+				search.type = "search";
+				search.placeholder = "대사 검색";
+				search.setAttribute("aria-label", "대화 기록 검색");
+				const rows = make("div", "", readingLog);
+				rows.className = "fgf-reading-log-rows";
+				let all = false;
+				const draw = () => {
+					rows.replaceChildren();
+					const query = search.value.trim().toLocaleLowerCase(), list = readingHistory.filter((item) => !query || (item.speaker + " " + item.text + " " + (item.choice ?? "")).toLocaleLowerCase().includes(query));
+					for (const item of all || query ? list : list.slice(-250)) {
+						const row = make("article", "", rows);
+						make("strong", item.speaker || "나레이션", row);
+						make("p", item.text, row);
+						if (item.choice) make("small", "선택 · " + item.choice, row);
+					};
+					rows.scrollTop = query ? 0 : rows.scrollHeight;
+				};
+				search.addEventListener("input", draw);
+				button("전체 기록", () => {
+					all = true;
+					draw();
+				}, readingLog);
+				button("돌아가기", () => {
+					closeReadingLog();
+					logButton.focus();
+				}, readingLog);
+				draw();
+				search.focus();
+			}, controls);
+			const label = make("label", "글자 속도", controls), speed = make("input", "", label);
+			speed.type = "range";
+			speed.min = "0";
+			speed.max = "100";
+			speed.value = String(reading.textSpeed);
+			speed.setAttribute("aria-label", "대사 글자 속도");
+			speed.addEventListener("input", () => {
+				reading.textSpeed = Number(speed.value);
+				if (!reading.textSpeed) revealAll?.();
+				void host.storage.save(prefix + ".reading", reading).catch(fail);
+			});
+			refreshReadingControls = () => {
+				automatic.textContent = reading.auto ? "자동 진행 켜짐" : "자동 진행";
+				automatic.setAttribute("aria-pressed", String(reading.auto));
+				skip.textContent = reading.skipRead ? "넘기기 중단" : "읽은 내용 넘기기";
+				skip.setAttribute("aria-pressed", String(reading.skipRead));
+				speed.value = String(reading.textSpeed);
+			};
+			refreshReadingControls();
+			if (reading.textSpeed > 0 && !(reading.skipRead && readBefore)) {
+				text.textContent = "";
+				revealing = true;
+				let count = 0, last = performance.now();
+				const chars = Array.from(fullText);
+				revealAll = () => {
+					cancelFrame(readingFrame);
+					complete();
+				};
+				const tick = (now) => {
+					if (disposed || token !== readingToken || view !== "dialogue") return;
+					const delta = Math.min(100, Math.max(0, now - last));
+					last = now;
+					if (!document.hidden && !readingPaused && !readingLog) {
+						count += delta * reading.textSpeed / 1e3;
+						const following = copyBody.scrollTop + copyBody.clientHeight >= copyBody.scrollHeight - 8;
+						text.textContent = chars.slice(0, Math.floor(count)).join("");
+						if (novel && following) copyBody.scrollTop = copyBody.scrollHeight;
+						if (count >= chars.length || !reading.textSpeed) {
+							complete();
+							return;
+						}
+					};
+					readingFrame = requestAnimationFrame(tick);
+				};
+				readingFrame = requestAnimationFrame(tick);
+			} else complete();
+		} else complete();
+		emit("dialogueNodeChanged", {
+			dialogueId,
+			nodeId,
+			speaker: current.speaker,
+			text: fullText,
+			read: readBefore
+		});
+		if (current.onEnterFunctionId) host.run(current.onEnterFunctionId, {
+			dialogueId,
+			nodeId
+		});
+		finishRender();
+		return true;
+	};
+	const goNode = (id) => {
+		if (++dialogueTrail > 1e3) {
+			fail("대화가 같은 노드를 너무 많이 거쳤습니다.");
+			close(false);
+			return false;
+		};
+		nodeId = id;
+		return renderDialogue();
+	};
+	const endDialogue = () => {
+		const id = dialogueId;
+		close(false);
+		if (config) write(config.variables.dialogueId, "");
+		emit("dialogueFinished", {
+			dialogueId: id,
+			cancelled: false
+		});
+		return true;
+	};
+	function next() {
+		if (readingLog || readingPaused) return false;
+		if (revealing) {
+			revealAll?.();
+			return true;
+		};
+		const current = node();
+		if (current?.choices.length) return false;
+		return current?.nextNodeId ? goNode(current.nextNodeId) : endDialogue();
+	}
+	function choose(id) {
+		if (readingLog || readingPaused) return false;
+		if (revealing) {
+			revealAll?.();
+			return false;
+		};
+		const current = node(), choice = current?.choices.find((choice) => choice.id === id);
+		if (!choice || !choiceAllowed(choice)) return false;
+		if (config) write(config.variables.lastChoice, id);
+		if (readingHistory.length) readingHistory[readingHistory.length - 1].choice = choice.text;
+		emit("choiceSelected", {
+			dialogueId,
+			nodeId,
+			choiceId: id
+		});
+		if (choice.functionId) host.run(choice.functionId, {
+			dialogueId,
+			nodeId,
+			choiceId: id
+		});
+		return choice.nextNodeId ? goNode(choice.nextNodeId) : endDialogue();
+	}
+	const startDialogue = (id, resumeNodeId) => {
+		const dialogue = config?.dialogues.find((dialogue) => dialogue.id === id);
+		if (!config?.modules.dialogue || !dialogue) return false;
+		if (!open("dialogue", dialogue.name)) return false;
+		dialogueId = id;
+		nodeId = resumeNodeId && dialogue.nodes.some((node) => node.id === resumeNodeId) ? resumeNodeId : dialogue.startNodeId;
+		dialogueTrail = 0;
+		write(config.variables.dialogueId, id);
+		emit("dialogueStarted", { dialogueId: id });
+		return renderDialogue();
+	};
+	const newGame = () => {
+		if (!config) return false;
+		close(false);
+		host.reset?.();
+		for (const variable of project.variables) host.vars[variable.name] = variable.type === "number" ? Number(variable.value) || 0 : variable.type === "boolean" ? variable.value === "true" : variable.value;
+		emit("newGame");
+		host.navigate(config.startSceneId || project.startSceneId);
+		return true;
+	};
+	const title = () => {
+		if (!config?.titleSceneId) return false;
+		close(false);
+		host.navigate(config.titleSceneId);
+		return true;
+	};
+	const openMenu = () => {
+		if (!config?.modules.menu || !open("menu", "일시정지")) return false;
+		button("계속하기", () => close());
+		if (config.modules.save) {
+			button("게임 저장", () => openSlots("save"));
+			button("불러오기", () => openSlots("load"));
+		};
+		if (config.modules.settings) button("게임 설정", openSettings);
+		if (config.titleSceneId) button("타이틀로", title);
+		finishRender();
+		return true;
+	};
+	const advanceDialoguePointer = (event) => {
+		if (disposed || view !== "dialogue" || readingLog || readingPaused || event.defaultPrevented || event.button !== 0) return;
+		const target = event.target instanceof Element ? event.target : undefined;
+		if (target?.closest("button,input,select,textarea,a,label,[role=\"button\"],[data-dialogue-ignore]") || target instanceof HTMLElement && target.isContentEditable) return;
+		if (window.getSelection()?.toString()) return;
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		next();
+	};
+	const keyDown = (event) => {
+		if (disposed || event.isComposing || event.defaultPrevented) return;
+		if (view === "dialogue" && ["Enter", " "].includes(event.key) && event.repeat) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		};
+		if (view) {
+			if (view === "dialogue" && novel && readingLog && event.key === "Escape") {
+				event.preventDefault();
+				event.stopPropagation();
+				closeReadingLog();
+				return;
+			};
+			if (view === "dialogue" && ["Enter", " "].includes(event.key) && !event.ctrlKey && !event.altKey && !event.metaKey && !(event.target instanceof HTMLButtonElement || event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLElement && event.target.isContentEditable)) {
+				event.preventDefault();
+				event.stopPropagation();
+				if (!event.repeat) next();
+				return;
+			};
+			if (event.key === "Escape" && !(event.target instanceof HTMLInputElement)) {
+				event.preventDefault();
+				close();
+			} else if (event.key === "Tab") {
+				const items = readingLog ? [...readingLog.querySelectorAll("button:not(:disabled),input,select,[tabindex=\"0\"]")] : focusable(), index = items.indexOf(document.activeElement);
+				if (event.shiftKey && index <= 0) {
+					event.preventDefault();
+					items.at(-1)?.focus();
+				} else if (!event.shiftKey && index === items.length - 1) {
+					event.preventDefault();
+					items[0]?.focus();
+				}
+			} else if (["ArrowUp", "ArrowDown"].includes(event.key) && !(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) {
+				event.preventDefault();
+				moveFocus(event.key === "ArrowUp" ? -1 : 1);
+			};
+			event.stopPropagation();
+		} else if (config?.modules.menu && event.code === settings.controls.menu && !event.repeat && !(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) {
+			event.preventDefault();
+			event.stopPropagation();
+			openMenu();
+		}
+	};
+	if (enabled && typeof document !== "undefined") {
+		root = make("div");
+		root.className = "forge-framework";
+		if (novel) root.classList.add("fgf-novel");
+		root.style.setProperty("--fgf-panel", config.theme.panel);
+		root.style.setProperty("--fgf-text", config.theme.text);
+		root.style.setProperty("--fgf-accent", config.theme.accent);
+		root.style.setProperty("--fgf-radius", config.theme.radius + "px");
+		root.style.setProperty("--fgf-font", config.theme.fontSize + "px");
+		root.style.setProperty("--fgf-dialogue-width", (config.dialogueOptions?.panelWidth ?? 1140) + "px");
+		root.style.setProperty("--fgf-dialogue-height", (config.dialogueOptions?.panelHeight ?? 280) + "px");
+		const style = make("style", "", root);
+		style.textContent = ".forge-framework{position:fixed;inset:0;z-index:40;pointer-events:none;color:var(--fgf-text);font:var(--fgf-font)/1.5 system-ui,sans-serif}.forge-framework *{box-sizing:border-box}.forge-framework button,.forge-framework input,.forge-framework select{font:inherit}.forge-framework button{background:#34465f;color:var(--fgf-text);border:1px solid #64748b;border-radius:6px;min-height:44px;padding:8px 16px;cursor:pointer;touch-action:manipulation}.forge-framework button:hover{background:var(--fgf-accent)}.forge-framework button:disabled{opacity:.45;cursor:default}.forge-framework :focus-visible{outline:3px solid #d3e5ff;outline-offset:3px}.forge-framework .fgf-toggle{position:absolute;right:14px;top:14px;pointer-events:auto}.forge-framework .fgf-overlay{position:absolute;inset:0;background:#0a101cb8;pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:clamp(12px,4vw,40px)}.forge-framework [hidden]{display:none!important}.forge-framework .fgf-panel{width:min(620px,100%);max-height:100%;display:flex;flex-direction:column;background:var(--fgf-panel);border:1px solid #64748b;border-radius:var(--fgf-radius);box-shadow:0 16px 60px #0008;overflow:hidden}.forge-framework .fgf-header{display:flex;gap:20px;align-items:center;padding:14px 20px;border-bottom:1px solid #64748b}.forge-framework h2{font-size:1.12em;margin:0;flex:1}.forge-framework .fgf-body{display:flex;flex-direction:column;gap:12px;overflow:auto;padding:20px;overscroll-behavior:contain;scrollbar-width:auto}.forge-framework .fgf-slot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;border:1px solid #64748b;border-radius:6px}.forge-framework .fgf-slot>div{flex:1;min-width:150px}.forge-framework small{display:block;opacity:.8}.forge-framework label{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}.forge-framework input[type=range]{width:100%;accent-color:var(--fgf-accent)}.forge-framework input[type=checkbox]{width:22px;height:22px}.forge-framework input[readonly]{width:140px;background:#152031;color:var(--fgf-text);border:1px solid #64748b;padding:8px}.forge-framework .fgf-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px}.forge-framework .fgf-dialogue-text{white-space:pre-wrap;margin:0;padding:4px 0 12px}.forge-framework .fgf-portrait{max-height:200px;max-width:180px;object-fit:contain;align-self:flex-start}.forge-framework .fgf-status{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);max-width:90%;padding:10px 18px;background:#132034f0;border:1px solid #64748b;border-radius:6px;pointer-events:none}";
+		style.textContent += `
       .fgf-dialogue-options{display:flex;flex-direction:column;gap:10px}
       .fgf-reading-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px;font-size:13px}
       .forge-framework .fgf-reading-controls button{font-size:13px;min-height:34px;padding:6px 10px}
@@ -27,8 +8224,3591 @@ const game=window.forgeGame=(function Aa(e,t,n={},r,i,a,o,s,c,l,u,d,f,p,m,h,g,_,
       .fgf-novel .fgf-reading-controls button:hover,.fgf-novel .fgf-reading-controls button[aria-pressed=true]{background:color-mix(in srgb,var(--fgf-panel) 85%,var(--fgf-accent))}
       .fgf-novel .fgf-reading-controls input{accent-color:var(--fgf-accent);width:88px}.fgf-novel :focus-visible{outline-color:var(--fgf-accent)}
       @media(max-width:700px){.fgf-novel .fgf-overlay[data-view=dialogue]{padding:8px}.fgf-novel .fgf-overlay[data-view=dialogue] .fgf-panel{max-height:calc(100dvh - 16px)}.fgf-novel .fgf-overlay[data-view=dialogue] .fgf-header{padding:5px 14px 0}.fgf-novel .fgf-overlay[data-view=dialogue] .fgf-body{padding:6px 14px 8px;gap:6px}.fgf-novel .fgf-dialogue-text{font-size:16px}.fgf-novel .fgf-reading-controls{justify-content:flex-start;gap:2px}.fgf-novel .fgf-reading-controls button{font-size:11px;padding:4px 6px}.fgf-novel .fgf-portrait{width:70px;height:90px;margin-right:12px}}
-    `,n.modules.menu){let e=Z(`메뉴`,Fe,b);e.className=`fgf-toggle`}T=X(`div`,``,b),T.className=`fgf-status`,T.setAttribute(`role`,`status`),T.hidden=!0,x=X(`div`,``,b),x.className=`fgf-overlay`,x.hidden=!0,S=X(`section`,``,x),S.className=`fgf-panel`,S.setAttribute(`role`,`dialog`),S.setAttribute(`aria-modal`,`true`),S.setAttribute(`aria-label`,`게임 공통 메뉴`);let r=X(`div`,``,S);r.className=`fgf-header`,w=X(`h2`,``,r);let i=Z(`닫기`,()=>_e(),r);A&&(i.textContent=`×`,i.setAttribute(`aria-label`,`닫기`),i.title=`닫기`),C=X(`div`,``,S),C.className=`fgf-body`,b.addEventListener(`keydown`,Le),(t.mount??document.body).append(b),window.addEventListener(`keydown`,Le),window.addEventListener(`click`,Ie,!0)}let Re=new Set,ze=!1,Be=t.transport??{async request(e){if(l||ze)return{id:e.id,ok:!1,error:`서비스가 종료됐습니다.`};if(e.authority===`server`)return{id:e.id,ok:!1,error:`서버 권한 명령은 온라인 전송 어댑터가 필요합니다.`};try{let n=e.payload&&typeof e.payload==`object`?e.payload:{},r=await Ve.action(e.type,typeof n.id==`string`?n.id:``,n.value);if(l||ze)return{id:e.id,ok:!1,error:`서비스가 종료됐습니다.`};for(let n of Re)try{n(o(e))}catch(e){t.error(String(e))}return{id:e.id,ok:r!==!1,value:r}}catch(t){return{id:e.id,ok:!1,error:String(t)}}},subscribe(e){return l||ze?()=>{}:(Re.add(e),()=>{Re.delete(e)})},dispose(){ze=!0,Re.clear()}},Ve={transport:Be,ready:Promise.all([fe,pe]),openMenu:Fe,openSave:()=>we(`save`),openLoad:()=>we(`load`),openSettings:Te,startDialogue:Me,next:Ae,choose:je,close:_e,newGame:Ne,title:Pe,save:ge,load:Y,remove:ve,slots:me,settings:()=>o(c),applySettings:J,capturesInput:()=>!!u,status:()=>({view:u,dialogueId:m,nodeId:h,busy:d}),history:()=>o(U),dialogue:e=>{let t=n?.dialogues.find(t=>t.id===e)??n?.dialogues.find(t=>t.name===e);return t?o(t):void 0},dialogueNodeIds:e=>n?.dialogues.find(t=>t.id===e)?.nodes.map(e=>e.id)??[],setChoiceGuard:e=>(j=e,N(),()=>{j===e&&(j=void 0,N())}),readingOptions:()=>A?{...P}:void 0,pauseReading:e=>{F=e},setReadingOptions:e=>(Number.isFinite(e.textSpeed)&&(P.textSpeed=Math.max(0,Math.min(150,e.textSpeed))),Number.isFinite(e.autoDelay)&&(P.autoDelay=Math.max(500,Math.min(15e3,e.autoDelay))),typeof e.auto==`boolean`&&(P.auto=e.auto),typeof e.skipRead==`boolean`&&(P.skipRead=e.skipRead),P.textSpeed||B?.(),W?.(),z||te?.(),t.storage.save(E+`.reading`,P).catch(ue),{...P}),on(e,t){let n=i.get(e)??new Set;return n.add(t),i.set(e,n),()=>n.delete(t)},async action(e,t=``,n){return e===`menu`?Fe():e===`save-menu`?we(`save`):e===`load-menu`?we(`load`):e===`settings`?Te():e===`dialogue`?Me(t,n&&typeof n==`object`&&`nodeId`in n?String(n.nodeId):void 0):e===`save`?ge(t||`1`):e===`load`?Y(t||`1`):e===`remove`?ve(t):e===`new-game`?Ne():e===`title`?Pe():e===`close`||e===`resume`?(_e(),!0):e===`setting`?J({[t]:n}):e===`next`&&Ae()},dispose(){l||(_e(!1),l=!0,clearTimeout(y),ie(),G(),K(_),typeof window<`u`&&window.removeEventListener(`keydown`,Le),typeof window<`u`&&window.removeEventListener(`click`,Ie,!0),b?.remove(),i.clear(),j=void 0,Be.dispose())}};return Ve},function Pa(e){let t={enabled:!1,recording:!0,watches:[],functions:[]},n=0,r=[],i=[],a=``,o=new Map,s=e=>{if(typeof e==`string`)return e.slice(0,1e4);if(typeof e==`number`)return Number.isFinite(e)?e:String(e);if(e===null||typeof e==`boolean`||e===void 0)return e;try{let t=JSON.stringify(e);return t.length>1e4?t.slice(0,1e4)+`…`:JSON.parse(t)}catch{return`표시할 수 없는 값`}},c=(r,c,l,u)=>{let d=s(c),f=o.get(r.id),p=!!f&&(l!==f.available||JSON.stringify(f.value)!==JSON.stringify(d)),m=l&&(r.stop===`change`?p:r.stop===`eq`?String(d)===r.threshold:r.stop===`gt`?Number(d)>Number(r.threshold):r.stop===`lt`&&Number(d)<Number(r.threshold));o.set(r.id,{value:d,available:l,matched:m});let h={id:r.id,value:d,available:l,time:Date.now(),sequence:++n,changed:p,cause:u};return t.recording&&(p||!f)&&i.push(h),i.length>500&&i.splice(0,i.length-500),f&&m&&(r.stop===`change`||!f.matched)&&(a=r.label+` · `+(r.stop===`change`?`값 변경`:`중단 조건 충족`),e.pause()),h},l=()=>{if(!t.enabled||!t.watches.length)return[];let n=e.sample(t.watches);return t.watches.map(t=>{if(t.kind===`variable`){let r=e.variableName(t.targetId);return c(t,r?n.values[r]:void 0,!!r&&Object.hasOwn(n.values,r))}if(t.kind===`object`){let e=n.objects.find(e=>e.id===t.targetId&&e.sceneId===t.sceneId&&e.active),r=!!e&&[`x`,`y`,`rotation`,`opacity`,`scaleX`,`scaleY`,`visible`,`worldX`,`worldY`,`velocityX`,`velocityY`].includes(t.property??``)&&e[t.property]!==void 0;return c(t,r?e[t.property]:void 0,r)}let r=n.states.find(e=>e.sceneId===t.sceneId&&e.bindingId===t.bindingId&&e.owner===t.owner)?.parameters?.find(e=>e.id===t.targetId);return c(t,r?.value,!!r)})},u=()=>{if(!t.enabled)return;let n=l();e.send({readings:[...i,...n.map(e=>({...e,changed:!1}))],events:r,...a?{paused:!0,reason:a}:{}}),i=[],r=[],a=``};return{configure(e){let n=!!e.enabled;t={enabled:n,recording:e.recording!==!1,watches:Array.isArray(e.watches)?e.watches.filter(e=>e&&typeof e.id==`string`&&[`variable`,`object`,`state`].includes(e.kind)).slice(0,256):[],functions:Array.isArray(e.functions)?e.functions.filter(e=>typeof e==`string`).slice(0,256):[],sceneId:e.sceneId};let a=new Set(t.watches.map(e=>e.id));for(let e of o.keys())a.has(e)||o.delete(e);n||(o.clear(),i=[],r=[]),u()},watching(e,n,r){return t.enabled&&t.recording&&(!t.sceneId||t.sceneId===r)&&(t.functions.includes(e)||n.some(e=>t.functions.includes(e)))},observe(e,i){if(!t.enabled||!t.recording)return;let a={...e,args:e.args?s(e.args):void 0,before:s(e.before),after:s(e.after),callId:i+`:`+e.callId,parentCallId:e.parentCallId?i+`:`+e.parentCallId:void 0,sceneId:i,sequence:++n};r.push(a),r.length>500&&r.splice(0,r.length-500)},variableChanged(e,n,r,i){if(t.enabled)for(let a of t.watches)a.kind===`variable`&&a.targetId===e&&(o.has(a.id)||c(a,n,!0),c(a,r,!0,i))},flush:u,clear(){r=[],i=[],o.clear()},dispose(){t.enabled=!1,r=[],i=[],o.clear()}}},function ti(e,t,n,r,i){let a={enabled:!1,ambientColor:`#ffffff`,ambientIntensity:.25,maxLights:16,...t.lighting},o=new Map,s=new Map,c={enabled:!0,kind:`point`,color:`#ffd49a`,radius:240,height:32,intensity:1.5,direction:0,coneAngle:70,softness:.25,follow:`self`,targetId:``,followRotation:!1,aimAtPointer:!1,offsetX:0,offsetY:0,flicker:0,flickerSpeed:7,pulse:0,pulseSpeed:1},l=!1,u=!1,d=()=>!!n.game?.renderer?.gl,f=e=>parseInt(e.slice(1),16),p=()=>{let e=f(a.ambientColor),t=a.ambientIntensity;return Math.round((e>>16&255)*t)<<16|Math.round((e>>8&255)*t)<<8|Math.round((e&255)*t)},m=(e,t)=>{t(e);for(let n of e.list??[])m(n,t)},h=e=>{let t=e,n=e.lighting?.receive??`auto`,r=new Set;for(;t&&!r.has(t.id);){if(r.add(t.id),n===`auto`&&t.lighting?.receive&&t.lighting.receive!==`auto`&&(n=t.lighting.receive),t.fixed||t.gameUi?.enabled)return n===`on`;t=t.parentId?s.get(t.parentId)?.def:void 0}return n!==`off`},g=e=>{let t=a.enabled&&d()&&h(e.def),n=e.def.lighting;m(e.go,e=>{e.setLighting?.(t),e.setSelfShadow&&(e.selfShadow={...e.selfShadow},e.setSelfShadow(n?.selfShadow??!1,n?.penumbra??.5,n?.diffuseFlatThreshold??1/3))})},_=()=>{a.enabled&&!d()&&(u||(u=!0,i(`이 실행 환경은 WebGL 조명을 지원하지 않습니다. WebGL 실행 환경에서 확인하세요.`))),a.enabled&&d()?n.lights.enable().setAmbientColor(p()):n.lights?.disable();for(let e of s.values())g(e)},v=(e,t)=>{if(!l&&t&&(s.set(e.id,{def:e,go:t}),g({def:e,go:t}),e.lighting?.light)){let r=o.get(e.id);r&&(n.lights?.removeLight(r.light),o.delete(e.id));let i={...c,...e.lighting.light},a=n.lights?.addLight(e.x,e.y,i.radius,f(i.color),0);a&&o.set(e.id,{def:e,go:t,options:i,light:a})}},y=e=>{for(let t=e;t;t=t.parentContainer)if(t.active===!1||t.visible===!1)return!1;return!0},b=()=>{let e=n.input?.activePointer,t=(e&&n.cameras.getCamerasBelowPointer?.(e)?.find(e=>e.name!==`게임 UI`))??n.cameras.main;return e?t.getWorldPoint(e.x,e.y):{x:0,y:0}},x=()=>{if(l)return;let e=n.time.now/1e3;for(let[t,r]of o){let{go:i,options:c,light:l}=r;if(i.active===!1){i.scene==null?(n.lights.removeLight(l),o.delete(t),s.delete(t)):l.setVisible(!1).setIntensity(0);continue}let u=c.follow===`object`?n.objectMap?.get(c.targetId):i;if(!a.enabled||!c.enabled||!y(i)||c.follow===`object`&&(!u||!y(u))){l.setVisible(!1).setIntensity(0);continue}l.setVisible(!0);let d,p,m=0;if(c.follow===`pointer`){let e=b();d=e.x+c.offsetX,p=e.y+c.offsetY}else{let e=u.getData?.(`forgeAnchor`)??u,t=e.getWorldTransformMatrix?.();t?(d=t.tx+t.a*c.offsetX+t.c*c.offsetY,p=t.ty+t.b*c.offsetX+t.d*c.offsetY,m=Math.atan2(t.b,t.a)):(d=e.x+c.offsetX,p=e.y+c.offsetY,m=e.rotation??0)}l.setPosition(d,p).setRadius(c.radius).setColor(f(c.color)).setZ(c.height);let h=c.intensity;if(c.pulse&&(h*=1-c.pulse*(.5+.5*Math.sin(e*c.pulseSpeed*Math.PI*2))),c.flicker){let n=[...t].reduce((e,t)=>e+t.charCodeAt(0),0),r=(Math.sin(e*c.flickerSpeed*5.71+n)+Math.sin(e*c.flickerSpeed*9.13+n*.3)+2)/4;h*=1-c.flicker*r}if(l.setIntensity(Math.max(0,h)),c.kind===`cone`){let e=c.direction*Math.PI/180;if(c.aimAtPointer){let t=b();e+=Math.atan2(t.y-p,t.x-d)}else c.followRotation&&(e+=m);let t=c.coneAngle*Math.PI/180;l.setCone(e,t*(1-c.softness),t)}else l.disableCone()}},S=(e,t,n)=>{if(!t){if(e===`enable`||e===`disable`||e===`toggle`)a.enabled=e===`toggle`?!a.enabled:e===`enable`;else if(e===`ambient`){let e=Number(n);if(!Number.isFinite(e))throw Error(`기본 밝기는 숫자여야 합니다.`);a.ambientIntensity=Math.max(0,Math.min(1,e))}else if(e===`color`&&/^#[0-9a-fA-F]{6}$/.test(String(n)))a.ambientColor=String(n);else throw Error(`씬에서 지원하지 않는 조명 조작입니다.`);return _(),x(),!0}let r=o.get(t);if(!r)throw Error(`대상 오브젝트에 광원이 없습니다.`);let i=r.options;if(e===`enable`||e===`disable`||e===`toggle`)i.enabled=e===`toggle`?!i.enabled:e===`enable`;else if(e===`color`){if(!/^#[0-9a-fA-F]{6}$/.test(String(n)))throw Error(`광원 색은 #RRGGBB 형식이어야 합니다.`);i.color=String(n)}else if(e===`intensity`||e===`radius`){let t=Number(n);if(!Number.isFinite(t))throw Error(`광원 값은 숫자여야 합니다.`);i[e]=e===`radius`?Math.max(1,Math.min(16384,t)):Math.max(0,Math.min(20,t))}else throw Error(`지원하지 않는 광원 조작입니다.`);return x(),!0},C=()=>({scene:{...a},lights:Object.fromEntries([...o].map(([e,t])=>[e,{...t.options}]))}),w=e=>{if(e&&typeof e==`object`){typeof e.scene?.enabled==`boolean`&&(a.enabled=e.scene.enabled),typeof e.scene?.ambientColor==`string`&&/^#[0-9a-fA-F]{6}$/.test(e.scene.ambientColor)&&(a.ambientColor=e.scene.ambientColor),Number.isFinite(e.scene?.ambientIntensity)&&(a.ambientIntensity=Math.max(0,Math.min(1,e.scene.ambientIntensity)));for(let[t,n]of o){let r=e.lights?.[t];if(r)for(let e of[`enabled`,`color`,`radius`,`intensity`])e===`enabled`&&typeof r[e]==`boolean`||e===`color`&&typeof r[e]==`string`&&/^#[0-9a-fA-F]{6}$/.test(r[e])?n.options[e]=r[e]:e===`radius`&&Number.isFinite(r[e])?n.options[e]=Math.max(1,Math.min(16384,r[e])):e===`intensity`&&Number.isFinite(r[e])&&(n.options[e]=Math.max(0,Math.min(20,r[e])))}_(),x()}},T=()=>{if(!l){l=!0,n.events.off(`postupdate`,x);for(let e of o.values())n.lights?.removeLight(e.light);o.clear(),s.clear()}};for(let e of r())v(e.def,e.go);return _(),x(),n.events.on(`postupdate`,x),n.events.once(`shutdown`,T),{bind:v,update:x,command:S,snapshot:C,restore:w,dispose:T}},function fi(e,t={}){let n=new Map((e.definitions??[]).map(e=>[e.id,e])),r=new Map((e.conditionRules??[]).map(e=>[e.id,e])),i=new Map(e.variables.map(e=>[e.id,e])),a=new Map((e.items??[]).map(e=>[e.id,e])),o=1,s=0,c=new Map,l=e=>n.get(e)??[...n.values()].find(t=>t.key===e),u=e=>r.get(e)??[...r.values()].find(t=>t.key===e),d=e=>({passed:!1,reasons:[e]}),f=()=>({passed:!0,reasons:[]}),p=(e,t,n)=>typeof e==`number`&&Number.isFinite(e)&&Number.isInteger(e)&&e>=t&&e<=n,m=(e,t,n)=>typeof e==typeof t?n===`eq`?e===t:n===`ne`?e!==t:typeof e==`number`&&typeof t==`number`?n===`lt`?e<t:n===`lte`?e<=t:n===`gt`?e>t:n===`gte`&&e>=t:!1:!1,h={eq:`같음`,ne:`다름`,lt:`미만`,lte:`이하`,gt:`초과`,gte:`이상`},g=e=>{if(t.variable)return t.variable(e);let n=i.get(e);return n?.type===`number`?Number(n.value):n?.type===`boolean`?n.value===`true`:n?.value};function _(e,l,u,p=0){if(!e||typeof e!=`object`||--u.remaining<0||p>32)return d(`조건의 항목 수나 연결 깊이를 확인하세요.`);if(e.type===`all`||e.type===`any`){if(!Array.isArray(e.children)||e.children.length>32)return d(`조건 묶음의 항목을 확인하세요.`);let t=e.children.map(e=>_(e,l,u,p+1));return e.type===`all`?{passed:t.every(e=>e.passed),reasons:[...new Set(t.flatMap(e=>e.reasons))].slice(0,32)}:t.some(e=>e.passed)?f():d(t.length?`다음 중 하나가 필요합니다: `+[...new Set(t.flatMap(e=>e.reasons))].slice(0,8).join(` / `):`충족할 대안 조건이 없습니다.`)}if(e.type===`condition`){let t=r.get(e.ruleId);if(!t)return d(`참조한 공통 조건이 없습니다.`);if(l.has(t.id))return d(t.name+`: 공통 조건이 순환 참조됩니다.`);l.add(t.id);let n=_(t.condition,l,u,p+1);return l.delete(t.id),n}let v,y=e.type===`variable`||e.type===`item`||e.type===`skill`||e.type===`profile`?e.value:void 0,b=`조건`;if(e.type===`variable`){let t=i.get(e.variableId);if(!t)return d(`조건의 변수가 없습니다.`);if(v=g(t.id),b=t.label||t.name,typeof y!==t.type)return d(b+`: 비교값의 유형을 확인하세요.`)}else if(e.type===`item`){let n=a.get(e.itemId);if(!n)return d(`조건의 아이템이 없습니다.`);v=t.itemCount?t.itemCount(n.id):n.initialQuantity,b=n.name+` 수량`}else if(e.type===`skill`){let t=n.get(e.definitionId);if(t?.kind!==`skill`)return d(`조건의 스킬 데이터가 없습니다.`);v=c.get(t.id)??0,b=t.name+` 습득 단계`}else if(e.type===`profile`)v=e.property===`level`?o:e.property===`points`?s:void 0,b=e.property===`level`?`레벨`:`스킬 포인트`;else return d(`지원하지 않는 선행조건입니다.`);return typeof v==`number`&&(!Number.isFinite(v)||typeof y!=`number`||!Number.isFinite(y))?d(b+`: 유효한 숫자가 필요합니다.`):m(v,y,e.compare)?f():d(b+` `+String(y)+` `+(h[e.compare]??`비교값`)+` 필요 · 현재 `+String(v))}let v=(e,t=`use`)=>{if(![`display`,`learn`,`use`].includes(t))return d(`조건 판정 단계를 확인하세요.`);let n=l(e);if(n){let e=n.requirements?.[t];return e?_(e,new Set,{remaining:2048}):f()}let r=a.get(e)??[...a.values()].find(t=>t.key===e);if(r){let e=r.requirements?.[t];return e?_(e,new Set,{remaining:2048}):f()}let i=u(e);return i?_(i.condition,new Set([i.id]),{remaining:2048}):d(`판정할 설정 데이터나 공통 조건이 없습니다.`)},y=e=>{let t=l(e);return t?.kind===`skill`?c.get(t.id)??0:0},b=e=>{let t=l(e);if(t?.kind!==`skill`)return d(`습득할 스킬 데이터가 없습니다.`);let n=v(t.id,`learn`);if(!n.passed)return n;if(y(t.id)>=(t.skillLearning?.maxRank??1))return d(t.name+`: 이미 최대 단계까지 배웠습니다.`);let r=t.skillLearning?.pointCost??0;return s<r?d(`스킬 포인트 `+r+` 필요 · 현재 `+s):f()},x=e=>{let t=b(e);if(!t.passed)return{...t,rank:y(e),spent:0};let n=l(e),r=n.skillLearning?.pointCost??0,i=y(n.id)+1;return s-=r,c.set(n.id,i),{passed:!0,reasons:[],rank:i,spent:r}},S=(e,t={})=>{let n=l(e);return n?.kind===`skill`?t.requireLearned&&y(n.id)<1?d(n.name+`: 먼저 스킬을 배워야 합니다.`):v(n.id,`use`):d(`사용할 스킬 데이터가 없습니다.`)},C=()=>({version:1,level:o,points:s,skills:Object.fromEntries(c)}),w=e=>{if(!e||typeof e!=`object`)return!1;let t=e;if(t.version!==void 0&&t.version!==1||!p(t.level,1,1e6)||!p(t.points,0,1e9)||!t.skills||typeof t.skills!=`object`||Array.isArray(t.skills)||Object.keys(t.skills).length>1e4)return!1;let r=new Map;for(let[e,i]of Object.entries(t.skills)){let t=n.get(e);if(t?.kind!==`skill`||!p(i,0,t.skillLearning?.maxRank??1))return!1;i>0&&r.set(e,i)}o=t.level,s=t.points,c.clear();for(let[e,t]of r)c.set(e,t);return!0},T=()=>{o=1,s=0,c.clear(),e.progression&&w(e.progression)},E=e=>{if(!p(e,1,1e6))throw Error(`레벨은 1~1,000,000의 정수로 설정하세요.`);return o=e,o},D=e=>{if(!p(e,0,1e9))throw Error(`스킬 포인트는 0~1,000,000,000의 정수로 설정하세요.`);return s=e,s};return T(),{check:v,progression:{check:b,learn:x,use:S,getRank:y,setLevel:E,setPoints:D,addPoints:e=>D(s+e),setRank:(e,t)=>{let n=l(e);if(n?.kind!==`skill`)throw Error(`설정할 스킬 데이터가 없습니다.`);if(!p(t,0,n.skillLearning?.maxRank??1))throw Error(`스킬 단계가 허용 범위를 벗어났습니다.`);return t===0?c.delete(n.id):c.set(n.id,t),t},snapshot:C,restore:w,reset:T}}},function ni(e){let t=new Map,n=new Map,r=new Map,i=!1,a=[`enter`,`stay`,`exit`,`interact`],o=(e,t=0)=>typeof e==`number`&&Number.isFinite(e)?e:t,s=e=>e?.getData?.(`forgeAnchor`)??e,c=e=>{if(!e||e.active===!1||e.visible===!1)return!1;for(let t=s(e),n=0;t;t=t.parentContainer)if(++n>64||t.active===!1||t.visible===!1)return!1;return!e.getData?.(`forgeUiTransient`)},l=e=>{if(e=s(e),!e)return;try{if(e.getWorldTransformMatrix){let t=e.getWorldTransformMatrix();return[t.a,t.b,t.c,t.d,t.tx,t.ty].every(Number.isFinite)?{a:t.a,b:t.b,c:t.c,d:t.d,tx:t.tx,ty:t.ty}:void 0}}catch{return}let t=o(e.rotation),n=o(e.scaleX,1),r=o(e.scaleY,1),i=Math.cos(t),a=Math.sin(t);if(!e.parentContainer)return{a:i*n,b:a*n,c:-a*r,d:i*r,tx:o(e.x),ty:o(e.y)}},u=(e,t,n)=>{let r=e.a*e.d-e.b*e.c;if(!Number.isFinite(r)||Math.abs(r)<1e-9)return;let i=t-e.tx,a=n-e.ty;return{x:(e.d*i-e.c*a)/r,y:(e.a*a-e.b*i)/r}},d=t=>!!e.isKeyDown(t),f=(e,t)=>{e.enabled=t.enabled,e.fired=new Set(t.fired),e.inside=new Map(t.inside.map(e=>[e.id,{elapsed:e.elapsed,fired:new Set(e.fired)}]))},p=(e,a)=>{if(i||!e.interaction||!a)return;let o=t.get(e.id);if(o&&o.go===a){o.def=e;return}let s={def:e,go:a,enabled:e.interaction.enabled,inside:new Map,fired:new Set};t.set(e.id,s);let c=r.get(e.id);c&&(f(s,c),r.delete(e.id));let l=e.interaction.key;n.has(l)||n.set(l,d(l))},m=(n,r,i,a)=>{if(!n.enabled||!c(n.go)||t.get(n.def.id)!==n)return;let o=n.def.interaction?.repeat??`always`;o===`once`&&n.fired.has(r)||o===`reenter`&&a.fired.has(r)||(n.fired.add(r),a.fired.add(r),e.fire(n.def.id,r,i))};return{bind:p,update:r=>{if(i)return;let a=e.actors().slice(),f=new Set;for(let e of a)e.def.interaction&&e.go?.active!==!1&&(p(e.def,e.go),f.add(e.def.id));for(let e of t.keys())f.has(e)||t.delete(e);let h=new Set;for(let e of new Set([...n.keys(),...[...t.values()].map(e=>e.def.interaction.key)])){let t=d(e);t&&n.get(e)===!1&&h.add(e),n.set(e,t)}let g=new Map;for(let n of[...t.values()]){let t=n.def.interaction;if(!n.enabled||!c(n.go)){n.inside.clear();continue}let i=t.sizeMode===`object`&&t.areaObjectId?a.find(e=>e.def.id===t.areaObjectId):{def:n.def,go:n.go},d=i&&s(i.go),f=i&&c(i.go)?l(i.go):void 0;if(!i||!f){for(let[e,t]of n.inside)m(n,`exit`,e,t);n.inside.clear();continue}let p=t.sizeMode===`object`,_=o(d?.width,i.def.width),v=o(d?.height,i.def.height),y=p?_:t.width,b=p?v:t.height,x=p?1:o(d?.getData?.(`forgeScaleX`),i.def.kind===`sprite`&&_>0?i.def.width/_:1),S=p?1:o(d?.getData?.(`forgeScaleY`),i.def.kind===`sprite`&&v>0?i.def.height/v:1);if(!p){if(Math.abs(x)<1e-9||Math.abs(S)<1e-9)continue;f={...f,a:f.a/x,b:f.b/x,c:f.c/S,d:f.d/S}}let C=t.offsetX+(.5-o(d?.originX,.5))*_*x,w=t.offsetY+(.5-o(d?.originY,.5))*v*S,T=p?i.def.kind===`ellipse`:t.shape===`circle`,E=p?y/2:t.radius,D=p?b/2:t.radius,O=new Set,k={x:f.tx+f.a*C+f.c*w,y:f.ty+f.b*C+f.d*w};for(let i of a){if(i.def.id===n.def.id||!c(i.go)||(t.target===`objects`?!t.targetIds.includes(i.def.id):i.def.fixed||![`platformer`,`topdown`].includes(i.def.behavior))||t.relation&&t.relation!==`all`&&(e.relation?.(n.def.id,i.def.id)??`neutral`)!==t.relation)continue;let a=l(i.go);if(!a)continue;let d=s(i.go),p=(.5-o(d?.originX,.5))*o(d?.width,i.def.width),_=(.5-o(d?.originY,.5))*o(d?.height,i.def.height),v=a.tx+a.a*p+a.c*_,x=a.ty+a.b*p+a.d*_,S=u(f,v,x);if(!S)continue;let A=S.x-C,j=S.y-w;if(T?E<=0||D<=0||(A/E)**2+(j/D)**2>1:y<=0||b<=0||Math.abs(A)>y/2||Math.abs(j)>b/2)continue;O.add(i.def.id);let M=n.inside.get(i.def.id);if(M?(M.elapsed+=Math.max(0,Math.min(36e5,o(r))),M.elapsed>=t.stayInterval&&(M.elapsed%=t.stayInterval,m(n,`stay`,i.def.id,M))):(M={elapsed:0,fired:new Set},n.inside.set(i.def.id,M),m(n,`enter`,i.def.id,M)),!n.enabled||!c(n.go)||n.inside.get(i.def.id)!==M)continue;let N=Math.hypot(v-k.x,x-k.y),P=t.key;if(h.has(P)&&N<=t.interactDistance&&n.def.events?.some(e=>e.enabled!==!1&&e.trigger===`interact`&&(!e.otherObjectId||e.otherObjectId===i.def.id))){let e=t.repeat??`always`;if(e===`once`&&n.fired.has(`interact`)||e===`reenter`&&M.fired.has(`interact`))continue;let r=g.get(P),a=n.def.id+`\0`+i.def.id;(!r||N<r.distance||N===r.distance&&a<r.region.def.id+`\0`+r.otherId)&&g.set(P,{region:n,otherId:i.def.id,visit:M,distance:N})}}for(let[e,t]of n.inside)O.has(e)||(n.inside.delete(e),m(n,`exit`,e,t))}for(let{region:e,otherId:t,visit:n}of g.values())e.inside.get(t)===n&&m(e,`interact`,t,n)},command:(r,a,o)=>{if(i)return!1;if(!t.has(a)){let t=e.actors().find(e=>e.def.id===a);t&&p(t.def,t.go)}let s=t.get(a);if(!s)return!1;if(r===`reset`){s.inside.clear(),s.fired.clear();for(let e of n.keys())n.set(e,d(e));return!0}return[`enable`,`disable`,`toggle`].includes(r)?(s.enabled=r===`toggle`?!s.enabled:r===`disable`?!1:o===void 0||o===!0||o===1||o===`true`||o===`1`,s.enabled||s.inside.clear(),!0):!1},snapshot:()=>({version:1,regions:[...[...t.values()].map(e=>({id:e.def.id,enabled:e.enabled,fired:[...e.fired],inside:[...e.inside].map(([e,t])=>({id:e,elapsed:t.elapsed,fired:[...t.fired]}))})),...[...r.values()].map(e=>({...e,fired:e.fired.slice(),inside:e.inside.map(e=>({...e,fired:e.fired.slice()}))}))]}),restore:e=>{if(i||!e||typeof e!=`object`)return!1;let o=e;if(o.version!==1||!Array.isArray(o.regions)||o.regions.length>1e4)return!1;let s=e=>typeof e==`string`&&e.length>0&&e.length<=200,c=e=>Array.isArray(e)&&e.length<=4&&e.every(e=>a.includes(e))&&new Set(e).size===e.length,l=new Set,u=0;for(let e of o.regions){if(!e||!s(e.id)||l.has(e.id)||typeof e.enabled!=`boolean`||!c(e.fired)||!Array.isArray(e.inside)||(u+=e.inside.length)>5e4)return!1;l.add(e.id);let t=new Set;for(let n of e.inside){if(!n||!s(n.id)||t.has(n.id)||typeof n.elapsed!=`number`||!Number.isFinite(n.elapsed)||n.elapsed<0||n.elapsed>36e5||!c(n.fired))return!1;t.add(n.id)}}r.clear();for(let e of t.values())e.inside.clear(),e.fired.clear(),e.enabled=e.def.interaction?.enabled??!1;for(let e of o.regions){let n={id:e.id,enabled:e.enabled,fired:e.fired.slice(),inside:e.inside.map(e=>({...e,fired:e.fired.slice()}))},i=t.get(n.id);i?f(i,n):r.set(n.id,n)}for(let e of n.keys())n.set(e,d(e));return!0},dispose:()=>{i=!0,t.clear(),r.clear(),n.clear()}}},function ri(e){let t=new Map,n=!1,r=(e,t)=>e===t?e:{min:e,max:t},i=(e,t)=>e===t?e:{start:e,end:t};function a(t,n){let a={emitting:!1,frequency:t.mode===`burst`?-1:t.frequency,quantity:t.quantity,maxAliveParticles:t.maxAlive,maxParticles:0,lifespan:r(t.lifespanMin,t.lifespanMax),speed:r(t.speedMin,t.speedMax),angle:r(t.angleMin,t.angleMax),gravityX:t.gravityX,gravityY:t.gravityY,alpha:i(t.alphaStart,t.alphaEnd),scaleX:i(t.scaleStart*t.stretchX,t.scaleEnd*t.stretchX),scaleY:i(t.scaleStart*t.stretchY,t.scaleEnd*t.stretchY),rotate:i(t.rotationStart,t.rotationEnd),color:[parseInt(t.colorStart.slice(1),16),parseInt(t.colorEnd.slice(1),16)],blendMode:t.blendMode};return n!==void 0&&(a.frame=n),t.zone===`rectangle`?a.emitZone={type:`random`,source:new e.Geom.Rectangle(-t.zoneWidth/2,-t.zoneHeight/2,t.zoneWidth,t.zoneHeight)}:t.zone===`circle`&&(a.emitZone={type:`random`,source:new e.Geom.Circle(0,0,t.zoneRadius)}),a}function o(e){let n=t.get(e);return n?(n.emitter.off?.(`destroy`,n.destroy),t.delete(e),!0):!1}function s(e){let n=t.get(e);if(!n||n.emitter.isDestroyed)n&&o(e);else return n}function c(e,t,r){if(n)return!1;let i=s(e);if(!i)return!1;let a=i.emitter,o=i.settings?.mode??`continuous`;if(r!==void 0&&(!Number.isInteger(r)||r<1||r>500))throw Error(`한 번 방출할 수량은 1~500의 정수여야 합니다.`);if(t===`off`)return i.enabled=!1,a.stop(!1),!0;if(![`on`,`explode`,`restart`].includes(t))throw Error(`지원하지 않는 파티클 명령입니다.`);return t===`on`&&i.enabled&&(o===`burst`||a.emitting&&a.frequency>=0)||(t===`restart`&&(a.stop(!1),a.killAll()),i.enabled=!0,t===`explode`||o===`burst`?(a.explode(r??i.quantity),a.stop(!1)):a.flow(i.frequency,i.quantity)),!0}function l(e,r,i,a=!0){if(n||!e||!r||r.isDestroyed)return!1;let s=t.get(e);if(s){if(s.emitter===r)return!0;s.emitter.stop(!1),s.emitter.killAll(),o(e)}let l={emitter:r,settings:i?{...i}:void 0,frequency:i?.frequency??Math.max(0,r.frequency??100),quantity:i?.quantity??Math.max(1,Number(r.quantity)||1),enabled:!i&&!!r.emitting,destroy:()=>{t.get(e)===l&&o(e)}};return t.set(e,l),r.once?.(`destroy`,l.destroy),i&&a&&i.emitting&&c(e,`on`),!0}function u(){return{version:1,emitters:[...t.keys()].flatMap(e=>{let t=s(e);return t?[{id:e,mode:t.emitter.frequency<0?`burst`:`continuous`,emitting:t.emitter.frequency<0?t.enabled:!!t.emitter.emitting}]:[]})}}function d(e){if(n||!e||typeof e!=`object`)return!1;let t=e;if(t.version!==1||!Array.isArray(t.emitters)||t.emitters.length>5e3)return!1;let r=new Set;for(let e of t.emitters){if(!e||typeof e.id!=`string`||e.id.length>200||r.has(e.id)||![`continuous`,`burst`].includes(e.mode)||typeof e.emitting!=`boolean`)return!1;r.add(e.id)}for(let e of t.emitters){let t=s(e.id);if(!t)continue;let n=t.emitter;n.stop(!1),n.killAll(),t.enabled=e.emitting,n.setFrequency(e.mode===`burst`?-1:t.frequency,t.quantity),e.emitting&&e.mode===`continuous`&&n.start()}return!0}function f(){if(!n){n=!0;for(let[e,n]of t)n.emitter.isDestroyed||(n.emitter.stop(!1),n.emitter.killAll()),o(e)}}return{config:a,register:l,command:c,snapshot:u,restore:d,remove:o,dispose:f}},function ii(e,t,n=()=>{}){let r=new Map,i=new Set,a=!1,o=(e,t)=>{let r=e+`:`+t;i.has(r)||(i.add(r),n(t))},s=e=>e.physics===`static`?`고정 물리는 이동 경로를 지원하지 않습니다. 동적 물리나 물리 없음을 선택하세요.`:e.gameUi?.enabled?`게임 UI의 위치 맞춤과 이동 경로를 함께 사용할 수 없습니다.`:e.gameplay?.agent?.enabled?`AI 이동과 이동 경로를 함께 사용할 수 없습니다.`:[`platformer`,`topdown`,`patrol`,`float`].includes(e.behavior)?`기본 이동 동작과 이동 경로를 함께 사용할 수 없습니다.`:e.tween===`float`||e.motionPath?.rotateToPath&&(e.tween===`spin`||e.behavior===`rotate`)?`위치·회전 효과와 이동 경로가 충돌합니다.`:``,c=(e,t,n)=>{let r=Math.max(0,Math.min(1,n))*(e.length-1),i=Math.min(e.length-2,Math.floor(r)),a=r-i,o=e[i],s=e[i+1];if(!t)return{x:o.x+(s.x-o.x)*a,y:o.y+(s.y-o.y)*a};let c=e[Math.max(0,i-1)],l=e[Math.min(e.length-1,i+2)],u=a*a,d=u*a,f=e=>.5*(2*o[e]+(-c[e]+s[e])*a+(2*c[e]-5*o[e]+4*s[e]-l[e])*u+(-c[e]+3*o[e]-3*s[e]+l[e])*d);return{x:f(`x`),y:f(`y`)}},l=(e,t)=>e.settings.ease===`sineInOut`?(1-Math.cos(Math.PI*t))/2:e.settings.ease===`quadInOut`?t<.5?2*t*t:1-2*(1-t)*(1-t):e.settings.ease===`cubicInOut`?t<.5?4*t*t*t:1-4*(1-t)*(1-t)*(1-t):t,u=(e,t)=>{let n=Math.max(0,Math.min(1,t))*e.length,r=e.table,i=0,a=r.length-1;for(;i+1<a;){let e=i+a>>1;r[e].distance<n?i=e:a=e}let o=r[i],s=r[a],l=s.distance>o.distance?(n-o.distance)/(s.distance-o.distance):0;return c(e.settings.points,e.settings.interpolation===`smooth`,o.t+(s.t-o.t)*l)},d=e=>{if(e.held)return;e.held=!0,e.node.setData?.(`forgeMotionPath`,!0);let t=e.node.body;t?.setDirectControl&&(e.body={direct:t.directControl,gravity:t.allowGravity,vx:t.velocity?.x??0,vy:t.velocity?.y??0,ax:t.acceleration?.x??0,ay:t.acceleration?.y??0},t.setDirectControl(!0),t.setAllowGravity?.(!1),t.setAcceleration?.(0,0),t.setVelocity?.(0,0))},f=e=>{e.held=!1,!e.node.isDestroyed&&e.node.scene&&e.node.setData?.(`forgeMotionPath`,!1);let t=e.node.body;t&&e.body&&(t.setDirectControl?.(e.body.direct),t.setAllowGravity?.(e.body.gravity),t.setAcceleration?.(e.body.ax,e.body.ay),t.setVelocity?.(e.body.vx,e.body.vy)),e.body=void 0},p=e=>{let t=u(e,l(e,e.progress)),n=e.settings.relative?e.origin:{x:0,y:0};if(e.node.x=n.x+t.x,e.node.y=n.y+t.y,e.settings.rotateToPath){let t=u(e,Math.max(0,l(e,e.progress)-1e-4)),n=u(e,Math.min(1,l(e,e.progress)+1e-4));Math.hypot(n.x-t.x,n.y-t.y)>1e-6&&(e.node.angle=Math.atan2((n.y-t.y)*e.direction,(n.x-t.x)*e.direction)*180/Math.PI+e.settings.rotationOffset)}},m=e=>{p(e);let t=e.node.body;if(t?.reset){t.reset(e.node.x,e.node.y),t.updateFromGameObject?.();for(let e of[`prev`,`prevFrame`,`autoFrame`])t[e]?.copy?.(t.position)}},h=(e,n)=>{if(a||!e.motionPath?.enabled||!n||r.has(e.id))return!1;let i=e.motionPath,l=s(e),u=n.getData?.(`forgeAnchor`)??n;if(l)return o(e.id,`${e.name}: ${l}`),!1;if(u.body&&!u.body.setDirectControl)return o(e.id,`${e.name}: 이 물리 방식은 이동 경로를 지원하지 않습니다.`),!1;if(e.kind===`group`&&t().some(e=>e.go!==n&&e.go.body&&(()=>{for(let t=e.go.parentContainer;t;t=t.parentContainer)if(t===n)return!0;return!1})()))return o(e.id,`${e.name}: 물리 자식이 있는 그룹 대신 움직일 물체에 경로를 연결하세요.`),!1;if(i.points.length<2||i.points.some(e=>!Number.isFinite(e.x)||!Number.isFinite(e.y))||!Number.isFinite(i.duration)||i.duration<16)return o(e.id,`${e.name}: 이동 경로의 점과 시간을 확인하세요.`),!1;let f={def:e,go:n,node:u,settings:i,origin:{x:u.x,y:u.y},progress:0,direction:1,leg:0,playing:i.autoStart,held:!1,length:0,table:[{distance:0,t:0}]},m=(i.points.length-1)*(i.interpolation===`smooth`?32:1),h=c(i.points,i.interpolation===`smooth`,0);for(let e=1;e<=m;e++){let t=e/m,n=c(i.points,i.interpolation===`smooth`,t);f.length+=Math.hypot(n.x-h.x,n.y-h.y),f.table.push({distance:f.length,t}),h=n}return f.length<1e-6?(o(e.id,`${e.name}: 서로 다른 위치의 경로점이 필요합니다.`),!1):(r.set(e.id,f),i.autoStart&&(d(f),p(f)),!0)},g=(e,t)=>{let n=t/e.settings.duration;if(e.settings.loop){if(e.settings.yoyo){let t=((e.direction===1?e.progress:2-e.progress)+n)%2;e.progress=t<=1?t:2-t,e.direction=t<1?1:-1}else e.progress=((e.progress+e.direction*n)%1+1)%1;return}let r=+(e.direction===1),i=Math.abs(r-e.progress);n<i?e.progress+=e.direction*n:(e.progress=r,n-=i,e.settings.yoyo&&e.leg===0?(e.leg=1,e.direction=e.direction===1?-1:1,n<1?e.progress+=e.direction*n:(e.progress=+(e.direction===1),e.playing=!1)):e.playing=!1)},_=(e,t)=>{if(!a)for(let[e,n]of r)!n.go.scene||n.go.isDestroyed?(f(n),r.delete(e)):n.go.active!==!1&&n.held&&(n.playing&&!n.go.getData?.(`gameplayBlocked`)&&g(n,Math.max(0,Number.isFinite(t)?t:0)),p(n))},v=(e,t,n)=>{let i=r.get(e);if(!i)throw Error(`대상에 사용 가능한 이동 경로가 없습니다.`);if(t===`stop`)return i.playing=!1,i.progress=0,i.direction=1,i.leg=0,m(i),f(i),!0;if(t===`seek`){if(typeof n!=`number`||!Number.isFinite(n)||n<0||n>1)throw Error(`경로 위치는 0~1 사이의 숫자여야 합니다.`);return d(i),i.progress=n,i.playing=!1,i.leg=0,m(i),!0}if(t===`pause`)return i.held&&(i.playing=!1),!0;if(![`play`,`restart`,`reverse`].includes(t))throw Error(`지원하지 않는 이동 경로 명령입니다.`);return d(i),t===`restart`?(i.progress=0,i.direction=1,i.leg=0):t===`reverse`?(i.direction=i.direction===1?-1:1,i.leg=0,i.direction===-1&&i.progress===0?i.progress=1:i.direction===1&&i.progress===1&&(i.progress=0)):!i.playing&&(i.direction===1&&i.progress===1||i.direction===-1&&i.progress===0)&&(i.progress=i.direction===1?0:1,i.leg=0),i.playing=!0,m(i),!0},y=()=>Object.fromEntries([...r].map(([e,t])=>[e,{progress:t.progress,direction:t.direction,leg:t.leg,playing:t.playing,held:t.held,origin:{...t.origin}}])),b=e=>{if(e&&typeof e==`object`)for(let[t,n]of r){let r=e[t];!r||!Number.isFinite(r.progress)||r.progress<0||r.progress>1||![1,-1].includes(r.direction)||![0,1].includes(r.leg)||typeof r.playing!=`boolean`||typeof r.held!=`boolean`||!Number.isFinite(r.origin?.x)||!Number.isFinite(r.origin?.y)||(n.progress=r.progress,n.direction=r.direction,n.leg=r.leg,n.playing=r.playing,n.origin={x:r.origin.x,y:r.origin.y},r.held?(d(n),m(n)):f(n))}},x=()=>{if(!a){a=!0,e.events?.off(`preupdate`,_);for(let e of r.values())f(e);r.clear()}};for(let e of t())h(e.def,e.go);return e.events?.on(`preupdate`,_),e.events?.once(`shutdown`,x),{bind:h,update:_,command:v,snapshot:y,restore:b,dispose:x,isDriving:e=>!!r.get(e)?.held}},function si(e,t,n=()=>{}){let r=new Map([`default`,...e.collisionGroups?.map(e=>e.id)??[]].map((e,t)=>[e,1<<t])),i=new Map,a=new WeakMap,o={enabled:!0,category:`default`,sensor:!1,left:!0,right:!0,up:!0,down:!0},s=e=>{let t=e.settings,n=e.go.body??e.go;if(n.collisionCategory=r.get(t.category)??1,n.collisionMask=t.enabled?t.mask===void 0?-1:t.mask.reduce((e,t)=>e|(r.get(t)??0),0):0,n.checkCollision){n.checkCollision.none=!t.enabled;for(let e of[`left`,`right`,`up`,`down`])n.checkCollision[e]=t.enabled&&t[e]}else if(e.go.forEachTile){let n=[t.left,t.right,t.up,t.down].join(`,`);n!==e.layerDirections&&(e.layerDirections!==void 0||![t.left,t.right,t.up,t.down].every(Boolean))&&(e.go.forEachTile(e=>{if(!e?.setCollision)return;let n=a.get(e);n||(n={left:!!e.collideLeft,right:!!e.collideRight,up:!!e.collideUp,down:!!e.collideDown},a.set(e,n)),e.setCollision(n.left&&t.left,n.right&&t.right,n.up&&t.up,n.down&&t.down,!1)}),e.go.calculateFacesWithin?.()),e.layerDirections=n}},c=(e,t)=>{if(!t||!t.body&&e.kind!==`tilemap`)return;let n=i.get(e.id);if(n&&n.go===t){s(n);return}let r={go:t,settings:{...o,...e.collision,mask:e.collision?.mask?.slice()}};i.set(e.id,r),t.once?.(`destroy`,()=>{i.get(e.id)===r&&i.delete(e.id)}),s(r)},l=e=>{let t=e?.gameObject??e?.tilemapLayer??e?.layer?.tilemapLayer??e;return i.get(t?.getData?.(`forgeObjectId`)??t?.getData?.(`forgeId`))},u=(e,t)=>{let n=l(e),r=l(t);return!n?.settings.sensor&&!r?.settings.sensor},d=(e,t,n)=>{let a=i.get(e);if(!a)throw Error(`충돌을 제어할 물리 오브젝트가 없습니다.`);let o=a.settings;if(t===`enable`||t===`disable`)o.enabled=t===`enable`;else if(t===`sensor`){if(typeof n!=`boolean`&&![`true`,`false`].includes(String(n)))throw Error(`통과 설정은 참거짓이어야 합니다.`);o.sensor=n===!0||n===`true`}else if(t===`category`){if(!r.has(String(n)))throw Error(`변경할 충돌 분류가 없습니다.`);o.category=String(n)}else throw Error(`지원하지 않는 충돌 명령입니다.`);return s(a),!0},f=()=>({version:1,objects:[...i].filter(([,e])=>e.go.active).map(([e,t])=>({id:e,...t.settings,mask:t.settings.mask?.slice()}))}),p=e=>{if(!e||e.version!==1||!Array.isArray(e.objects)||e.objects.length>2e4)return!1;let t=[];for(let n of e.objects){if(!n||typeof n.id!=`string`||!r.has(n.category)||[`enabled`,`sensor`,`left`,`right`,`up`,`down`].some(e=>typeof n[e]!=`boolean`)||n.mask!==void 0&&(!Array.isArray(n.mask)||n.mask.length>32||n.mask.some(e=>typeof e!=`string`||!r.has(e))))return!1;let e=i.get(n.id);e&&t.push({record:e,settings:{enabled:n.enabled,sensor:n.sensor,category:n.category,left:n.left,right:n.right,up:n.up,down:n.down,mask:n.mask?.slice()}})}for(let{record:e,settings:n}of t)e.settings=n,s(e);return!0},m=()=>i.clear();for(let e of t())c(e.def,e.go);return{bind:c,canSeparate:u,command:d,snapshot:f,restore:p,dispose:m}},function ci(e,t){let n=new Map((e?.factions??[]).map(e=>[e.id,e.name])),r=new Map,i=new Map,a=new Map,o=new Map,s=e?.defaultRelation??`hostile`,c=e?.enemyOfEnemy??!1,l=!1,u=0,d=e=>typeof e==`string`&&e.length<=200,f=e=>e===`friendly`||e===`neutral`||e===`hostile`,p=(e,t)=>JSON.stringify([e,t]),m=e=>{let t=r.get(p(e.from,e.to));if(t?.relation===`hostile`&&i.get(t.from)?.delete(t.to),r.set(p(e.from,e.to),{...e}),e.relation===`hostile`){let t=i.get(e.from);t||(t=new Set,i.set(e.from,t)),t.add(e.to)}};for(let t of e?.relations??[])m(t);let h=e=>{if(e.go?.isDestroyed)return;let t=a.get(e.def.id)??e.def.gameplay?.faction??e.def.gameplay?.combat?.team??``;e.go?.getData?.(`faction`)!==t&&e.go?.setData?.(`faction`,t),e.go?.getData?.(`team`)!==t&&e.go?.setData?.(`team`,t)},g=e=>!!e?.go&&!e.go.isDestroyed&&e.go.active!==!1,_=()=>{if(l)return;let e=new Set;for(let n of t.actors())g(n)&&(e.add(n.def.id),o.set(n.def.id,n),h(n));for(let t of o.keys())e.has(t)||o.delete(t)},v=e=>{let t=o.get(e);return g(t)||(_(),t=o.get(e)),g(t)?t:void 0},y=e=>{let t=v(e);return t?(h(t),a.get(e)??t.def.gameplay?.faction??t.def.gameplay?.combat?.team??``):``},b=(e,t)=>{let n=r.get(p(e,t));if(n)return n.relation;if(e===t)return`friendly`;if(c){for(let n of i.get(e)??[])if(i.get(n)?.has(t))return`friendly`}return s},x=(e,t)=>{if(l)throw Error(`진영 서비스가 종료됐습니다.`);if(!d(t))throw Error(`진영 ID는 200자 이내 문자열이어야 합니다.`);let n=v(e);if(!n||n.go?.isDestroyed)throw Error(`진영을 바꿀 오브젝트가 없습니다.`);if(!a.has(e)&&a.size>=5e3)throw Error(`변경할 진영 대상이 너무 많습니다.`);return y(e)!==t&&u++,a.set(e,t),h(n),!0},S=(e,t,n,i=!1)=>{if(l)throw Error(`진영 서비스가 종료됐습니다.`);if(!d(e)||!d(t)||!f(n))throw Error(`진영과 관계 값을 확인하세요.`);let a=+!r.has(p(e,t))+(i&&e!==t&&!r.has(p(t,e))?1:0);if(r.size+a>4096)throw Error(`진영 관계는 최대 4096개입니다.`);let o=r.get(p(e,t))?.relation!==n||i&&r.get(p(t,e))?.relation!==n;return m({from:e,to:t,relation:n}),i&&m({from:t,to:e,relation:n}),o&&u++,!0},C=(e,t,n=!1)=>{let a=!1;for(let[o,s]of n?[[e,t],[t,e]]:[[e,t]])i.get(o)?.delete(s),a=r.delete(p(o,s))||a;return a&&u++,!0},w=e=>{if(!f(e))throw Error(`기본 진영 관계를 확인하세요.`);return s!==e&&u++,s=e,!0},T=e=>{if(typeof e!=`boolean`)throw Error(`적의 적 규칙은 켜기 또는 끄기 값이어야 합니다.`);return c!==e&&u++,c=e,!0},E=()=>({version:1,defaultRelation:s,enemyOfEnemy:c,relations:[...r.values()].map(e=>({...e})),teams:[...a].map(([e,t])=>({objectId:e,team:t}))});return _(),{relation:b,team:y,setTeam:x,setRelation:S,clearRelation:C,setDefault:w,setEnemyOfEnemy:T,snapshot:E,restore:e=>{if(!e||e.version!==1||!f(e.defaultRelation)||typeof e.enemyOfEnemy!=`boolean`||!Array.isArray(e.relations)||e.relations.length>4096||!Array.isArray(e.teams)||e.teams.length>5e3)return!1;let t=new Map,n=new Map;for(let n of e.relations){if(!n||!d(n.from)||!d(n.to)||!f(n.relation)||t.has(p(n.from,n.to)))return!1;t.set(p(n.from,n.to),{from:n.from,to:n.to,relation:n.relation})}for(let t of e.teams){if(!t||!d(t.objectId)||!t.objectId||!d(t.team)||n.has(t.objectId))return!1;n.set(t.objectId,t.team)}r.clear(),i.clear();for(let e of t.values())m(e);a.clear();for(let[e,t]of n)a.set(e,t);return s=e.defaultRelation,c=e.enemyOfEnemy,u++,_(),!0},inspect:()=>{_();let e=new Map(n);for(let t of o.values()){let n=y(t.def.id);e.has(n)||e.set(n,n||`미지정`)}for(let t of r.values())e.has(t.from)||e.set(t.from,t.from||`미지정`),e.has(t.to)||e.set(t.to,t.to||`미지정`);return{factions:[...e].map(([e,t])=>({id:e,name:t,registered:n.has(e)})),...E()}},refresh:_,get revision(){return u},dispose:()=>{l=!0,o.clear(),a.clear(),r.clear(),i.clear()}}},function li(e,t){let n=new Map,r=new Map,i=new Map,a=new Set,o=!1,s=0,c=0,l=(e,t=0)=>typeof e==`number`&&Number.isFinite(e)?e:t,u=(e,t,n)=>Math.max(t,Math.min(n,e)),d={enabled:!0,start:{mode:`self`,targetId:``,offsetX:0,offsetY:0,x:0,y:0},end:{mode:`pointer`,targetId:``,offsetX:0,offsetY:0,x:0,y:0},style:`line`,textureMode:`stretch`,assetId:``,frame:0,textureSpeed:0,jitterAmplitude:0,jitterSpeed:18,width:4,color:`#d7bd82`,opacity:1,sag:24,waveAmplitude:0,waveSpeed:1,segments:24,maxLength:0,progress:1,extendDuration:300,retractDuration:300},f=e=>e?.getData?.(`forgeAnchor`)??e,p=e=>{let t=f(e),n=0;for(;t?.parentContainer&&n++<64;)t=t.parentContainer;return t},m=e=>{if(!e||e.active===!1||e.visible===!1)return!1;for(let t=f(e),n=0;t;t=t.parentContainer)if(++n>64||t.active===!1||t.visible===!1)return!1;return!0},h=e=>{let t=f(e.go);if(!t)return;let n;try{n=t.getWorldTransformMatrix?.()}catch{return}if(!n){if(t.parentContainer)return;let e=l(t.rotation),r=l(t.scaleX,1),i=l(t.scaleY,1);n={a:Math.cos(e)*r,b:Math.sin(e)*r,c:-Math.sin(e)*i,d:Math.cos(e)*i,tx:l(t.x),ty:l(t.y)}}let r=l(t.getData?.(`forgeScaleX`),e.def.kind===`sprite`&&t.width>0?e.def.width/t.width:1),i=l(t.getData?.(`forgeScaleY`),e.def.kind===`sprite`&&t.height>0?e.def.height/t.height:1);if(Math.abs(r)<1e-9||Math.abs(i)<1e-9)return;let a={a:n.a/r,b:n.b/r,c:n.c/i,d:n.d/i,tx:n.tx,ty:n.ty};return Object.values(a).every(Number.isFinite)?a:void 0},g=t=>{let n=p(t.go);return(e.cameras?.cameras??[e.cameras?.main]).find(e=>e&&e.visible!==!1&&!(n?.cameraFilter&e.id))??e.cameras?.main},_=(e,t)=>{let n=p(e);return{x:l(t?.scrollX)*(1-l(n?.scrollFactorX,1)),y:l(t?.scrollY)*(1-l(n?.scrollFactorY,1))}},v=(t,n,r,i)=>{if(n.mode===`point`)return{x:n.x+n.offsetX,y:n.y+n.offsetY};if(n.mode===`pointer`){let t=e.input?.activePointer;if(!t)return;let r=i?.getWorldPoint?.(t.x,t.y)??{x:t.worldX??t.x,y:t.worldY??t.y};return{x:r.x+n.offsetX,y:r.y+n.offsetY}}let a=n.mode===`self`?t:r.get(n.targetId);if(!a||!m(a.go))return;let o=h(a);if(!o)return;let s=_(a.go,i);return{x:o.tx+o.a*n.offsetX+o.c*n.offsetY+s.x,y:o.ty+o.b*n.offsetX+o.d*n.offsetY+s.y}},y=(e,t,n)=>{let r=Math.max(2,Math.min(128,Math.round(n.segments))),i=t.x-e.x,a=t.y-e.y,o=Math.hypot(i,a),c=o?-a/o:0,l=o?i/o:1,d=[],f=0;if(o<1e-8)return{points:[{...e},{...e}],totalLength:0,length:0,end:{...e}};let p=n.jitterAmplitude??0,m=Math.floor(Math.max(0,s)*(n.jitterSpeed??18));for(let t=0;t<=r;t++){let o=t/r,u=n.waveAmplitude*Math.sin(Math.PI*o)*Math.sin(s*n.waveSpeed*Math.PI*2-o*Math.PI*2);if(p>0&&t>0&&t<r){let e=Math.imul((m^Math.imul(t,374761393))>>>0,668265263);e=Math.imul(e^e>>>13,1274126177),e=(e^e>>>16)>>>0,u+=(e/4294967295*2-1)*p*Math.sin(Math.PI*o)}let h={x:e.x+i*o+c*u,y:e.y+a*o+n.sag*4*o*(1-o)+l*u};t&&(f+=Math.hypot(h.x-d[t-1].x,h.y-d[t-1].y)),d.push(h)}let h=Math.min(f,n.maxLength>0?n.maxLength:f)*u(n.progress,0,1),g=[d[0]],_=0;for(let e=1;e<d.length;e++){let t=d[e-1],n=d[e],r=Math.hypot(n.x-t.x,n.y-t.y);if(_+r>=h){let e=r?(h-_)/r:0;g.push({x:t.x+(n.x-t.x)*e,y:t.y+(n.y-t.y)*e});break}g.push(n),_+=r}return g.length===1&&g.push({...g[0]}),{points:g,totalLength:f,length:h,end:g[g.length-1]}},b=(e,n)=>{a.has(e)||(a.add(e),t.error?.(n))},x=n=>{let r=n.assetId+`:`+n.frame,a=i.get(r);if(a)return a;let o=t.source(n.assetId,n.frame);if(!o||!e.textures?.exists(o.key))return;let s=e.textures.getFrame(o.key,o.frame);if(!s)return;let l=Math.round(s.realWidth??s.width),u=Math.round(s.realHeight??s.height);if(l<1||u<1||l>4096||u>4096||l*u>4194304){b(r,`연결 그림은 한 프레임 4096픽셀·총 419만 픽셀 이하로 선택하세요.`);return}let d=`__forge_connection_`+e.sys?.settings?.key+`_`+Date.now()+`_`+ ++c,f=e.textures.createCanvas(d,l,u);if(f)try{let e=f.context,t=s.source?.image;if(!t)throw Error(`원본 그림이 없습니다.`);e.imageSmoothingEnabled=!1;let n=s.x??0,a=s.y??0;s.rotated?(e.save(),e.translate(n,a+s.cutWidth),e.rotate(-Math.PI/2),e.drawImage(t,s.cutX,s.cutY,s.cutWidth,s.cutHeight,0,0,s.cutWidth,s.cutHeight),e.restore()):e.drawImage(t,s.cutX,s.cutY,s.cutWidth,s.cutHeight,n,a,s.cutWidth,s.cutHeight),f.refresh();let o={key:d,width:l,height:u};return i.set(r,o),o}catch(t){e.textures.remove(d),b(r,`연결 그림을 읽지 못했습니다: `+String(t));return}},S=(e,t,n)=>{let r=[],i=0;for(let a=1;a<e.length;a++){let o=e[a-1],s=e[a],c=Math.hypot(s.x-o.x,s.y-o.y),l=i+c;if(l>=t&&i<=n){let e=c?u((t-i)/c,0,1):0,a=c?u((n-i)/c,0,1):1;r.length||r.push({x:o.x+(s.x-o.x)*e,y:o.y+(s.y-o.y)*e});let l={x:o.x+(s.x-o.x)*a,y:o.y+(s.y-o.y)*a},d=r[r.length-1];Math.hypot(l.x-d.x,l.y-d.y)>1e-8&&r.push(l)}if(i=l,l>=n)break}return r.length===1&&r.push({...r[0]}),r},C=t=>{let{settings:n,root:r,line:i,points:a}=t,o=p(t.go),c=n.opacity;for(let e=f(t.go),n=0;e&&n++<64;e=e.parentContainer)c*=l(e.alpha,1);r.cameraFilter=o?.cameraFilter??0,r.setDepth?.(l(o?.depth)+1e-4),r.setAlpha?.(c);for(let e of r.list??[])e.cameraFilter=r.cameraFilter;if(!n.enabled||!m(t.go)||!t.start||!t.end||t.length<1e-7){r.setVisible(!1);return}r.setVisible(!0),i.clear(),n.style===`texture`&&e.game?.renderer?.gl&&e.add?.rope&&!t.textureAttempted&&(t.texture=x(n),t.textureAttempted=!0);let d=!!e.game?.renderer?.gl&&!!e.add?.rope&&t.texture;if(n.style===`texture`&&d){t.mode=`texture`,i.setVisible(!1);let o=t.texture,c=n.textureMode===`repeat`,d=c&&l(n.textureSpeed)!==0,f=c?Math.max(n.width*o.width/o.height,t.length/(d?127:128)):t.length,p=d?(-s*l(n.textureSpeed)%f+f)%f:0,m=c?Math.min(128,Math.max(1,Math.ceil((t.length+p)/f))):1,h=n.width/o.height;for(let i=0;i<m;i++){let s=i*f-p,l=Math.max(0,s),d=Math.min(t.length,s+f),m=S(a,l,d);if(m.length<2)continue;let g=t.ropes[i];g||(g=e.add.rope(0,0,o.key,void 0,m),r.add(g),t.ropes[i]=g);let _=m[0],v=m.map(e=>({x:(e.x-_.x)/h,y:(e.y-_.y)/h}));g.setPosition(_.x,_.y).setScale(h).setVisible(!0),g.cameraFilter=r.cameraFilter,g.setPoints(v,parseInt(n.color.slice(1),16));let y=0,b=c?(d-l)/f:1,x=d-l,C=c?(l-s)/f:0;for(let e=0;e<m.length;e++){e&&(y+=Math.hypot(m[e].x-m[e-1].x,m[e].y-m[e-1].y));let t=u(C+(x?y/x*b:0),0,1);g.uv[e*4]=t,g.uv[e*4+2]=t}g.dirty=!0}for(let e=m;e<t.ropes.length;e++)t.ropes[e].setVisible(!1)}else{t.mode=n.style===`texture`?`line-fallback`:`line`;for(let e of t.ropes)e.setVisible(!1);i.setVisible(!0),i.lineStyle(n.width,parseInt(n.color.slice(1),16),1),i.beginPath(),i.moveTo(a[0].x,a[0].y);for(let e=1;e<a.length;e++)i.lineTo(a[e].x,a[e].y);i.strokePath()}},w=(e,t)=>{e.settings.enabled=t.enabled,e.settings.start={...t.start},e.settings.end={...t.end},e.settings.progress=t.progress,e.motion=t.motion?{...t.motion}:void 0},T=(t,i)=>{if(o||!t.connection||!i)return!1;let a=n.get(t.id);if(a&&a.go===i)return!0;a&&(a.root.destroy(!0),n.delete(t.id));let s={...d,...t.connection,start:{...d.start,...t.connection.start},end:{...d.end,...t.connection.end}},c=e.add.container(0,0),l=e.add.graphics();c.add(l),c.setVisible(!1);let u={def:t,go:i,settings:s,root:c,line:l,ropes:[],points:[],length:0,mode:`line`,textureAttempted:!1};n.set(t.id,u);let f=r.get(t.id);return f&&(w(u,f),r.delete(t.id)),!0},E=(e,t)=>{let n=g(e),r=v(e,e.settings.start,t,n),i=v(e,e.settings.end,t,n);if(e.start=r,e.end=i,r&&i){let t=y(r,i,e.settings);e.points=t.points,e.end=t.end,e.length=t.length}else e.points=[],e.length=0},D=(e=0)=>{if(o||n.size===0)return;let r=u(l(e),0,1e3);s+=r/1e3;let i=new Map(t.actors().map(e=>[e.def.id,e]));for(let[e,t]of n)if(!i.has(e)||t.go?.isDestroyed||t.go?.scene===null)t.root.destroy(!0),n.delete(e);else{if(t.motion){let e=t.motion;e.elapsed=Math.min(e.duration,e.elapsed+r),t.settings.progress=e.from+(e.to-e.from)*(e.duration?e.elapsed/e.duration:1),e.elapsed>=e.duration&&(t.motion=void 0,e.to===0&&(t.settings.enabled=!1))}!t.settings.enabled||!m(t.go)?t.root.setVisible(!1):(E(t,i),C(t))}},O=(e,r,i)=>{if(o)return!1;if(!n.has(r)){let e=t.actors().find(e=>e.def.id===r);e&&T(e.def,e.go)}let a=n.get(r);if(!a)return!1;let s=a.settings;if([`on`,`off`,`toggle`,`enable`,`disable`].includes(e))s.enabled=e===`toggle`?!s.enabled:e===`on`||e===`enable`,s.enabled||(a.motion=void 0);else if(e===`progress`){let e=Number(i);if(!Number.isFinite(e)||e<0||e>1)throw Error(`연결 진행률은 0~1 사이 숫자여야 합니다.`);s.progress=e,a.motion=void 0}else if(e===`extend`||e===`retract`){let t=i===void 0?e===`extend`?s.extendDuration:s.retractDuration:Number(i);if(!Number.isFinite(t)||t<0||t>6e4)throw Error(`연결 시간은 0~60000ms여야 합니다.`);e===`extend`&&s.progress>=1&&(s.progress=0),s.enabled=!0,a.motion={from:s.progress,to:+(e===`extend`),elapsed:0,duration:t}}else if(e===`attachEnd`||e===`attachStart`){if(E(a,new Map(t.actors().map(e=>[e.def.id,e]))),!i||typeof i!=`object`||typeof i.targetId!=`string`)throw Error(`연결할 오브젝트를 선택하세요.`);let n=i;if((n.x!==void 0||n.y!==void 0)&&(!Number.isFinite(n.x)||!Number.isFinite(n.y)))throw Error(`부착점의 X/Y 좌표를 함께 입력하세요.`);let r=new Map(t.actors().map(e=>[e.def.id,e])).get(n.targetId);if(!r||!m(r.go))throw Error(`연결할 실행 중인 오브젝트가 없습니다.`);let o=h(r),c=e===`attachEnd`?a.end:a.start,l=Number.isFinite(n.x)&&Number.isFinite(n.y)?{x:n.x,y:n.y}:c;if(!o||!l)throw Error(`현재 연결점을 확인할 수 없습니다.`);let u=o.a*o.d-o.b*o.c;if(Math.abs(u)<1e-9)throw Error(`크기가 0인 오브젝트에는 연결할 수 없습니다.`);let d=_(r.go,g(a)),f=l.x-o.tx-d.x,p=l.y-o.ty-d.y,v=(o.d*f-o.c*p)/u,y=(o.a*p-o.b*f)/u;if(![v,y].every(e=>Number.isFinite(e)&&Math.abs(e)<=1e9))throw Error(`연결점이 오브젝트에서 너무 멉니다.`);s[e===`attachEnd`?`end`:`start`]={mode:`object`,targetId:n.targetId,offsetX:v,offsetY:y,x:0,y:0},e===`attachEnd`&&(s.progress=1,a.motion=void 0)}else if(e===`release`)E(a,new Map(t.actors().map(e=>[e.def.id,e]))),a.end&&(s.end={mode:`point`,targetId:``,x:a.end.x,y:a.end.y,offsetX:0,offsetY:0},s.progress=1,a.motion=void 0);else throw Error(`지원하지 않는 연결 명령입니다.`);return D(0),!0};return{bind:T,update:D,command:(e,r,i)=>{if(o)return!1;if(n.has(r))return O(e,r,i);let a=t.actors().find(e=>e.def.id===r);if(!a)return!1;if(a.def.connection)return T(a.def,a.go),O(e,r,i);if(a.def.kind!==`group`)return!1;let s=f(a.go),c=[...n.values()].filter(e=>{let t=new Set,n=f(e.go)?.parentContainer;for(let e=0;n&&e<64;e++){if(t.has(n))return!1;if(t.add(n),n===s)return!0;n=n.parentContainer}return!1});if(!c.length)return!1;let l=c.map(e=>({entry:e,settings:{...e.settings,start:{...e.settings.start},end:{...e.settings.end}},motion:e.motion&&{...e.motion}}));try{for(let t of c)O(e,t.def.id,i);return!0}catch(e){for(let e of l)e.entry.settings=e.settings,e.entry.motion=e.motion;throw D(0),e}},snapshot:()=>({version:1,clock:s,connections:[...[...n.values()].map(e=>({id:e.def.id,enabled:e.settings.enabled,start:{...e.settings.start},end:{...e.settings.end},progress:e.settings.progress,...e.motion?{motion:{...e.motion}}:{}})),...[...r.values()].map(e=>({...e,start:{...e.start},end:{...e.end},...e.motion?{motion:{...e.motion}}:{}}))]}),restore:e=>{if(o||!e||typeof e!=`object`)return!1;let t=e;if(t.version!==1||!Number.isFinite(t.clock)||t.clock<0||t.clock>0xe8d4a51000||!Array.isArray(t.connections)||t.connections.length>5e3)return!1;let i=new Set,a=e=>e&&[`self`,`object`,`point`,`pointer`].includes(e.mode)&&typeof e.targetId==`string`&&e.targetId.length<=200&&(e.bindingKey===void 0||typeof e.bindingKey==`string`&&/^\$slot:[A-Za-z][A-Za-z0-9_.-]{0,79}$/.test(e.bindingKey))&&[e.x,e.y,e.offsetX,e.offsetY].every(e=>Number.isFinite(e)&&Math.abs(e)<=1e9);for(let e of t.connections)if(!e||typeof e.id!=`string`||!e.id||e.id.length>200||i.has(e.id)||typeof e.enabled!=`boolean`||!a(e.start)||!a(e.end)||!Number.isFinite(e.progress)||e.progress<0||e.progress>1||(i.add(e.id),e.motion&&(![e.motion.from,e.motion.to,e.motion.elapsed,e.motion.duration].every(Number.isFinite)||e.motion.from<0||e.motion.from>1||e.motion.to<0||e.motion.to>1||e.motion.duration<0||e.motion.duration>6e4||e.motion.elapsed<0||e.motion.elapsed>e.motion.duration)))return!1;s=t.clock,r.clear();for(let e of t.connections){let t={...e,start:{...e.start},end:{...e.end},...e.motion?{motion:{...e.motion}}:{}},i=n.get(e.id);i?w(i,t):r.set(e.id,t)}return D(0),!0},inspect:()=>[...n.values()].map(e=>({id:e.def.id,enabled:e.settings.enabled,progress:e.settings.progress,start:e.start&&{...e.start},end:e.end&&{...e.end},points:e.points.map(e=>({...e})),length:e.length,mode:e.mode,visible:e.root.visible,textureKey:e.texture?.key,renderPieces:e.ropes.filter(e=>e.visible).length})),dispose:()=>{if(!o){o=!0;for(let e of n.values())e.root.destroy(!0);n.clear(),r.clear();for(let t of i.values())e.textures?.exists(t.key)&&e.textures.remove(t.key);i.clear()}}}},function ui(e,t){let n=new Set,r=!1,i=(t={})=>{if(r)throw Error(`종료한 씬에는 물리 세계를 만들 수 없습니다.`);let i=e.Physics.Matter.Matter,a=i.Engine.create({positionIterations:10,velocityIterations:8,constraintIterations:6});a.gravity.x=0,a.gravity.y=(t.gravity??980)/1e3,a.gravity.scale=.001;let o=new Map,s=new Set,c=0,l=0,u=!1,d=Math.max(1e3/240,Math.min(1e3/60,t.step??1e3/120)),f=e=>{if(!Number.isFinite(e))throw Error(`물리 좌표와 값은 유한한 숫자여야 합니다.`);return e},p=e=>{let t=o.get(e);if(!t)throw Error(`물리 대상이 없습니다: `+e);return t.body},m=(e,t,n,r,s,c,l={},d)=>{if(u||o.has(e))throw Error(`물리 대상 ID가 중복되었거나 세계가 종료됐습니다.`);if([n,r,s,c].forEach(f),s<=0||c<=0)throw Error(`충돌체 크기는 0보다 커야 합니다.`);let p=t===`circle`?i.Bodies.circle(n,r,s,{...l,label:e}):i.Bodies.rectangle(n,r,s,c,{...l,label:e});i.Composite.add(a.world,p);let m={body:p,go:d,kinematic:l.kinematic===!0,offsetX:l.offsetX??0,offsetY:l.offsetY??0};return o.set(e,m),d?.body?.enable!==void 0&&(d.body.enable=!1),p},h={engine:a,entries:o,rectangle:(e,t,n,r,i,a={},o)=>m(e,`rectangle`,t,n,r,i,a,o),circle:(e,t,n,r,i={},a)=>m(e,`circle`,t,n,r,r,i,a),body:p,rope:(e,t,n={})=>{let r=p(e),o=t.bodyId?p(t.bodyId):void 0,c={x:f(t.x),y:f(t.y)},l=Math.max(8,n.minLength??40),u=Math.max(l,n.maxLength??560),d=o?{x:o.position.x+c.x,y:o.position.y+c.y}:c,m=i.Constraint.create({bodyA:o,pointA:c,bodyB:r,pointB:{x:0,y:0},length:Math.max(l,Math.min(u,n.length??Math.hypot(r.position.x-d.x,r.position.y-d.y))),stiffness:n.stiffness??.98,damping:n.damping??.025});i.Composite.add(a.world,m);let h=!0,g={constraint:m,minLength:l,maxLength:u,get active(){return h},get length(){return m.length},setLength(e){return m.length=Math.max(l,Math.min(u,f(e))),m.length},anchor(){return o?{x:o.position.x+c.x,y:o.position.y+c.y}:{...c}},release(){h&&(h=!1,i.Composite.remove(a.world,m),s.delete(g))},update(){if(!h)return;let e=g.anchor(),t=Math.hypot(r.position.x-e.x,r.position.y-e.y),i=n.slack!==!1&&t<m.length-2;m.stiffness=i?0:n.stiffness??.98,m.damping=i?0:n.damping??.025}};return s.add(g),g},remove(e){let t=o.get(e);if(!t)return!1;for(let e of[...s])(e.constraint.bodyA===t.body||e.constraint.bodyB===t.body)&&e.release();return i.Composite.remove(a.world,t.body),o.delete(e),!0},position(e,t,n){i.Body.setPosition(p(e),{x:f(t),y:f(n)})},velocity(e,t,n){let r=p(e);return t!==void 0&&n!==void 0&&i.Body.setVelocity(r,{x:f(t)/60,y:f(n)/60}),{x:r.velocity.x*60,y:r.velocity.y*60}},accelerate(e,t,n){let r=p(e);i.Body.applyForce(r,r.position,{x:f(t)*r.mass/1e6,y:f(n)*r.mass/1e6})},grounded(e,t=5){let n=p(e),r=n.bounds;return[...o.values()].some(e=>e.body!==n&&!e.body.isSensor&&e.body.bounds.min.y>=r.max.y-10&&i.Query.region([e.body],{min:{x:r.min.x+3,y:r.max.y-2},max:{x:r.max.x-3,y:r.max.y+t}}).length>0)},raycast(e,t,n=[]){return i.Query.ray([...o.entries()].filter(([e,t])=>!n.includes(e)&&!t.body.isSensor).map(([,e])=>e.body),e,t,1).map(e=>e.bodyA.label)},touching(e,t){return i.Query.collides(p(e),[p(t)]).length>0},step(e,t){if(!u){for(c=Math.min(c+Math.max(0,f(e)),d*12);c+1e-7>=d;){l+=d,t?.(d/1e3,l);for(let e of s)e.update();i.Engine.update(a,d),c=Math.max(0,c-d)}for(let e of o.values())e.go?.active!==!1&&e.go?.setPosition?.(e.body.position.x+e.offsetX,e.body.position.y+e.offsetY)}},snapshot(){return{version:1,clock:l,bodies:[...o].filter(([,e])=>!e.body.isStatic||e.kinematic).map(([e,t])=>({id:e,x:t.body.position.x,y:t.body.position.y,vx:t.body.velocity.x*60,vy:t.body.velocity.y*60,angle:t.body.angle}))}},restore(e){if(e?.version!==1||!Array.isArray(e.bodies))return!1;Number.isFinite(e.clock)&&e.clock>=0&&(l=e.clock),c=0;for(let t of e.bodies){if(!o.has(t.id)||![t.x,t.y,t.vx,t.vy,t.angle].every(Number.isFinite))continue;h.position(t.id,t.x,t.y),h.velocity(t.id,t.vx,t.vy),i.Body.setAngle(p(t.id),t.angle);let e=o.get(t.id);e.go?.setPosition?.(t.x+e.offsetX,t.y+e.offsetY)}return!0},destroy(){if(!u){u=!0;for(let e of[...s])e.release();i.Composite.clear(a.world,!1),i.Engine.clear(a),o.clear(),n.delete(h)}}};return n.add(h),h},a=()=>{if(!r){r=!0;for(let e of[...n])e.destroy()}};return t.events.once(`shutdown`,a),{create:i,destroy:a}},function di(e,t,n){let r=new Map,i=new Map,a=new Set,o=!1,s={enabled:!1,mode:`homing`,target:`object`,targetId:``,ownerId:``,speed:320,turnRate:360,acquireRange:800,trackDurationMs:0,reacquireMs:250,startDelayMs:0,lostTarget:`reacquire`,stopDistance:12,arrival:`destroy`,returnArrival:`destroy`,lifetimeMs:8e3,rotateToDirection:!0,rotationOffset:0,targetOffsetX:0,targetOffsetY:0,onAcquire:``,onArrive:``,onLost:``},c=(e,t=0)=>typeof e==`number`&&Number.isFinite(e)?e:t,l=e=>JSON.parse(JSON.stringify(e)),u=e=>e?.getData?.(`forgeAnchor`)??e,d=(e,t)=>{a.has(e+t)||(a.add(e+t),n.error?.(t))},f=e=>{if(!e||e.active===!1||e.isDestroyed||e.scene===null)return!1;for(let t=u(e),n=0;t;t=t.parentContainer)if(++n>64||t.active===!1||t.visible===!1)return!1;return!0},p=(e,t)=>{if(!f(t))return!1;if(n.alive)return n.alive(e,t);let r=t.getData?.(`hp`);return!(typeof r==`number`&&r<=0)&&!t.getData?.(`dead`)&&!t.getData?.(`gameplayDead`)},m=e=>{try{let t=e?.getWorldTransformMatrix?.();if(t&&[`a`,`b`,`c`,`d`,`tx`,`ty`].every(e=>Number.isFinite(t[e])))return t}catch{return}if(!e||e.parentContainer)return;let t=c(e.rotation,c(e.angle)*Math.PI/180),n=c(e.scaleX,1),r=c(e.scaleY,1);return{a:Math.cos(t)*n,b:Math.sin(t)*n,c:-Math.sin(t)*r,d:Math.cos(t)*r,tx:c(e.x),ty:c(e.y)}},h=e=>{let t=m(u(e));return t?{x:t.tx,y:t.ty}:void 0},g=(e,t)=>{if(!e)return t;let n=m(e);if(!n)return;let r=n.a*n.d-n.b*n.c;if(Math.abs(r)<1e-10)return;let i=t.x-n.tx,a=t.y-n.ty;return{x:(n.d*i-n.c*a)/r,y:(n.a*a-n.b*i)/r}},_=(e,t)=>{let n=g(e.node.parentContainer,t);return!n||!Number.isFinite(n.x)||!Number.isFinite(n.y)?!1:(e.node.x=n.x,e.node.y=n.y,!0)},v=e=>{if(!e.settings.rotateToDirection)return;let t=e.heading+e.settings.rotationOffset*Math.PI/180,n=e.node.parentContainer?m(e.node.parentContainer):void 0;if(e.node.parentContainer&&!n)return;let r=n?Math.atan2(-n.b*Math.cos(t)+n.a*Math.sin(t),n.d*Math.cos(t)-n.c*Math.sin(t)):t,i=n?n.a*n.d-n.b*n.c:1;e.node.rotation=r+(i<0?Math.PI:0)+(c(e.node.scaleX,1)<0?Math.PI:0)},y=e=>e.physics===`static`?`고정 물리 오브젝트는 유도 이동을 사용할 수 없습니다.`:e.gameUi?.enabled?`게임 UI의 위치 맞춤과 유도 이동을 함께 사용할 수 없습니다.`:e.motionPath?.enabled?`이동 경로와 유도 이동이 같은 위치를 제어합니다.`:e.gameplay?.agent?.enabled?`AI 이동과 유도 이동이 같은 위치를 제어합니다.`:[`platformer`,`topdown`,`patrol`,`float`].includes(e.behavior)?`기본 이동 동작과 유도 이동이 같은 위치를 제어합니다.`:e.tween===`float`||e.projectileGuidance?.rotateToDirection&&(e.tween===`spin`||e.behavior===`rotate`)?`위치·회전 효과와 유도 이동이 같은 값을 바꿉니다.`:``,b=(e,t,r)=>{let i=y({...e,projectileGuidance:{...r,enabled:!0}});if(i)return i;let a=u(t);return a?.body&&!a.body.setDirectControl?`이 물리 방식은 유도 이동을 지원하지 않습니다.`:e.kind===`group`&&n.actors().some(e=>e.go!==t&&u(e.go)?.body&&(()=>{for(let t=u(e.go).parentContainer,n=0;t&&n++<64;t=t.parentContainer)if(t===a)return!0;return!1})())?`물리 자식이 있는 그룹은 유도 이동을 사용할 수 없습니다.`:``},x=e=>e&&typeof e.enabled==`boolean`&&[`homing`,`follow`,`return`].includes(e.mode)&&[`object`,`nearestEnemy`,`pointer`,`owner`].includes(e.target)&&[`straight`,`reacquire`,`stop`,`destroy`].includes(e.lostTarget)&&[`stop`,`pass`,`destroy`,`return`].includes(e.arrival)&&[`stop`,`destroy`].includes(e.returnArrival)&&typeof e.rotateToDirection==`boolean`&&[`targetId`,`ownerId`,`onAcquire`,`onArrive`,`onLost`].every(t=>typeof e[t]==`string`&&e[t].length<=200)&&[`speed`,`turnRate`,`acquireRange`,`stopDistance`,`trackDurationMs`,`reacquireMs`,`startDelayMs`,`lifetimeMs`,`rotationOffset`,`targetOffsetX`,`targetOffsetY`].every(t=>Number.isFinite(e[t]))&&e.speed>=0&&e.speed<=1e4&&e.turnRate>=0&&e.turnRate<=36e3&&e.acquireRange>=0&&e.acquireRange<=1e6&&e.stopDistance>=0&&e.stopDistance<=1e6&&e.reacquireMs>=16&&e.reacquireMs<=6e4&&[`trackDurationMs`,`startDelayMs`,`lifetimeMs`].every(t=>e[t]>=0&&e[t]<=864e5)&&Math.abs(e.rotationOffset)<=36e3&&Math.abs(e.targetOffsetX)<=1e6&&Math.abs(e.targetOffsetY)<=1e6,S=e=>{if(e.held)return;e.held=!0,e.node.setData?.(`forgeProjectileGuidance`,!0);let t=e.node.body;t?.setDirectControl&&(e.body={direct:!!t.directControl,gravity:!!t.allowGravity,vx:c(t.velocity?.x),vy:c(t.velocity?.y),ax:c(t.acceleration?.x),ay:c(t.acceleration?.y)},t.setDirectControl(!0),t.setAllowGravity?.(!1),t.setAcceleration?.(0,0),t.setVelocity?.(0,0))},C=e=>{if(!e.held)return;e.held=!1,e.node.setData?.(`forgeProjectileGuidance`,!1);let t=e.node.body;t&&e.body&&(t.setDirectControl?.(e.body.direct),t.setAllowGravity?.(e.body.gravity),t.setAcceleration?.(e.body.ax,e.body.ay),t.setVelocity?.(e.body.vx,e.body.vy)),e.body=void 0},w=(e,t)=>{try{return n.resolveTarget?.(e,t.settings.ownerId,t.id)??e}catch{return``}},T=e=>w(e.settings.ownerId||e.go.getData?.(`spawnOwnerId`)||e.go.getData?.(`ownerId`)||``,e),E=(e,t,r,i)=>{let a=e.settings[t];if(!a)return;let o=h(e.go)??{x:0,y:0};try{n.run(a,{sourceId:e.id,ownerId:T(e),targetId:e.targetId,x:o.x,y:o.y,targetX:i?.x??o.x,targetY:i?.y??o.y,reason:r,phase:e.phase},e.id)}catch(t){d(e.id,e.def.name+`: 유도 이벤트 실행 실패 `+String(t))}},D=e=>{r.delete(e.id),C(e),e.go.destroy?.(),e.node!==e.go&&e.node.active!==!1&&!e.node.isDestroyed&&e.node.destroy?.()},O=e=>{e.phase=`returning`,e.returnStarted=!0,e.targetId=``,e.acquired=!1,e.lostNotified=!1,e.arrived=!1,e.searchInMs=0},k=(e,t,r)=>{if(!t||t===e.id)return;let i=r.get(t)?.go??n.object(t);if(!p(t,i))return;let a=h(i);if(a)return{x:a.x+e.settings.targetOffsetX,y:a.y+e.settings.targetOffsetY}},A=(e,t,r)=>{let i=T(e)||e.id,a=n.relation?.(i,t);if(n.relation)return a===`hostile`||a===`enemy`;let o=r.get(i)?.def,s=r.get(t)?.def,c=o?.gameplay?.faction??o?.gameplay?.combat?.team??``,l=s?.gameplay?.faction??s?.gameplay?.combat?.team??``;return!!c&&!!l&&c!==l},j=(e,n)=>{let r=e.settings;if(e.phase===`returning`){let t=T(e),r=k(e,t,n);if(r){let n=e.targetId!==t;e.targetId=t,(n||!e.acquired)&&(e.acquired=!0,e.lostNotified=!1,E(e,`onAcquire`,`return`,r))}return r}if(r.target===`pointer`){let n=t.input?.activePointer;if(!n||n.active===!1||!Number.isFinite(n.x)||!Number.isFinite(n.y))return;let i=(t.cameras?.main)?.getWorldPoint?.(n.x,n.y)??{x:n.worldX??n.x,y:n.worldY??n.y};if(!Number.isFinite(i.x)||!Number.isFinite(i.y))return;let a={x:i.x+r.targetOffsetX,y:i.y+r.targetOffsetY};return e.acquired||(e.targetId=``,e.acquired=!0,e.lostNotified=!1,E(e,`onAcquire`,`pointer`,a)),a}if(e.targetId){let t=k(e,e.targetId,n);if(t)return t}if(e.searchInMs>0)return;e.searchInMs=r.reacquireMs;let i=T(e),a=h(e.go);if(!a)return;let o=r.target===`owner`?i:r.target===`object`?w(r.targetId,e):``,s=o?k(e,o,n):void 0;if(r.target===`nearestEnemy`){let t=r.acquireRange>0?r.acquireRange:1/0;for(let r of n.values()){if(r.def.id===e.id||r.def.id===i||r.go===e.go||!A(e,r.def.id,n))continue;let c=k(e,r.def.id,n);if(!c)continue;let l=Math.hypot(c.x-a.x,c.y-a.y);(l<t||l===t&&(!o||r.def.id<o))&&(t=l,o=r.def.id,s=c)}}else s&&r.acquireRange>0&&Math.hypot(s.x-a.x,s.y-a.y)>r.acquireRange&&(s=void 0);return s&&(e.targetId=o,e.acquired=!0,e.lostNotified=!1,e.arrived=!1,E(e,`onAcquire`,`acquire`,s)),s},M=e=>(e.lostNotified||(e.lostNotified=!0,E(e,`onLost`,e.acquired?`target-unavailable`:`target-not-found`)),e.targetId=``,e.acquired=!1,e.arrived=!1,e.settings.lostTarget===`destroy`?(D(e),!1):e.settings.lostTarget===`stop`?(e.phase=`lost`,!1):(e.settings.lostTarget===`straight`&&(e.phase=`coasting`),!0)),N=(e,t)=>{if(e.arrived||(e.arrived=!0,E(e,`onArrive`,e.phase===`returning`?`returned`:`arrived`,t)),!r.has(e.id)||!f(e.go))return;let n=e.phase===`returning`?e.settings.returnArrival:e.settings.arrival;n===`destroy`?D(e):n===`return`?O(e):n===`stop`&&(e.phase=`arrived`)},P=(e,t)=>{if(o||!t||!e.projectileGuidance)return!1;let n=r.get(e.id);if(n?.go===t)return!0;n&&(C(n),r.delete(e.id));let a={...s,...e.projectileGuidance},c=a.enabled?b(e,t,a):``;if(c)return d(e.id,e.name+`: `+c),!1;if(!x(a))return d(e.id,e.name+`: 유도 이동 설정을 확인하세요.`),!1;let l=u(t),f=m(l);if(!f)return!1;let p={id:e.id,def:e,go:t,node:l,settings:a,playing:!0,ageMs:0,trackedMs:0,searchInMs:0,delayLeftMs:a.startDelayMs,heading:Math.atan2(f.b,f.a)-a.rotationOffset*Math.PI/180,phase:`outbound`,targetId:``,acquired:!1,lostNotified:!1,arrived:!1,returnStarted:!1,held:!1};r.set(e.id,p),a.enabled&&S(p);let h=i.get(e.id);return h&&(z(p,h),i.delete(e.id)),!0},F=(e,t,n)=>{if(e.ageMs+=t,e.settings.lifetimeMs>0&&e.ageMs>=e.settings.lifetimeMs){D(e);return}if(e.delayLeftMs>0){let n=Math.min(e.delayLeftMs,t);if(e.delayLeftMs-=n,t-=n,!t)return}if(e.searchInMs=Math.max(0,e.searchInMs-t),e.phase===`lost`&&e.settings.mode!==`return`)return;if(!e.returnStarted&&(e.phase===`outbound`||e.settings.mode===`return`&&(e.phase===`coasting`||e.phase===`lost`))&&(e.trackedMs+=t,e.settings.trackDurationMs>0&&e.trackedMs>=e.settings.trackDurationMs)){if(e.settings.mode===`return`)O(e);else if(e.settings.mode===`follow`){e.phase=`lost`;return}else e.phase=`coasting`}if(e.phase===`lost`||e.phase===`arrived`&&e.settings.mode!==`follow`||e.acquired&&e.targetId&&e.phase!==`coasting`&&(!k(e,e.targetId,n)||e.phase!==`returning`&&e.settings.target===`nearestEnemy`&&!A(e,e.targetId,n))&&!M(e)||!r.has(e.id)||!e.settings.enabled||!e.playing)return;let i;if(e.phase!==`coasting`&&(i=j(e,n)),!r.has(e.id)||!f(e.go)||!e.settings.enabled||!e.playing||!i&&e.phase!==`coasting`&&(e.phase===`arrived`||!M(e)))return;let a=h(e.go);if(!a)return;let o=a;if(e.phase===`arrived`){if(e.settings.mode!==`follow`||!i||Math.hypot(i.x-o.x,i.y-o.y)<=e.settings.stopDistance+.5)return;e.phase=`outbound`,e.arrived=!1}let s=t;for(;s>0&&r.has(e.id)&&f(e.go);){let t=Math.min(s,16),n=t/1e3;if(s-=t,i){if(Math.hypot(i.x-o.x,i.y-o.y)<=e.settings.stopDistance&&(N(e,i),e.phase!==`outbound`||e.settings.arrival!==`pass`))break;let t=Math.atan2(i.y-o.y,i.x-o.x),r=Math.atan2(Math.sin(t-e.heading),Math.cos(t-e.heading)),a=e.settings.turnRate*Math.PI/180*n;e.heading+=Math.max(-a,Math.min(a,r))}let r=e.settings.speed*n,a={x:o.x+Math.cos(e.heading)*r,y:o.y+Math.sin(e.heading)*r};if(i&&!e.arrived){let t=a.x-o.x,n=a.y-o.y,r=t*t+n*n,s=r?Math.max(0,Math.min(1,((i.x-o.x)*t+(i.y-o.y)*n)/r)):0,c={x:o.x+t*s,y:o.y+n*s};if(Math.hypot(i.x-c.x,i.y-c.y)<=e.settings.stopDistance){if((e.phase===`returning`?e.settings.returnArrival:e.settings.arrival)!==`pass`){let a=o.x-i.x,c=o.y-i.y,l=2*(a*t+c*n),u=a*a+c*c-e.settings.stopDistance*e.settings.stopDistance,d=l*l-4*r*u,f=r&&d>=0?Math.max(0,Math.min(1,(-l-Math.sqrt(d))/(2*r))):s;_(e,{x:o.x+t*f,y:o.y+n*f}),v(e),N(e,i);break}N(e,i)}}if(!_(e,a)){d(e.id,e.def.name+`: 부모 좌표를 변환할 수 없습니다.`);break}v(e),o=a}},I=(e=0)=>{if(o||!r.size||n.paused?.())return;let t=Math.min(1e3,Math.max(0,c(e)));if(!t)return;let i=new Map(n.actors().map(e=>[e.def.id,e]));for(let[e,n]of r){if(!i.has(e)||n.go.isDestroyed||n.go.scene===null){C(n),r.delete(e);continue}if(!n.settings.enabled||!n.playing||!f(n.go)||n.go.getData?.(`gameplayBlocked`))continue;S(n);let a=t;for(;a>0&&r.has(e)&&n.settings.enabled&&n.playing&&f(n.go);){let e=Math.min(a,16);F(n,e,i),a-=e}}},L=(e,t,i)=>{if(o)return!1;let a=r.get(t);if(!a){let e=n.actors().find(e=>e.def.id===t);e&&P(e.def,e.go),a=r.get(t)}if(!a)return!1;if([`enable`,`on`,`resume`,`restart`,`return`].includes(e)){let e=b(a.def,a.go,a.settings);if(e)return d(t,a.def.name+`: `+e),!1}if(e===`enable`||e===`on`||e===`resume`)a.settings.enabled=!0,a.playing=!0,S(a);else if(e===`disable`||e===`off`)a.settings.enabled=!1,C(a);else if(e===`pause`||e===`stop`)a.playing=!1;else if(e===`restart`)a.ageMs=a.trackedMs=a.searchInMs=0,a.delayLeftMs=a.settings.startDelayMs,a.phase=`outbound`,a.targetId=``,a.acquired=a.lostNotified=a.arrived=a.returnStarted=!1,a.settings.enabled=a.playing=!0,S(a);else if(e===`return`)a.settings.enabled=a.playing=!0,S(a),O(a);else if(e===`target`||e===`retarget`||e===`owner`){if(typeof i!=`string`||i.length>200)throw Error(`연결할 오브젝트 ID를 입력하세요.`);e===`owner`?a.settings.ownerId=i:(a.settings.target=`object`,a.settings.targetId=i,a.phase=`outbound`,a.trackedMs=0,a.returnStarted=!1),a.targetId=``,a.acquired=a.lostNotified=a.arrived=!1,a.searchInMs=0}else throw Error(`지원하지 않는 유도 이동 명령입니다.`);return!0},R=e=>({id:e.id,settings:l(e.settings),playing:e.playing,ageMs:e.ageMs,trackedMs:e.trackedMs,searchInMs:e.searchInMs,delayLeftMs:e.delayLeftMs,heading:e.heading,phase:e.phase,targetId:e.targetId,acquired:e.acquired,lostNotified:e.lostNotified,arrived:e.arrived,returnStarted:e.returnStarted,position:h(e.go)??{x:0,y:0}});function z(e,t){C(e),e.settings=l(t.settings);for(let n of[`playing`,`ageMs`,`trackedMs`,`searchInMs`,`delayLeftMs`,`heading`,`phase`,`targetId`,`acquired`,`lostNotified`,`arrived`,`returnStarted`])e[n]=t[n];let n=e.settings.enabled?b(e.def,e.go,e.settings):``;n?(e.settings.enabled=!1,d(e.id,e.def.name+`: `+n)):(_(e,t.position),v(e),e.node.body?.updateFromGameObject?.(),e.settings.enabled&&S(e))}return{bind:P,update:I,command:L,snapshot:()=>({version:1,projectiles:[...[...r.values()].map(R),...[...i.values()].map(l)]}),restore:e=>{if(o||!e||typeof e!=`object`)return!1;let t=e;if(t.version!==1||!Array.isArray(t.projectiles)||t.projectiles.length>5e3)return!1;let n=new Set;for(let e of t.projectiles){if(!e||typeof e.id!=`string`||!e.id||e.id.length>200||n.has(e.id)||!x(e.settings)||![`outbound`,`returning`,`coasting`,`arrived`,`lost`].includes(e.phase)||typeof e.targetId!=`string`||e.targetId.length>200||![`playing`,`acquired`,`lostNotified`,`arrived`,`returnStarted`].every(t=>typeof e[t]==`boolean`)||![`ageMs`,`trackedMs`,`searchInMs`,`delayLeftMs`].every(t=>Number.isFinite(e[t])&&e[t]>=0&&e[t]<=0xe8d4a51000)||!Number.isFinite(e.heading)||!e.position||![e.position.x,e.position.y].every(e=>Number.isFinite(e)&&Math.abs(e)<=1e9))return!1;n.add(e.id)}i.clear();for(let e of t.projectiles){let t=l(e),n=r.get(e.id);n?z(n,t):i.set(e.id,t)}return!0},inspect:()=>[...r.values()].map(e=>({id:e.id,enabled:e.settings.enabled,playing:e.playing,phase:e.phase,targetId:e.targetId,heading:e.heading*180/Math.PI,ageMs:e.ageMs,trackedMs:e.trackedMs,position:h(e.go)})),isDriving:e=>!!r.get(e)?.held,dispose:()=>{if(!o){o=!0;for(let e of r.values())C(e);r.clear(),i.clear(),a.clear()}}}},function Nr(e){let t=new Map,n=(e,t)=>{let n=e.atlas?.frames,r=typeof t==`string`?n?.findIndex(e=>e.name===t):-1;return r!==void 0&&r>=0?r:t===`__BASE`?0:Number(t)},r=(e,t=0)=>{let r=e.atlas?.frames,i=n(e,t),a=Number.isInteger(i)&&i>=0?r?.[i]:void 0;return{key:a?.pageId??e.id,frame:a?a.pageId?`${e.id}:${i}`:a.name:e.type===`image`?`__BASE`:t}};return{source:(e,i=0)=>{let a=r(e,i);if(!t.has(e.id))return a;let o=e.atlas?.frames[n(e,i)];return{key:e.id,frame:o?.name??a.frame}},register:n=>{for(let i of e.assets){let e=i.atlas?.frames;if(!e?.some(e=>e.pageId)||n.exists(i.id))continue;let a=e.map((e,t)=>{let a=r(i,t);if(!n.exists(a.key))return;let o=n.get(a.key);return o.has(a.frame)?o.get(a.frame):void 0});if(a.some(e=>!e))continue;let o=n.create(i.id,[]);if(!o)continue;let s=o.destroy;o.destroy=function(){this.source=[],this.dataSource=[],t.delete(i.id),s.call(this)};let c=(e,t)=>{if(Object.prototype.hasOwnProperty.call(o.frames,e))return;let n=o.source.indexOf(t.source);n<0&&(n=o.source.push(t.source)-1);let r=t.clone();r.texture=o,r.name=e,r.sourceIndex=n,r.source=t.source,r.customData=t.customData,r.customPivot=t.customPivot,r.pivotX=t.pivotX,r.pivotY=t.pivotY,r.rotated&&r.updateUVsInverted(),o.frames[e]=r,o.frameTotal++};e.forEach((e,t)=>c(e.name,a[t])),e.forEach((e,t)=>c(t,a[t])),c(`__BASE`,a[0]),o.firstFrame=e[0].name,t.set(i.id,o)}}}},function Pr(e,t,n,r){let i=new Map,a=new Map;function o(e){let t=[];for(let n of e.replaceAll(`\\`,`/`).split(`/`))if(n&&n!==`.`){if(n===`..`){if(!t.length)throw Error(`공통 코드의 경로가 프로젝트 밖을 가리킵니다: `+e);t.pop()}else t.push(n)}return t.join(`/`)}for(let t of e.scripts){if(!t.modulePath)continue;let e=o(t.modulePath);if(i.has(e))throw Error(`공통 코드 경로가 중복됩니다: `+e);i.set(e,t)}function s(e,t=``){let n=t.split(`/`).slice(0,-1).join(`/`),r=o(e.startsWith(`.`)?n+`/`+e:e),a=[r,r+`.js`,r+`/index.js`].find(e=>i.has(e));if(!a)throw Error(`연결된 공통 코드가 없습니다: `+e+(t?` ← `+t:``));return a}function c(e,r=``){let o=s(e,r),l=a.get(o);if(l)return l.exports;let u=i.get(o),d={exports:{}};a.set(o,d);try{return Function(`require`,`module`,`exports`,`ctx`,`Phaser`,u.code+`
-//# sourceURL=forge-script:///`+encodeURI(o)+`
-`)(e=>c(e,o),d,d.exports,t,n),d.exports}catch(e){throw a.delete(o),Error(u.name+` [`+o+`]: `+(e instanceof Error?e.message:String(e)))}}return{require:e=>c(e),list:()=>[...i].map(([e,t])=>({id:t.id,path:e,entry:!!t.moduleEntry,loaded:a.has(e)})),load(){for(let i of e.scripts)if(!i.modulePath||i.moduleEntry)try{let e=i.modulePath?c(i.modulePath):Function(`ctx`,`Phaser`,i.code+`
-//# sourceURL=forge-script:///`+encodeURIComponent(i.id)+`.js
-`)(t,n);e&&typeof e==`object`&&Object.assign(t.utils,e)}catch(e){r(e instanceof Error?e.message:String(e))}}}});
+    `;
+		if (config.modules.menu) {
+			const toggle = button("메뉴", openMenu, root);
+			toggle.className = "fgf-toggle";
+		};
+		status = make("div", "", root);
+		status.className = "fgf-status";
+		status.setAttribute("role", "status");
+		status.hidden = true;
+		overlay = make("div", "", root);
+		overlay.className = "fgf-overlay";
+		overlay.hidden = true;
+		panel = make("section", "", overlay);
+		panel.className = "fgf-panel";
+		panel.setAttribute("role", "dialog");
+		panel.setAttribute("aria-modal", "true");
+		panel.setAttribute("aria-label", "게임 공통 메뉴");
+		const header = make("div", "", panel);
+		header.className = "fgf-header";
+		heading = make("h2", "", header);
+		const closeButton = button("닫기", () => close(), header);
+		if (novel) {
+			closeButton.textContent = "×";
+			closeButton.setAttribute("aria-label", "닫기");
+			closeButton.title = "닫기";
+		};
+		body = make("div", "", panel);
+		body.className = "fgf-body";
+		root.addEventListener("keydown", keyDown);
+		(host.mount ?? document.body).append(root);
+		window.addEventListener("keydown", keyDown);
+		window.addEventListener("click", advanceDialoguePointer, true);
+	};
+	const transportListeners = new Set();
+	let transportClosed = false;
+	const transport = host.transport ?? {
+		async request(command) {
+			if (disposed || transportClosed) return {
+				id: command.id,
+				ok: false,
+				error: "서비스가 종료됐습니다."
+			};
+			if (command.authority === "server") return {
+				id: command.id,
+				ok: false,
+				error: "서버 권한 명령은 온라인 전송 어댑터가 필요합니다."
+			};
+			try {
+				const payload = command.payload && typeof command.payload === "object" ? command.payload : {}, ok = await api.action(command.type, typeof payload.id === "string" ? payload.id : "", payload.value);
+				if (disposed || transportClosed) return {
+					id: command.id,
+					ok: false,
+					error: "서비스가 종료됐습니다."
+				};
+				for (const listener of transportListeners) try {
+					listener(copy(command));
+				} catch (error) {
+					host.error(String(error));
+				};
+				return {
+					id: command.id,
+					ok: ok !== false,
+					value: ok
+				};
+			} catch (error) {
+				return {
+					id: command.id,
+					ok: false,
+					error: String(error)
+				};
+			}
+		},
+		subscribe(listener) {
+			if (disposed || transportClosed) return () => {};
+			transportListeners.add(listener);
+			return () => {
+				transportListeners.delete(listener);
+			};
+		},
+		dispose() {
+			transportClosed = true;
+			transportListeners.clear();
+		}
+	};
+	const api = {
+		transport,
+		ready: Promise.all([ready, readingReady]),
+		openMenu,
+		openSave: () => openSlots("save"),
+		openLoad: () => openSlots("load"),
+		openSettings,
+		startDialogue,
+		next,
+		choose,
+		close,
+		newGame,
+		title,
+		save,
+		load,
+		remove,
+		slots,
+		settings: () => copy(settings),
+		applySettings,
+		capturesInput: () => !!view,
+		status: () => ({
+			view,
+			dialogueId,
+			nodeId,
+			busy
+		}),
+		history: () => copy(readingHistory),
+		dialogue: (id) => {
+			const found = config?.dialogues.find((dialogue) => dialogue.id === id) ?? config?.dialogues.find((dialogue) => dialogue.name === id);
+			return found ? copy(found) : undefined;
+		},
+		dialogueNodeIds: (id) => config?.dialogues.find((dialogue) => dialogue.id === id)?.nodes.map((node) => node.id) ?? [],
+		setChoiceGuard: (guard) => {
+			choiceGuard = guard;
+			refreshChoices();
+			return () => {
+				if (choiceGuard === guard) {
+					choiceGuard = undefined;
+					refreshChoices();
+				}
+			};
+		},
+		readingOptions: () => novel ? { ...reading } : undefined,
+		pauseReading: (paused) => {
+			readingPaused = paused;
+		},
+		setReadingOptions: (input) => {
+			if (Number.isFinite(input.textSpeed)) reading.textSpeed = Math.max(0, Math.min(150, input.textSpeed));
+			if (Number.isFinite(input.autoDelay)) reading.autoDelay = Math.max(500, Math.min(15e3, input.autoDelay));
+			if (typeof input.auto === "boolean") reading.auto = input.auto;
+			if (typeof input.skipRead === "boolean") reading.skipRead = input.skipRead;
+			if (!reading.textSpeed) revealAll?.();
+			refreshReadingControls?.();
+			if (!revealing) rescheduleReading?.();
+			void host.storage.save(prefix + ".reading", reading).catch(fail);
+			return { ...reading };
+		},
+		on(event, listener) {
+			const list = events.get(event) ?? new Set();
+			list.add(listener);
+			events.set(event, list);
+			return () => list.delete(listener);
+		},
+		async action(command, id = "", input) {
+			if (command === "menu") return openMenu();
+			if (command === "save-menu") return openSlots("save");
+			if (command === "load-menu") return openSlots("load");
+			if (command === "settings") return openSettings();
+			if (command === "dialogue") return startDialogue(id, input && typeof input === "object" && "nodeId" in input ? String(input.nodeId) : undefined);
+			if (command === "save") return save(id || "1");
+			if (command === "load") return load(id || "1");
+			if (command === "remove") return remove(id);
+			if (command === "new-game") return newGame();
+			if (command === "title") return title();
+			if (command === "close" || command === "resume") {
+				close();
+				return true;
+			};
+			if (command === "setting") return applySettings({ [id]: input });
+			if (command === "next") return next();
+			return false;
+		},
+		dispose() {
+			if (disposed) return;
+			close(false);
+			disposed = true;
+			clearTimeout(toastTimer);
+			flushReadSeen();
+			stopReading();
+			cancelFrame(gamepadRequest);
+			if (typeof window !== "undefined") window.removeEventListener("keydown", keyDown);
+			if (typeof window !== "undefined") window.removeEventListener("click", advanceDialoguePointer, true);
+			root?.remove();
+			events.clear();
+			choiceGuard = undefined;
+			transport.dispose();
+		}
+	};
+	return api;
+},function createRuntimeObservatory(host) {
+	let config = {
+		enabled: false,
+		recording: true,
+		watches: [],
+		functions: []
+	};
+	let sequence = 0;
+	let events = [];
+	let changes = [];
+	let stopped = "";
+	const last = new Map();
+	const safe = (value) => {
+		if (typeof value === "string") return value.slice(0, 1e4);
+		if (typeof value === "number") return Number.isFinite(value) ? value : String(value);
+		if (value === null || typeof value === "boolean" || value === undefined) return value;
+		try {
+			const text = JSON.stringify(value);
+			return text.length > 1e4 ? text.slice(0, 1e4) + "…" : JSON.parse(text);
+		} catch {
+			return "표시할 수 없는 값";
+		}
+	};
+	const update = (watch, value, available, cause) => {
+		const next = safe(value), previous = last.get(watch.id);
+		const changed = !!previous && (available !== previous.available || JSON.stringify(previous.value) !== JSON.stringify(next));
+		const matched = available && (watch.stop === "change" ? changed : watch.stop === "eq" ? String(next) === watch.threshold : watch.stop === "gt" ? Number(next) > Number(watch.threshold) : watch.stop === "lt" ? Number(next) < Number(watch.threshold) : false);
+		last.set(watch.id, {
+			value: next,
+			available,
+			matched
+		});
+		const reading = {
+			id: watch.id,
+			value: next,
+			available,
+			time: Date.now(),
+			sequence: ++sequence,
+			changed,
+			cause
+		};
+		if (config.recording && (changed || !previous)) changes.push(reading);
+		if (changes.length > 500) changes.splice(0, changes.length - 500);
+		if (previous && matched && (watch.stop === "change" || !previous.matched)) {
+			stopped = watch.label + " · " + (watch.stop === "change" ? "값 변경" : "중단 조건 충족");
+			host.pause();
+		};
+		return reading;
+	};
+	const sample = () => {
+		if (!config.enabled || !config.watches.length) return [];
+		const snapshot = host.sample(config.watches);
+		return config.watches.map((watch) => {
+			if (watch.kind === "variable") {
+				const name = host.variableName(watch.targetId);
+				return update(watch, name ? snapshot.values[name] : undefined, !!name && Object.hasOwn(snapshot.values, name));
+			};
+			if (watch.kind === "object") {
+				const object = snapshot.objects.find((o) => o.id === watch.targetId && o.sceneId === watch.sceneId && o.active);
+				const allowed = [
+					"x",
+					"y",
+					"rotation",
+					"opacity",
+					"scaleX",
+					"scaleY",
+					"visible",
+					"worldX",
+					"worldY",
+					"velocityX",
+					"velocityY"
+				];
+				const ok = !!object && allowed.includes(watch.property ?? "") && object[watch.property] !== undefined;
+				return update(watch, ok ? object[watch.property] : undefined, ok);
+			};
+			const binding = snapshot.states.find((s) => s.sceneId === watch.sceneId && s.bindingId === watch.bindingId && s.owner === watch.owner);
+			const parameter = binding?.parameters?.find((p) => p.id === watch.targetId);
+			return update(watch, parameter?.value, !!parameter);
+		});
+	};
+	const flush = () => {
+		if (!config.enabled) return;
+		const readings = sample();
+		// Full current values plus bounded intermediate changes (including multiple writes in one tick).
+		host.send({
+			readings: [...changes, ...readings.map((r) => ({
+				...r,
+				changed: false
+			}))],
+			events,
+			...stopped ? {
+				paused: true,
+				reason: stopped
+			} : {}
+		});
+		changes = [];
+		events = [];
+		stopped = "";
+	};
+	return {
+		configure(next) {
+			const enabled = !!next.enabled;
+			config = {
+				enabled,
+				recording: next.recording !== false,
+				watches: Array.isArray(next.watches) ? next.watches.filter((w) => w && typeof w.id === "string" && [
+					"variable",
+					"object",
+					"state"
+				].includes(w.kind)).slice(0, 256) : [],
+				functions: Array.isArray(next.functions) ? next.functions.filter((id) => typeof id === "string").slice(0, 256) : [],
+				sceneId: next.sceneId
+			};
+			const ids = new Set(config.watches.map((w) => w.id));
+			for (const id of last.keys()) if (!ids.has(id)) last.delete(id);
+			if (!enabled) {
+				last.clear();
+				changes = [];
+				events = [];
+			};
+			flush();
+		},
+		watching(functionId, stack, sceneId) {
+			return config.enabled && config.recording && (!config.sceneId || config.sceneId === sceneId) && (config.functions.includes(functionId) || stack.some((id) => config.functions.includes(id)));
+		},
+		observe(entry, sceneId) {
+			if (!config.enabled || !config.recording) return;
+			const safeEntry = {
+				...entry,
+				args: entry.args ? safe(entry.args) : undefined,
+				before: safe(entry.before),
+				after: safe(entry.after),
+				callId: sceneId + ":" + entry.callId,
+				parentCallId: entry.parentCallId ? sceneId + ":" + entry.parentCallId : undefined,
+				sceneId,
+				sequence: ++sequence
+			};
+			events.push(safeEntry);
+			if (events.length > 500) events.splice(0, events.length - 500);
+		},
+		variableChanged(id, before, after, cause) {
+			if (!config.enabled) return;
+			for (const watch of config.watches) if (watch.kind === "variable" && watch.targetId === id) {
+				if (!last.has(watch.id)) update(watch, before, true);
+				update(watch, after, true, cause);
+			}
+		},
+		flush,
+		clear() {
+			events = [];
+			changes = [];
+			last.clear();
+		},
+		dispose() {
+			config.enabled = false;
+			events = [];
+			changes = [];
+			last.clear();
+		}
+	};
+},function createLightingRuntime(project, definition, scene, actors, error) {
+	const sceneState = {
+		enabled: false,
+		ambientColor: "#ffffff",
+		ambientIntensity: .25,
+		maxLights: 16,
+		...definition.lighting
+	};
+	const records = new Map();
+	const surfaces = new Map();
+	const defaults = {
+		enabled: true,
+		kind: "point",
+		color: "#ffd49a",
+		radius: 240,
+		height: 32,
+		intensity: 1.5,
+		direction: 0,
+		coneAngle: 70,
+		softness: .25,
+		follow: "self",
+		targetId: "",
+		followRotation: false,
+		aimAtPointer: false,
+		offsetX: 0,
+		offsetY: 0,
+		flicker: 0,
+		flickerSpeed: 7,
+		pulse: 0,
+		pulseSpeed: 1
+	};
+	let disposed = false, warned = false;
+	const webgl = () => !!scene.game?.renderer?.gl;
+	const color = (value) => parseInt(value.slice(1), 16);
+	const ambient = () => {
+		const c = color(sceneState.ambientColor), v = sceneState.ambientIntensity;
+		return Math.round((c >> 16 & 255) * v) << 16 | Math.round((c >> 8 & 255) * v) << 8 | Math.round((c & 255) * v);
+	};
+	const eachLeaf = (go, apply) => {
+		apply(go);
+		for (const child of go.list ?? []) eachLeaf(child, apply);
+	};
+	const receives = (o) => {
+		let current = o, receive = o.lighting?.receive ?? "auto";
+		const visited = new Set();
+		while (current && !visited.has(current.id)) {
+			visited.add(current.id);
+			if (receive === "auto" && current.lighting?.receive && current.lighting.receive !== "auto") receive = current.lighting.receive;
+			if (current.fixed || current.gameUi?.enabled) return receive === "on";
+			current = current.parentId ? surfaces.get(current.parentId)?.def : undefined;
+		};
+		return receive !== "off";
+	};
+	const applySurface = (record) => {
+		const enabled = sceneState.enabled && webgl() && receives(record.def), settings = record.def.lighting;
+		eachLeaf(record.go, (go) => {
+			go.setLighting?.(enabled);
+			if (go.setSelfShadow) {
+				go.selfShadow = { ...go.selfShadow };
+				go.setSelfShadow(settings?.selfShadow ?? false, settings?.penumbra ?? .5, settings?.diffuseFlatThreshold ?? 1 / 3);
+			}
+		});
+	};
+	const applyScene = () => {
+		if (sceneState.enabled && !webgl()) {
+			if (!warned) {
+				warned = true;
+				error("이 실행 환경은 WebGL 조명을 지원하지 않습니다. WebGL 실행 환경에서 확인하세요.");
+			}
+		};
+		if (sceneState.enabled && webgl()) scene.lights.enable().setAmbientColor(ambient());
+		else scene.lights?.disable();
+		for (const record of surfaces.values()) applySurface(record);
+	};
+	const bind = (o, go) => {
+		if (disposed || !go) return;
+		surfaces.set(o.id, {
+			def: o,
+			go
+		});
+		applySurface({
+			def: o,
+			go
+		});
+		if (o.lighting?.light) {
+			const previous = records.get(o.id);
+			if (previous) {
+				scene.lights?.removeLight(previous.light);
+				records.delete(o.id);
+			};
+			const options = {
+				...defaults,
+				...o.lighting.light
+			};
+			const light = scene.lights?.addLight(o.x, o.y, options.radius, color(options.color), 0);
+			if (light) records.set(o.id, {
+				def: o,
+				go,
+				options,
+				light
+			});
+		}
+	};
+	const visible = (go) => {
+		for (let node = go; node; node = node.parentContainer) if (node.active === false || node.visible === false) return false;
+		return true;
+	};
+	const pointerPoint = () => {
+		const pointer = scene.input?.activePointer, camera = (pointer && scene.cameras.getCamerasBelowPointer?.(pointer)?.find((c) => c.name !== "게임 UI")) ?? scene.cameras.main;
+		return pointer ? camera.getWorldPoint(pointer.x, pointer.y) : {
+			x: 0,
+			y: 0
+		};
+	};
+	const update = () => {
+		if (disposed) return;
+		const time = scene.time.now / 1e3;
+		for (const [id, record] of records) {
+			const { go, options: o, light } = record;
+			if (go.active === false) {
+				if (go.scene == null) {
+					scene.lights.removeLight(light);
+					records.delete(id);
+					surfaces.delete(id);
+				} else light.setVisible(false).setIntensity(0);
+				continue;
+			};
+			const target = o.follow === "object" ? scene.objectMap?.get(o.targetId) : go;
+			if (!sceneState.enabled || !o.enabled || !visible(go) || o.follow === "object" && (!target || !visible(target))) {
+				light.setVisible(false).setIntensity(0);
+				continue;
+			};
+			light.setVisible(true);
+			let x, y, rotation = 0;
+			if (o.follow === "pointer") {
+				const p = pointerPoint();
+				x = p.x + o.offsetX;
+				y = p.y + o.offsetY;
+			} else {
+				const anchor = target.getData?.("forgeAnchor") ?? target, matrix = anchor.getWorldTransformMatrix?.();
+				if (matrix) {
+					x = matrix.tx + matrix.a * o.offsetX + matrix.c * o.offsetY;
+					y = matrix.ty + matrix.b * o.offsetX + matrix.d * o.offsetY;
+					rotation = Math.atan2(matrix.b, matrix.a);
+				} else {
+					x = anchor.x + o.offsetX;
+					y = anchor.y + o.offsetY;
+					rotation = anchor.rotation ?? 0;
+				}
+			};
+			light.setPosition(x, y).setRadius(o.radius).setColor(color(o.color)).setZ(o.height);
+			let intensity = o.intensity;
+			if (o.pulse) intensity *= 1 - o.pulse * (.5 + .5 * Math.sin(time * o.pulseSpeed * Math.PI * 2));
+			if (o.flicker) {
+				const phase = [...id].reduce((v, c) => v + c.charCodeAt(0), 0);
+				const wave = (Math.sin(time * o.flickerSpeed * 5.71 + phase) + Math.sin(time * o.flickerSpeed * 9.13 + phase * .3) + 2) / 4;
+				intensity *= 1 - o.flicker * wave;
+			};
+			light.setIntensity(Math.max(0, intensity));
+			if (o.kind === "cone") {
+				let direction = o.direction * Math.PI / 180;
+				if (o.aimAtPointer) {
+					const p = pointerPoint();
+					direction += Math.atan2(p.y - y, p.x - x);
+				} else if (o.followRotation) direction += rotation;
+				const outer = o.coneAngle * Math.PI / 180;
+				light.setCone(direction, outer * (1 - o.softness), outer);
+			} else light.disableCone();
+		}
+	};
+	const command = (name, targetId, value) => {
+		if (!targetId) {
+			if (name === "enable" || name === "disable" || name === "toggle") sceneState.enabled = name === "toggle" ? !sceneState.enabled : name === "enable";
+			else if (name === "ambient") {
+				const n = Number(value);
+				if (!Number.isFinite(n)) throw Error("기본 밝기는 숫자여야 합니다.");
+				sceneState.ambientIntensity = Math.max(0, Math.min(1, n));
+			} else if (name === "color" && /^#[0-9a-fA-F]{6}$/.test(String(value))) sceneState.ambientColor = String(value);
+			else throw Error("씬에서 지원하지 않는 조명 조작입니다.");
+			applyScene();
+			update();
+			return true;
+		};
+		const record = records.get(targetId);
+		if (!record) throw Error("대상 오브젝트에 광원이 없습니다.");
+		const o = record.options;
+		if (name === "enable" || name === "disable" || name === "toggle") o.enabled = name === "toggle" ? !o.enabled : name === "enable";
+		else if (name === "color") {
+			if (!/^#[0-9a-fA-F]{6}$/.test(String(value))) throw Error("광원 색은 #RRGGBB 형식이어야 합니다.");
+			o.color = String(value);
+		} else if (name === "intensity" || name === "radius") {
+			const n = Number(value);
+			if (!Number.isFinite(n)) throw Error("광원 값은 숫자여야 합니다.");
+			o[name] = name === "radius" ? Math.max(1, Math.min(16384, n)) : Math.max(0, Math.min(20, n));
+		} else throw Error("지원하지 않는 광원 조작입니다.");
+		update();
+		return true;
+	};
+	const snapshot = () => ({
+		scene: { ...sceneState },
+		lights: Object.fromEntries([...records].map(([id, r]) => [id, { ...r.options }]))
+	});
+	const restore = (value) => {
+		if (!value || typeof value !== "object") return;
+		if (typeof value.scene?.enabled === "boolean") sceneState.enabled = value.scene.enabled;
+		if (typeof value.scene?.ambientColor === "string" && /^#[0-9a-fA-F]{6}$/.test(value.scene.ambientColor)) sceneState.ambientColor = value.scene.ambientColor;
+		if (Number.isFinite(value.scene?.ambientIntensity)) sceneState.ambientIntensity = Math.max(0, Math.min(1, value.scene.ambientIntensity));
+		for (const [id, r] of records) {
+			const saved = value.lights?.[id];
+			if (!saved) continue;
+			for (const key of [
+				"enabled",
+				"color",
+				"radius",
+				"intensity"
+			]) {
+				if (key === "enabled" && typeof saved[key] === "boolean") r.options[key] = saved[key];
+				else if (key === "color" && typeof saved[key] === "string" && /^#[0-9a-fA-F]{6}$/.test(saved[key])) r.options[key] = saved[key];
+				else if (key === "radius" && Number.isFinite(saved[key])) r.options[key] = Math.max(1, Math.min(16384, saved[key]));
+				else if (key === "intensity" && Number.isFinite(saved[key])) r.options[key] = Math.max(0, Math.min(20, saved[key]));
+			}
+		};
+		applyScene();
+		update();
+	};
+	const dispose = () => {
+		if (disposed) return;
+		disposed = true;
+		scene.events.off("postupdate", update);
+		for (const r of records.values()) scene.lights?.removeLight(r.light);
+		records.clear();
+		surfaces.clear();
+	};
+	for (const actor of actors()) bind(actor.def, actor.go);
+	applyScene();
+	update();
+	scene.events.on("postupdate", update);
+	scene.events.once("shutdown", dispose);
+	return {
+		bind,
+		update,
+		command,
+		snapshot,
+		restore,
+		dispose
+	};
+},function createRequirementsRuntime(project, host = {}) {
+	const definitions = new Map((project.definitions ?? []).map((value) => [value.id, value])), rules = new Map((project.conditionRules ?? []).map((value) => [value.id, value])), variables = new Map(project.variables.map((value) => [value.id, value])), items = new Map((project.items ?? []).map((value) => [value.id, value]));
+	let level = 1, points = 0;
+	const skills = new Map();
+	const skill = (id) => definitions.get(id) ?? [...definitions.values()].find((value) => value.key === id);
+	const rule = (id) => rules.get(id) ?? [...rules.values()].find((value) => value.key === id);
+	const fail = (message) => ({
+		passed: false,
+		reasons: [message]
+	}), pass = () => ({
+		passed: true,
+		reasons: []
+	});
+	const finite = (value, min, max) => typeof value === "number" && Number.isFinite(value) && Number.isInteger(value) && value >= min && value <= max;
+	const compare = (left, right, op) => typeof left !== typeof right ? false : op === "eq" ? left === right : op === "ne" ? left !== right : typeof left === "number" && typeof right === "number" ? op === "lt" ? left < right : op === "lte" ? left <= right : op === "gt" ? left > right : op === "gte" ? left >= right : false : false;
+	const comparison = {
+		eq: "같음",
+		ne: "다름",
+		lt: "미만",
+		lte: "이하",
+		gt: "초과",
+		gte: "이상"
+	};
+	const variable = (id) => {
+		if (host.variable) return host.variable(id);
+		const value = variables.get(id);
+		return value?.type === "number" ? Number(value.value) : value?.type === "boolean" ? value.value === "true" : value?.value;
+	};
+	function evaluate(node, active, budget, depth = 0) {
+		if (!node || typeof node !== "object" || --budget.remaining < 0 || depth > 32) return fail("조건의 항목 수나 연결 깊이를 확인하세요.");
+		if (node.type === "all" || node.type === "any") {
+			if (!Array.isArray(node.children) || node.children.length > 32) return fail("조건 묶음의 항목을 확인하세요.");
+			const results = node.children.map((child) => evaluate(child, active, budget, depth + 1));
+			if (node.type === "all") return {
+				passed: results.every((result) => result.passed),
+				reasons: [...new Set(results.flatMap((result) => result.reasons))].slice(0, 32)
+			};
+			if (results.some((result) => result.passed)) return pass();
+			return fail(results.length ? "다음 중 하나가 필요합니다: " + [...new Set(results.flatMap((result) => result.reasons))].slice(0, 8).join(" / ") : "충족할 대안 조건이 없습니다.");
+		};
+		if (node.type === "condition") {
+			const value = rules.get(node.ruleId);
+			if (!value) return fail("참조한 공통 조건이 없습니다.");
+			if (active.has(value.id)) return fail(value.name + ": 공통 조건이 순환 참조됩니다.");
+			active.add(value.id);
+			const result = evaluate(value.condition, active, budget, depth + 1);
+			active.delete(value.id);
+			return result;
+		};
+		let current, expected = node.type === "variable" || node.type === "item" || node.type === "skill" || node.type === "profile" ? node.value : undefined, label = "조건";
+		if (node.type === "variable") {
+			const value = variables.get(node.variableId);
+			if (!value) return fail("조건의 변수가 없습니다.");
+			current = variable(value.id);
+			label = value.label || value.name;
+			if (typeof expected !== value.type) return fail(label + ": 비교값의 유형을 확인하세요.");
+		} else if (node.type === "item") {
+			const value = items.get(node.itemId);
+			if (!value) return fail("조건의 아이템이 없습니다.");
+			current = host.itemCount ? host.itemCount(value.id) : value.initialQuantity;
+			label = value.name + " 수량";
+		} else if (node.type === "skill") {
+			const value = definitions.get(node.definitionId);
+			if (value?.kind !== "skill") return fail("조건의 스킬 데이터가 없습니다.");
+			current = skills.get(value.id) ?? 0;
+			label = value.name + " 습득 단계";
+		} else if (node.type === "profile") {
+			current = node.property === "level" ? level : node.property === "points" ? points : undefined;
+			label = node.property === "level" ? "레벨" : "스킬 포인트";
+		} else return fail("지원하지 않는 선행조건입니다.");
+		if (typeof current === "number" && (!Number.isFinite(current) || typeof expected !== "number" || !Number.isFinite(expected))) return fail(label + ": 유효한 숫자가 필요합니다.");
+		return compare(current, expected, node.compare) ? pass() : fail(label + " " + String(expected) + " " + (comparison[node.compare] ?? "비교값") + " 필요 · 현재 " + String(current));
+	}
+	const check = (id, phase = "use") => {
+		if (![
+			"display",
+			"learn",
+			"use"
+		].includes(phase)) return fail("조건 판정 단계를 확인하세요.");
+		const value = skill(id);
+		if (value) {
+			const node = value.requirements?.[phase];
+			return node ? evaluate(node, new Set(), { remaining: 2048 }) : pass();
+		};
+		const item = items.get(id) ?? [...items.values()].find((item) => item.key === id);
+		if (item) {
+			const node = item.requirements?.[phase];
+			return node ? evaluate(node, new Set(), { remaining: 2048 }) : pass();
+		};
+		const valueRule = rule(id);
+		if (valueRule) return evaluate(valueRule.condition, new Set([valueRule.id]), { remaining: 2048 });
+		return fail("판정할 설정 데이터나 공통 조건이 없습니다.");
+	};
+	const getRank = (id) => {
+		const value = skill(id);
+		return value?.kind === "skill" ? skills.get(value.id) ?? 0 : 0;
+	};
+	const checkLearn = (id) => {
+		const value = skill(id);
+		if (value?.kind !== "skill") return fail("습득할 스킬 데이터가 없습니다.");
+		const result = check(value.id, "learn");
+		if (!result.passed) return result;
+		if (getRank(value.id) >= (value.skillLearning?.maxRank ?? 1)) return fail(value.name + ": 이미 최대 단계까지 배웠습니다.");
+		const cost = value.skillLearning?.pointCost ?? 0;
+		if (points < cost) return fail("스킬 포인트 " + cost + " 필요 · 현재 " + points);
+		return pass();
+	};
+	const learn = (id) => {
+		const result = checkLearn(id);
+		if (!result.passed) return {
+			...result,
+			rank: getRank(id),
+			spent: 0
+		};
+		const value = skill(id), spent = value.skillLearning?.pointCost ?? 0, rank = getRank(value.id) + 1;
+		points -= spent;
+		skills.set(value.id, rank);
+		return {
+			passed: true,
+			reasons: [],
+			rank,
+			spent
+		};
+	};
+	const use = (id, options = {}) => {
+		const value = skill(id);
+		if (value?.kind !== "skill") return fail("사용할 스킬 데이터가 없습니다.");
+		if (options.requireLearned && getRank(value.id) < 1) return fail(value.name + ": 먼저 스킬을 배워야 합니다.");
+		return check(value.id, "use");
+	};
+	const snapshot = () => ({
+		version: 1,
+		level,
+		points,
+		skills: Object.fromEntries(skills)
+	});
+	const restore = (value) => {
+		if (!value || typeof value !== "object") return false;
+		const input = value;
+		if (input.version !== undefined && input.version !== 1 || !finite(input.level, 1, 1e6) || !finite(input.points, 0, 1e9) || !input.skills || typeof input.skills !== "object" || Array.isArray(input.skills) || Object.keys(input.skills).length > 1e4) return false;
+		const next = new Map();
+		for (const [id, rank] of Object.entries(input.skills)) {
+			const d = definitions.get(id);
+			if (d?.kind !== "skill" || !finite(rank, 0, d.skillLearning?.maxRank ?? 1)) return false;
+			if (rank > 0) next.set(id, rank);
+		};
+		level = input.level;
+		points = input.points;
+		skills.clear();
+		for (const [id, rank] of next) skills.set(id, rank);
+		return true;
+	};
+	const reset = () => {
+		level = 1;
+		points = 0;
+		skills.clear();
+		if (project.progression) restore(project.progression);
+	};
+	const setLevel = (value) => {
+		if (!finite(value, 1, 1e6)) throw Error("레벨은 1~1,000,000의 정수로 설정하세요.");
+		level = value;
+		return level;
+	};
+	const setPoints = (value) => {
+		if (!finite(value, 0, 1e9)) throw Error("스킬 포인트는 0~1,000,000,000의 정수로 설정하세요.");
+		points = value;
+		return points;
+	};
+	const setRank = (id, value) => {
+		const definition = skill(id);
+		if (definition?.kind !== "skill") throw Error("설정할 스킬 데이터가 없습니다.");
+		if (!finite(value, 0, definition.skillLearning?.maxRank ?? 1)) throw Error("스킬 단계가 허용 범위를 벗어났습니다.");
+		if (value === 0) skills.delete(definition.id);
+		else skills.set(definition.id, value);
+		return value;
+	};
+	reset();
+	return {
+		check,
+		progression: {
+			check: checkLearn,
+			learn,
+			use,
+			getRank,
+			setLevel,
+			setPoints,
+			addPoints: (value) => setPoints(points + value),
+			setRank,
+			snapshot,
+			restore,
+			reset
+		}
+	};
+},function createInteractionRuntime(host) {
+	const regions = new Map(), keys = new Map(), pending = new Map();
+	let disposed = false;
+	const triggers = [
+		"enter",
+		"stay",
+		"exit",
+		"interact"
+	];
+	const finite = (value, fallback = 0) => typeof value === "number" && Number.isFinite(value) ? value : fallback;
+	const anchor = (go) => go?.getData?.("forgeAnchor") ?? go;
+	const usable = (go) => {
+		if (!go || go.active === false || go.visible === false) return false;
+		for (let node = anchor(go), count = 0; node; node = node.parentContainer) {
+			if (++count > 64 || node.active === false || node.visible === false) return false;
+		};
+		return !go.getData?.("forgeUiTransient");
+	};
+	const matrix = (go) => {
+		go = anchor(go);
+		if (!go) return;
+		try {
+			if (go.getWorldTransformMatrix) {
+				const m = go.getWorldTransformMatrix();
+				if ([
+					m.a,
+					m.b,
+					m.c,
+					m.d,
+					m.tx,
+					m.ty
+				].every(Number.isFinite)) return {
+					a: m.a,
+					b: m.b,
+					c: m.c,
+					d: m.d,
+					tx: m.tx,
+					ty: m.ty
+				};
+				return;
+			}
+		} catch {
+			return;
+		};
+		const rotation = finite(go.rotation), sx = finite(go.scaleX, 1), sy = finite(go.scaleY, 1), cos = Math.cos(rotation), sin = Math.sin(rotation);
+		if (go.parentContainer) return;
+		return {
+			a: cos * sx,
+			b: sin * sx,
+			c: -sin * sy,
+			d: cos * sy,
+			tx: finite(go.x),
+			ty: finite(go.y)
+		};
+	};
+	const local = (m, x, y) => {
+		const determinant = m.a * m.d - m.b * m.c;
+		if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-9) return;
+		const dx = x - m.tx, dy = y - m.ty;
+		return {
+			x: (m.d * dx - m.c * dy) / determinant,
+			y: (m.a * dy - m.b * dx) / determinant
+		};
+	};
+	const keyDown = (key) => !!host.isKeyDown(key);
+	const load = (region, saved) => {
+		region.enabled = saved.enabled;
+		region.fired = new Set(saved.fired);
+		region.inside = new Map(saved.inside.map((visit) => [visit.id, {
+			elapsed: visit.elapsed,
+			fired: new Set(visit.fired)
+		}]));
+	};
+	const bind = (def, go) => {
+		if (disposed || !def.interaction || !go) return;
+		const previous = regions.get(def.id);
+		if (previous && previous.go === go) {
+			previous.def = def;
+			return;
+		};
+		const region = {
+			def,
+			go,
+			enabled: def.interaction.enabled,
+			inside: new Map(),
+			fired: new Set()
+		};
+		regions.set(def.id, region);
+		const saved = pending.get(def.id);
+		if (saved) {
+			load(region, saved);
+			pending.delete(def.id);
+		};
+		const key = def.interaction.key;
+		if (!keys.has(key)) keys.set(key, keyDown(key));
+	};
+	const emit = (region, trigger, otherId, visit) => {
+		if (!region.enabled || !usable(region.go) || regions.get(region.def.id) !== region) return;
+		const repeat = region.def.interaction?.repeat ?? "always";
+		if (repeat === "once" && region.fired.has(trigger) || repeat === "reenter" && visit.fired.has(trigger)) return;
+		region.fired.add(trigger);
+		visit.fired.add(trigger);
+		host.fire(region.def.id, trigger, otherId);
+	};
+	const update = (delta) => {
+		if (disposed) return;
+		const entries = host.actors().slice(), live = new Set();
+		for (const entry of entries) if (entry.def.interaction && entry.go?.active !== false) {
+			bind(entry.def, entry.go);
+			live.add(entry.def.id);
+		};
+		for (const id of regions.keys()) if (!live.has(id)) regions.delete(id);
+		const pressed = new Set();
+		for (const key of new Set([...keys.keys(), ...[...regions.values()].map((region) => region.def.interaction.key)])) {
+			const down = keyDown(key);
+			if (down && keys.get(key) === false) pressed.add(key);
+			keys.set(key, down);
+		};
+		const choices = new Map();
+		for (const region of [...regions.values()]) {
+			const settings = region.def.interaction;
+			if (!region.enabled || !usable(region.go)) {
+				region.inside.clear();
+				continue;
+			};
+			const area = settings.sizeMode === "object" && settings.areaObjectId ? entries.find((entry) => entry.def.id === settings.areaObjectId) : {
+				def: region.def,
+				go: region.go
+			}, areaGo = area && anchor(area.go);
+			let m = area && usable(area.go) ? matrix(area.go) : undefined;
+			if (!area || !m) {
+				for (const [id, visit] of region.inside) emit(region, "exit", id, visit);
+				region.inside.clear();
+				continue;
+			};
+			const objectSize = settings.sizeMode === "object", nativeWidth = finite(areaGo?.width, area.def.width), nativeHeight = finite(areaGo?.height, area.def.height), width = objectSize ? nativeWidth : settings.width, height = objectSize ? nativeHeight : settings.height, baseX = objectSize ? 1 : finite(areaGo?.getData?.("forgeScaleX"), area.def.kind === "sprite" && nativeWidth > 0 ? area.def.width / nativeWidth : 1), baseY = objectSize ? 1 : finite(areaGo?.getData?.("forgeScaleY"), area.def.kind === "sprite" && nativeHeight > 0 ? area.def.height / nativeHeight : 1);
+			if (!objectSize) {
+				if (Math.abs(baseX) < 1e-9 || Math.abs(baseY) < 1e-9) continue;
+				m = {
+					...m,
+					a: m.a / baseX,
+					b: m.b / baseX,
+					c: m.c / baseY,
+					d: m.d / baseY
+				};
+			};
+			const offsetX = settings.offsetX + (.5 - finite(areaGo?.originX, .5)) * nativeWidth * baseX, offsetY = settings.offsetY + (.5 - finite(areaGo?.originY, .5)) * nativeHeight * baseY, round = objectSize ? area.def.kind === "ellipse" : settings.shape === "circle", rx = objectSize ? width / 2 : settings.radius, ry = objectSize ? height / 2 : settings.radius, inside = new Set(), center = {
+				x: m.tx + m.a * offsetX + m.c * offsetY,
+				y: m.ty + m.b * offsetX + m.d * offsetY
+			};
+			for (const entry of entries) {
+				if (entry.def.id === region.def.id || !usable(entry.go) || (settings.target === "objects" ? !settings.targetIds.includes(entry.def.id) : entry.def.fixed || !["platformer", "topdown"].includes(entry.def.behavior))) continue;
+				if (settings.relation && settings.relation !== "all" && (host.relation?.(region.def.id, entry.def.id) ?? "neutral") !== settings.relation) continue;
+				const target = matrix(entry.go);
+				if (!target) continue;
+				const targetGo = anchor(entry.go), cx = (.5 - finite(targetGo?.originX, .5)) * finite(targetGo?.width, entry.def.width), cy = (.5 - finite(targetGo?.originY, .5)) * finite(targetGo?.height, entry.def.height), worldX = target.tx + target.a * cx + target.c * cy, worldY = target.ty + target.b * cx + target.d * cy;
+				const at = local(m, worldX, worldY);
+				if (!at) continue;
+				const dx = at.x - offsetX, dy = at.y - offsetY;
+				if (round ? rx <= 0 || ry <= 0 || (dx / rx) ** 2 + (dy / ry) ** 2 > 1 : width <= 0 || height <= 0 || Math.abs(dx) > width / 2 || Math.abs(dy) > height / 2) continue;
+				inside.add(entry.def.id);
+				let visit = region.inside.get(entry.def.id);
+				if (!visit) {
+					visit = {
+						elapsed: 0,
+						fired: new Set()
+					};
+					region.inside.set(entry.def.id, visit);
+					emit(region, "enter", entry.def.id, visit);
+				} else {
+					visit.elapsed += Math.max(0, Math.min(36e5, finite(delta)));
+					if (visit.elapsed >= settings.stayInterval) {
+						visit.elapsed %= settings.stayInterval;
+						emit(region, "stay", entry.def.id, visit);
+					}
+				};
+				if (!region.enabled || !usable(region.go) || region.inside.get(entry.def.id) !== visit) continue;
+				const distance = Math.hypot(worldX - center.x, worldY - center.y), key = settings.key;
+				if (pressed.has(key) && distance <= settings.interactDistance && region.def.events?.some((event) => event.enabled !== false && event.trigger === "interact" && (!event.otherObjectId || event.otherObjectId === entry.def.id))) {
+					const repeat = settings.repeat ?? "always";
+					if (repeat === "once" && region.fired.has("interact") || repeat === "reenter" && visit.fired.has("interact")) continue;
+					const previous = choices.get(key), tie = region.def.id + "\0" + entry.def.id;
+					if (!previous || distance < previous.distance || distance === previous.distance && tie < previous.region.def.id + "\0" + previous.otherId) choices.set(key, {
+						region,
+						otherId: entry.def.id,
+						visit,
+						distance
+					});
+				}
+			};
+			for (const [id, visit] of region.inside) if (!inside.has(id)) {
+				region.inside.delete(id);
+				emit(region, "exit", id, visit);
+			}
+		};
+		for (const { region, otherId, visit } of choices.values()) if (region.inside.get(otherId) === visit) emit(region, "interact", otherId, visit);
+	};
+	const command = (name, id, value) => {
+		if (disposed) return false;
+		if (!regions.has(id)) {
+			const entry = host.actors().find((entry) => entry.def.id === id);
+			if (entry) bind(entry.def, entry.go);
+		};
+		const region = regions.get(id);
+		if (!region) return false;
+		if (name === "reset") {
+			region.inside.clear();
+			region.fired.clear();
+			for (const key of keys.keys()) keys.set(key, keyDown(key));
+			return true;
+		};
+		if (![
+			"enable",
+			"disable",
+			"toggle"
+		].includes(name)) return false;
+		region.enabled = name === "toggle" ? !region.enabled : name === "disable" ? false : value === undefined ? true : value === true || value === 1 || value === "true" || value === "1";
+		if (!region.enabled) region.inside.clear();
+		return true;
+	};
+	const snapshot = () => ({
+		version: 1,
+		regions: [...[...regions.values()].map((region) => ({
+			id: region.def.id,
+			enabled: region.enabled,
+			fired: [...region.fired],
+			inside: [...region.inside].map(([id, visit]) => ({
+				id,
+				elapsed: visit.elapsed,
+				fired: [...visit.fired]
+			}))
+		})), ...[...pending.values()].map((saved) => ({
+			...saved,
+			fired: saved.fired.slice(),
+			inside: saved.inside.map((visit) => ({
+				...visit,
+				fired: visit.fired.slice()
+			}))
+		}))]
+	});
+	const restore = (value) => {
+		if (disposed || !value || typeof value !== "object") return false;
+		const input = value;
+		if (input.version !== 1 || !Array.isArray(input.regions) || input.regions.length > 1e4) return false;
+		const validId = (id) => typeof id === "string" && id.length > 0 && id.length <= 200, validFired = (value) => Array.isArray(value) && value.length <= 4 && value.every((trigger) => triggers.includes(trigger)) && new Set(value).size === value.length;
+		const ids = new Set();
+		let visits = 0;
+		for (const region of input.regions) {
+			if (!region || !validId(region.id) || ids.has(region.id) || typeof region.enabled !== "boolean" || !validFired(region.fired) || !Array.isArray(region.inside) || (visits += region.inside.length) > 5e4) return false;
+			ids.add(region.id);
+			const otherIds = new Set();
+			for (const visit of region.inside) {
+				if (!visit || !validId(visit.id) || otherIds.has(visit.id) || typeof visit.elapsed !== "number" || !Number.isFinite(visit.elapsed) || visit.elapsed < 0 || visit.elapsed > 36e5 || !validFired(visit.fired)) return false;
+				otherIds.add(visit.id);
+			}
+		};
+		pending.clear();
+		for (const region of regions.values()) {
+			region.inside.clear();
+			region.fired.clear();
+			region.enabled = region.def.interaction?.enabled ?? false;
+		};
+		for (const saved of input.regions) {
+			const copy = {
+				id: saved.id,
+				enabled: saved.enabled,
+				fired: saved.fired.slice(),
+				inside: saved.inside.map((visit) => ({
+					...visit,
+					fired: visit.fired.slice()
+				}))
+			};
+			const region = regions.get(copy.id);
+			if (region) load(region, copy);
+			else pending.set(copy.id, copy);
+		};
+		for (const key of keys.keys()) keys.set(key, keyDown(key));
+		return true;
+	};
+	return {
+		bind,
+		update,
+		command,
+		snapshot,
+		restore,
+		dispose: () => {
+			disposed = true;
+			regions.clear();
+			pending.clear();
+			keys.clear();
+		}
+	};
+},function createParticleRuntime(Phaser) {
+	const entries = new Map();
+	let disposed = false;
+	const range = (min, max) => min === max ? min : {
+		min,
+		max
+	};
+	const fade = (start, end) => start === end ? start : {
+		start,
+		end
+	};
+	function config(settings, frame) {
+		// maxParticles는 비활성 풀까지 세므로 재사용을 막는다. 동시 활성 상한만으로 풀 크기를 제한한다.
+		const value = {
+			emitting: false,
+			frequency: settings.mode === "burst" ? -1 : settings.frequency,
+			quantity: settings.quantity,
+			maxAliveParticles: settings.maxAlive,
+			maxParticles: 0,
+			lifespan: range(settings.lifespanMin, settings.lifespanMax),
+			speed: range(settings.speedMin, settings.speedMax),
+			angle: range(settings.angleMin, settings.angleMax),
+			gravityX: settings.gravityX,
+			gravityY: settings.gravityY,
+			alpha: fade(settings.alphaStart, settings.alphaEnd),
+			scaleX: fade(settings.scaleStart * settings.stretchX, settings.scaleEnd * settings.stretchX),
+			scaleY: fade(settings.scaleStart * settings.stretchY, settings.scaleEnd * settings.stretchY),
+			rotate: fade(settings.rotationStart, settings.rotationEnd),
+			color: [parseInt(settings.colorStart.slice(1), 16), parseInt(settings.colorEnd.slice(1), 16)],
+			blendMode: settings.blendMode
+		};
+		if (frame !== undefined) value.frame = frame;
+		if (settings.zone === "rectangle") value.emitZone = {
+			type: "random",
+			source: new Phaser.Geom.Rectangle(-settings.zoneWidth / 2, -settings.zoneHeight / 2, settings.zoneWidth, settings.zoneHeight)
+		};
+		else if (settings.zone === "circle") value.emitZone = {
+			type: "random",
+			source: new Phaser.Geom.Circle(0, 0, settings.zoneRadius)
+		};
+		return value;
+	}
+	function remove(id) {
+		const entry = entries.get(id);
+		if (!entry) return false;
+		entry.emitter.off?.("destroy", entry.destroy);
+		entries.delete(id);
+		return true;
+	}
+	function find(id) {
+		const entry = entries.get(id);
+		if (!entry || entry.emitter.isDestroyed) {
+			if (entry) remove(id);
+			return undefined;
+		};
+		return entry;
+	}
+	function command(id, operation, count) {
+		if (disposed) return false;
+		const entry = find(id);
+		if (!entry) return false;
+		const emitter = entry.emitter, mode = entry.settings?.mode ?? "continuous";
+		if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 500)) throw Error("한 번 방출할 수량은 1~500의 정수여야 합니다.");
+		if (operation === "off") {
+			entry.enabled = false;
+			emitter.stop(false);
+			return true;
+		};
+		if (![
+			"on",
+			"explode",
+			"restart"
+		].includes(operation)) throw Error("지원하지 않는 파티클 명령입니다.");
+		if (operation === "on" && entry.enabled && (mode === "burst" || emitter.emitting && emitter.frequency >= 0)) return true;
+		if (operation === "restart") {
+			emitter.stop(false);
+			emitter.killAll();
+		};
+		entry.enabled = true;
+		if (operation === "explode" || mode === "burst") {
+			emitter.explode(count ?? entry.quantity);
+			emitter.stop(false);
+		} else emitter.flow(entry.frequency, entry.quantity);
+		return true;
+	}
+	function register(id, emitter, settings, activate = true) {
+		if (disposed || !id || !emitter || emitter.isDestroyed) return false;
+		const previous = entries.get(id);
+		if (previous) {
+			if (previous.emitter === emitter) return true;
+			previous.emitter.stop(false);
+			previous.emitter.killAll();
+			remove(id);
+		};
+		const entry = {
+			emitter,
+			settings: settings ? { ...settings } : undefined,
+			frequency: settings?.frequency ?? Math.max(0, emitter.frequency ?? 100),
+			quantity: settings?.quantity ?? Math.max(1, Number(emitter.quantity) || 1),
+			enabled: settings ? false : !!emitter.emitting,
+			destroy: () => {
+				if (entries.get(id) === entry) remove(id);
+			}
+		};
+		entries.set(id, entry);
+		emitter.once?.("destroy", entry.destroy);
+		if (settings && activate && settings.emitting) command(id, "on");
+		return true;
+	}
+	function snapshot() {
+		return {
+			version: 1,
+			emitters: [...entries.keys()].flatMap((id) => {
+				const entry = find(id);
+				return entry ? [{
+					id,
+					mode: entry.emitter.frequency < 0 ? "burst" : "continuous",
+					emitting: entry.emitter.frequency < 0 ? entry.enabled : !!entry.emitter.emitting
+				}] : [];
+			})
+		};
+	}
+	function restore(value) {
+		if (disposed || !value || typeof value !== "object") return false;
+		const data = value;
+		if (data.version !== 1 || !Array.isArray(data.emitters) || data.emitters.length > 5e3) return false;
+		const ids = new Set();
+		for (const row of data.emitters) {
+			if (!row || typeof row.id !== "string" || row.id.length > 200 || ids.has(row.id) || !["continuous", "burst"].includes(row.mode) || typeof row.emitting !== "boolean") return false;
+			ids.add(row.id);
+		};
+		for (const row of data.emitters) {
+			const entry = find(row.id);
+			if (!entry) continue;
+			const emitter = entry.emitter;
+			emitter.stop(false);
+			emitter.killAll();
+			entry.enabled = row.emitting;
+			emitter.setFrequency(row.mode === "burst" ? -1 : entry.frequency, entry.quantity);
+			if (row.emitting && row.mode === "continuous") emitter.start();
+		};
+		return true;
+	}
+	function dispose() {
+		if (disposed) return;
+		disposed = true;
+		for (const [id, entry] of entries) {
+			if (!entry.emitter.isDestroyed) {
+				entry.emitter.stop(false);
+				entry.emitter.killAll();
+			};
+			remove(id);
+		}
+	}
+	return {
+		config,
+		register,
+		command,
+		snapshot,
+		restore,
+		remove,
+		dispose
+	};
+},function createMotionPathRuntime(scene, actors, report = () => {}) {
+	const records = new Map(), warnings = new Set();
+	let disposed = false;
+	const warn = (id, message) => {
+		const key = id + ":" + message;
+		if (!warnings.has(key)) {
+			warnings.add(key);
+			report(message);
+		}
+	};
+	const conflict = (o) => {
+		if (o.physics === "static") return "고정 물리는 이동 경로를 지원하지 않습니다. 동적 물리나 물리 없음을 선택하세요.";
+		if (o.gameUi?.enabled) return "게임 UI의 위치 맞춤과 이동 경로를 함께 사용할 수 없습니다.";
+		if (o.gameplay?.agent?.enabled) return "AI 이동과 이동 경로를 함께 사용할 수 없습니다.";
+		if ([
+			"platformer",
+			"topdown",
+			"patrol",
+			"float"
+		].includes(o.behavior)) return "기본 이동 동작과 이동 경로를 함께 사용할 수 없습니다.";
+		if (o.tween === "float" || o.motionPath?.rotateToPath && (o.tween === "spin" || o.behavior === "rotate")) return "위치·회전 효과와 이동 경로가 충돌합니다.";
+		return "";
+	};
+	const sample = (points, smooth, t) => {
+		const scaled = Math.max(0, Math.min(1, t)) * (points.length - 1), i = Math.min(points.length - 2, Math.floor(scaled)), u = scaled - i, b = points[i], c = points[i + 1];
+		if (!smooth) return {
+			x: b.x + (c.x - b.x) * u,
+			y: b.y + (c.y - b.y) * u
+		};
+		const a = points[Math.max(0, i - 1)], d = points[Math.min(points.length - 1, i + 2)], u2 = u * u, u3 = u2 * u;
+		const axis = (key) => .5 * (2 * b[key] + (-a[key] + c[key]) * u + (2 * a[key] - 5 * b[key] + 4 * c[key] - d[key]) * u2 + (-a[key] + 3 * b[key] - 3 * c[key] + d[key]) * u3);
+		return {
+			x: axis("x"),
+			y: axis("y")
+		};
+	};
+	const ease = (r, t) => r.settings.ease === "sineInOut" ? (1 - Math.cos(Math.PI * t)) / 2 : r.settings.ease === "quadInOut" ? t < .5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t) : r.settings.ease === "cubicInOut" ? t < .5 ? 4 * t * t * t : 1 - 4 * (1 - t) * (1 - t) * (1 - t) : t;
+	const at = (r, progress) => {
+		const distance = Math.max(0, Math.min(1, progress)) * r.length, table = r.table;
+		let lo = 0, hi = table.length - 1;
+		while (lo + 1 < hi) {
+			const middle = lo + hi >> 1;
+			if (table[middle].distance < distance) lo = middle;
+			else hi = middle;
+		};
+		const a = table[lo], b = table[hi], ratio = b.distance > a.distance ? (distance - a.distance) / (b.distance - a.distance) : 0;
+		return sample(r.settings.points, r.settings.interpolation === "smooth", a.t + (b.t - a.t) * ratio);
+	};
+	const acquire = (r) => {
+		if (r.held) return;
+		r.held = true;
+		r.node.setData?.("forgeMotionPath", true);
+		const body = r.node.body;
+		if (body?.setDirectControl) {
+			r.body = {
+				direct: body.directControl,
+				gravity: body.allowGravity,
+				vx: body.velocity?.x ?? 0,
+				vy: body.velocity?.y ?? 0,
+				ax: body.acceleration?.x ?? 0,
+				ay: body.acceleration?.y ?? 0
+			};
+			body.setDirectControl(true);
+			body.setAllowGravity?.(false);
+			body.setAcceleration?.(0, 0);
+			body.setVelocity?.(0, 0);
+		}
+	};
+	const release = (r) => {
+		r.held = false;
+		if (!r.node.isDestroyed && r.node.scene) r.node.setData?.("forgeMotionPath", false);
+		const body = r.node.body;
+		if (body && r.body) {
+			body.setDirectControl?.(r.body.direct);
+			body.setAllowGravity?.(r.body.gravity);
+			body.setAcceleration?.(r.body.ax, r.body.ay);
+			body.setVelocity?.(r.body.vx, r.body.vy);
+		};
+		r.body = undefined;
+	};
+	const apply = (r) => {
+		const p = at(r, ease(r, r.progress)), origin = r.settings.relative ? r.origin : {
+			x: 0,
+			y: 0
+		};
+		r.node.x = origin.x + p.x;
+		r.node.y = origin.y + p.y;
+		if (r.settings.rotateToPath) {
+			const a = at(r, Math.max(0, ease(r, r.progress) - 1e-4)), b = at(r, Math.min(1, ease(r, r.progress) + 1e-4));
+			if (Math.hypot(b.x - a.x, b.y - a.y) > 1e-6) r.node.angle = Math.atan2((b.y - a.y) * r.direction, (b.x - a.x) * r.direction) * 180 / Math.PI + r.settings.rotationOffset;
+		}
+	};
+	const teleport = (r) => {
+		apply(r);
+		const body = r.node.body;
+		if (body?.reset) {
+			body.reset(r.node.x, r.node.y);
+			body.updateFromGameObject?.();
+			for (const key of [
+				"prev",
+				"prevFrame",
+				"autoFrame"
+			]) body[key]?.copy?.(body.position);
+		}
+	};
+	const bind = (def, go) => {
+		if (disposed || !def.motionPath?.enabled || !go || records.has(def.id)) return false;
+		const settings = def.motionPath, issue = conflict(def), node = go.getData?.("forgeAnchor") ?? go;
+		if (issue) {
+			warn(def.id, `${def.name}: ${issue}`);
+			return false;
+		};
+		if (node.body && !node.body.setDirectControl) {
+			warn(def.id, `${def.name}: 이 물리 방식은 이동 경로를 지원하지 않습니다.`);
+			return false;
+		};
+		if (def.kind === "group" && actors().some((a) => a.go !== go && a.go.body && (() => {
+			for (let p = a.go.parentContainer; p; p = p.parentContainer) if (p === go) return true;
+			return false;
+		})())) {
+			warn(def.id, `${def.name}: 물리 자식이 있는 그룹 대신 움직일 물체에 경로를 연결하세요.`);
+			return false;
+		};
+		if (settings.points.length < 2 || settings.points.some((p) => !Number.isFinite(p.x) || !Number.isFinite(p.y)) || !Number.isFinite(settings.duration) || settings.duration < 16) {
+			warn(def.id, `${def.name}: 이동 경로의 점과 시간을 확인하세요.`);
+			return false;
+		};
+		const r = {
+			def,
+			go,
+			node,
+			settings,
+			origin: {
+				x: node.x,
+				y: node.y
+			},
+			progress: 0,
+			direction: 1,
+			leg: 0,
+			playing: settings.autoStart,
+			held: false,
+			length: 0,
+			table: [{
+				distance: 0,
+				t: 0
+			}]
+		};
+		const count = (settings.points.length - 1) * (settings.interpolation === "smooth" ? 32 : 1);
+		let previous = sample(settings.points, settings.interpolation === "smooth", 0);
+		for (let i = 1; i <= count; i++) {
+			const t = i / count, p = sample(settings.points, settings.interpolation === "smooth", t);
+			r.length += Math.hypot(p.x - previous.x, p.y - previous.y);
+			r.table.push({
+				distance: r.length,
+				t
+			});
+			previous = p;
+		};
+		if (r.length < 1e-6) {
+			warn(def.id, `${def.name}: 서로 다른 위치의 경로점이 필요합니다.`);
+			return false;
+		};
+		records.set(def.id, r);
+		if (settings.autoStart) {
+			acquire(r);
+			apply(r);
+		};
+		return true;
+	};
+	const advance = (r, delta) => {
+		let travel = delta / r.settings.duration;
+		if (r.settings.loop) {
+			if (r.settings.yoyo) {
+				const phase = ((r.direction === 1 ? r.progress : 2 - r.progress) + travel) % 2;
+				r.progress = phase <= 1 ? phase : 2 - phase;
+				r.direction = phase < 1 ? 1 : -1;
+			} else r.progress = ((r.progress + r.direction * travel) % 1 + 1) % 1;
+			return;
+		};
+		const edge = r.direction === 1 ? 1 : 0, distance = Math.abs(edge - r.progress);
+		if (travel < distance) {
+			r.progress += r.direction * travel;
+			return;
+		};
+		r.progress = edge;
+		travel -= distance;
+		if (r.settings.yoyo && r.leg === 0) {
+			r.leg = 1;
+			r.direction = r.direction === 1 ? -1 : 1;
+			if (travel < 1) r.progress += r.direction * travel;
+			else {
+				r.progress = r.direction === 1 ? 1 : 0;
+				r.playing = false;
+			}
+		} else r.playing = false;
+	};
+	const update = (_time, delta) => {
+		if (disposed) return;
+		for (const [id, r] of records) {
+			if (!r.go.scene || r.go.isDestroyed) {
+				release(r);
+				records.delete(id);
+				continue;
+			};
+			if (r.go.active === false || !r.held) continue;
+			if (r.playing && !r.go.getData?.("gameplayBlocked")) advance(r, Math.max(0, Number.isFinite(delta) ? delta : 0));
+			apply(r);
+		}
+	};
+	const command = (targetId, action, value) => {
+		const r = records.get(targetId);
+		if (!r) throw Error("대상에 사용 가능한 이동 경로가 없습니다.");
+		if (action === "stop") {
+			r.playing = false;
+			r.progress = 0;
+			r.direction = 1;
+			r.leg = 0;
+			teleport(r);
+			release(r);
+			return true;
+		};
+		if (action === "seek") {
+			if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1) throw Error("경로 위치는 0~1 사이의 숫자여야 합니다.");
+			acquire(r);
+			r.progress = value;
+			r.playing = false;
+			r.leg = 0;
+			teleport(r);
+			return true;
+		};
+		if (action === "pause") {
+			if (r.held) r.playing = false;
+			return true;
+		};
+		if (![
+			"play",
+			"restart",
+			"reverse"
+		].includes(action)) throw Error("지원하지 않는 이동 경로 명령입니다.");
+		acquire(r);
+		if (action === "restart") {
+			r.progress = 0;
+			r.direction = 1;
+			r.leg = 0;
+		} else if (action === "reverse") {
+			r.direction = r.direction === 1 ? -1 : 1;
+			r.leg = 0;
+			if (r.direction === -1 && r.progress === 0) r.progress = 1;
+			else if (r.direction === 1 && r.progress === 1) r.progress = 0;
+		} else if (!r.playing && (r.direction === 1 && r.progress === 1 || r.direction === -1 && r.progress === 0)) {
+			r.progress = r.direction === 1 ? 0 : 1;
+			r.leg = 0;
+		};
+		r.playing = true;
+		teleport(r);
+		return true;
+	};
+	const snapshot = () => Object.fromEntries([...records].map(([id, r]) => [id, {
+		progress: r.progress,
+		direction: r.direction,
+		leg: r.leg,
+		playing: r.playing,
+		held: r.held,
+		origin: { ...r.origin }
+	}]));
+	const restore = (data) => {
+		if (!data || typeof data !== "object") return;
+		for (const [id, r] of records) {
+			const s = data[id];
+			if (!s || !Number.isFinite(s.progress) || s.progress < 0 || s.progress > 1 || ![1, -1].includes(s.direction) || ![0, 1].includes(s.leg) || typeof s.playing !== "boolean" || typeof s.held !== "boolean" || !Number.isFinite(s.origin?.x) || !Number.isFinite(s.origin?.y)) continue;
+			r.progress = s.progress;
+			r.direction = s.direction;
+			r.leg = s.leg;
+			r.playing = s.playing;
+			r.origin = {
+				x: s.origin.x,
+				y: s.origin.y
+			};
+			if (s.held) {
+				acquire(r);
+				teleport(r);
+			} else release(r);
+		}
+	};
+	const dispose = () => {
+		if (disposed) return;
+		disposed = true;
+		scene.events?.off("preupdate", update);
+		for (const r of records.values()) release(r);
+		records.clear();
+	};
+	for (const actor of actors()) bind(actor.def, actor.go);
+	scene.events?.on("preupdate", update);
+	scene.events?.once("shutdown", dispose);
+	return {
+		bind,
+		update,
+		command,
+		snapshot,
+		restore,
+		dispose,
+		isDriving: (id) => !!records.get(id)?.held
+	};
+},function createCollisionRuntime(project, actors, error = () => {}) {
+	const bits = new Map(["default", ...project.collisionGroups?.map((g) => g.id) ?? []].map((id, index) => [id, 1 << index]));
+	const records = new Map(), tileSides = new WeakMap();
+	const defaults = {
+		enabled: true,
+		category: "default",
+		sensor: false,
+		left: true,
+		right: true,
+		up: true,
+		down: true
+	};
+	const apply = (record) => {
+		const c = record.settings, target = record.go.body ?? record.go;
+		target.collisionCategory = bits.get(c.category) ?? 1;
+		target.collisionMask = !c.enabled ? 0 : c.mask === undefined ? -1 : c.mask.reduce((mask, id) => mask | (bits.get(id) ?? 0), 0);
+		if (target.checkCollision) {
+			target.checkCollision.none = !c.enabled;
+			for (const side of [
+				"left",
+				"right",
+				"up",
+				"down"
+			]) target.checkCollision[side] = c.enabled && c[side];
+		} else if (record.go.forEachTile) {
+			const signature = [
+				c.left,
+				c.right,
+				c.up,
+				c.down
+			].join(",");
+			if (signature !== record.layerDirections && (record.layerDirections !== undefined || ![
+				c.left,
+				c.right,
+				c.up,
+				c.down
+			].every(Boolean))) {
+				record.go.forEachTile((tile) => {
+					if (!tile?.setCollision) return;
+					let base = tileSides.get(tile);
+					if (!base) {
+						base = {
+							left: !!tile.collideLeft,
+							right: !!tile.collideRight,
+							up: !!tile.collideUp,
+							down: !!tile.collideDown
+						};
+						tileSides.set(tile, base);
+					};
+					tile.setCollision(base.left && c.left, base.right && c.right, base.up && c.up, base.down && c.down, false);
+				});
+				record.go.calculateFacesWithin?.();
+			};
+			record.layerDirections = signature;
+		}
+	};
+	const bind = (def, go) => {
+		if (!go || !go.body && def.kind !== "tilemap") return;
+		const previous = records.get(def.id);
+		if (previous && previous.go === go) {
+			apply(previous);
+			return;
+		};
+		const record = {
+			go,
+			settings: {
+				...defaults,
+				...def.collision,
+				mask: def.collision?.mask?.slice()
+			}
+		};
+		records.set(def.id, record);
+		go.once?.("destroy", () => {
+			if (records.get(def.id) === record) records.delete(def.id);
+		});
+		apply(record);
+	};
+	const recordFor = (value) => {
+		const go = value?.gameObject ?? value?.tilemapLayer ?? value?.layer?.tilemapLayer ?? value;
+		return records.get(go?.getData?.("forgeObjectId") ?? go?.getData?.("forgeId"));
+	};
+	const canSeparate = (a, b) => {
+		const one = recordFor(a), two = recordFor(b);
+		return !one?.settings.sensor && !two?.settings.sensor;
+	};
+	const command = (id, action, value) => {
+		const record = records.get(id);
+		if (!record) throw Error("충돌을 제어할 물리 오브젝트가 없습니다.");
+		const c = record.settings;
+		if (action === "enable" || action === "disable") c.enabled = action === "enable";
+		else if (action === "sensor") {
+			if (typeof value !== "boolean" && !["true", "false"].includes(String(value))) throw Error("통과 설정은 참거짓이어야 합니다.");
+			c.sensor = value === true || value === "true";
+		} else if (action === "category") {
+			if (!bits.has(String(value))) throw Error("변경할 충돌 분류가 없습니다.");
+			c.category = String(value);
+		} else throw Error("지원하지 않는 충돌 명령입니다.");
+		apply(record);
+		return true;
+	};
+	const snapshot = () => ({
+		version: 1,
+		objects: [...records].filter(([, r]) => r.go.active).map(([id, r]) => ({
+			id,
+			...r.settings,
+			mask: r.settings.mask?.slice()
+		}))
+	});
+	const restore = (data) => {
+		if (!data || data.version !== 1 || !Array.isArray(data.objects) || data.objects.length > 2e4) return false;
+		const pending = [];
+		for (const row of data.objects) {
+			if (!row || typeof row.id !== "string" || !bits.has(row.category) || [
+				"enabled",
+				"sensor",
+				"left",
+				"right",
+				"up",
+				"down"
+			].some((k) => typeof row[k] !== "boolean") || row.mask !== undefined && (!Array.isArray(row.mask) || row.mask.length > 32 || row.mask.some((id) => typeof id !== "string" || !bits.has(id)))) return false;
+			const record = records.get(row.id);
+			if (record) pending.push({
+				record,
+				settings: {
+					enabled: row.enabled,
+					sensor: row.sensor,
+					category: row.category,
+					left: row.left,
+					right: row.right,
+					up: row.up,
+					down: row.down,
+					mask: row.mask?.slice()
+				}
+			});
+		};
+		for (const { record, settings } of pending) {
+			record.settings = settings;
+			apply(record);
+		};
+		return true;
+	};
+	const dispose = () => records.clear();
+	for (const actor of actors()) bind(actor.def, actor.go);
+	return {
+		bind,
+		canSeparate,
+		command,
+		snapshot,
+		restore,
+		dispose
+	};
+},function createFactionRuntime(settings, host) {
+	const names = new Map((settings?.factions ?? []).map((f) => [f.id, f.name])), relations = new Map(), hostile = new Map(), teams = new Map(), objects = new Map();
+	let defaultRelation = settings?.defaultRelation ?? "hostile", enemyOfEnemy = settings?.enemyOfEnemy ?? false, disposed = false, revision = 0;
+	const validId = (value) => typeof value === "string" && value.length <= 200;
+	const validRelation = (value) => value === "friendly" || value === "neutral" || value === "hostile";
+	const key = (from, to) => JSON.stringify([from, to]);
+	const indexRelation = (row) => {
+		const old = relations.get(key(row.from, row.to));
+		if (old?.relation === "hostile") hostile.get(old.from)?.delete(old.to);
+		relations.set(key(row.from, row.to), { ...row });
+		if (row.relation === "hostile") {
+			let targets = hostile.get(row.from);
+			if (!targets) {
+				targets = new Set();
+				hostile.set(row.from, targets);
+			};
+			targets.add(row.to);
+		}
+	};
+	for (const row of settings?.relations ?? []) indexRelation(row);
+	const publish = (entry) => {
+		if (entry.go?.isDestroyed) return;
+		const team = teams.get(entry.def.id) ?? entry.def.gameplay?.faction ?? entry.def.gameplay?.combat?.team ?? "";
+		if (entry.go?.getData?.("faction") !== team) entry.go?.setData?.("faction", team);
+		if (entry.go?.getData?.("team") !== team) entry.go?.setData?.("team", team);
+	};
+	const alive = (entry) => !!entry?.go && !entry.go.isDestroyed && entry.go.active !== false;
+	const refresh = () => {
+		if (disposed) return;
+		const current = new Set();
+		for (const entry of host.actors()) if (alive(entry)) {
+			current.add(entry.def.id);
+			objects.set(entry.def.id, entry);
+			publish(entry);
+		};
+		for (const id of objects.keys()) if (!current.has(id)) objects.delete(id);
+	};
+	const object = (id) => {
+		let entry = objects.get(id);
+		if (!alive(entry)) {
+			refresh();
+			entry = objects.get(id);
+		};
+		return alive(entry) ? entry : undefined;
+	};
+	const team = (id) => {
+		const entry = object(id);
+		if (!entry) return "";
+		publish(entry);
+		return teams.get(id) ?? entry.def.gameplay?.faction ?? entry.def.gameplay?.combat?.team ?? "";
+	};
+	const relation = (from, to) => {
+		const explicit = relations.get(key(from, to));
+		if (explicit) return explicit.relation;
+		if (from === to) return "friendly";
+		if (enemyOfEnemy) {
+			for (const via of hostile.get(from) ?? []) if (hostile.get(via)?.has(to)) return "friendly";
+		};
+		return defaultRelation;
+	};
+	const setTeam = (id, value) => {
+		if (disposed) throw Error("진영 서비스가 종료됐습니다.");
+		if (!validId(value)) throw Error("진영 ID는 200자 이내 문자열이어야 합니다.");
+		const entry = object(id);
+		if (!entry || entry.go?.isDestroyed) throw Error("진영을 바꿀 오브젝트가 없습니다.");
+		if (!teams.has(id) && teams.size >= 5e3) throw Error("변경할 진영 대상이 너무 많습니다.");
+		if (team(id) !== value) revision++;
+		teams.set(id, value);
+		publish(entry);
+		return true;
+	};
+	const setRelation = (from, to, value, bidirectional = false) => {
+		if (disposed) throw Error("진영 서비스가 종료됐습니다.");
+		if (!validId(from) || !validId(to) || !validRelation(value)) throw Error("진영과 관계 값을 확인하세요.");
+		const additions = (!relations.has(key(from, to)) ? 1 : 0) + (bidirectional && from !== to && !relations.has(key(to, from)) ? 1 : 0);
+		if (relations.size + additions > 4096) throw Error("진영 관계는 최대 4096개입니다.");
+		const changed = relations.get(key(from, to))?.relation !== value || bidirectional && relations.get(key(to, from))?.relation !== value;
+		indexRelation({
+			from,
+			to,
+			relation: value
+		});
+		if (bidirectional) indexRelation({
+			from: to,
+			to: from,
+			relation: value
+		});
+		if (changed) revision++;
+		return true;
+	};
+	const clearRelation = (from, to, bidirectional = false) => {
+		let changed = false;
+		for (const [a, b] of bidirectional ? [[from, to], [to, from]] : [[from, to]]) {
+			hostile.get(a)?.delete(b);
+			changed = relations.delete(key(a, b)) || changed;
+		};
+		if (changed) revision++;
+		return true;
+	};
+	const setDefault = (value) => {
+		if (!validRelation(value)) throw Error("기본 진영 관계를 확인하세요.");
+		if (defaultRelation !== value) revision++;
+		defaultRelation = value;
+		return true;
+	};
+	const setEnemyOfEnemy = (value) => {
+		if (typeof value !== "boolean") throw Error("적의 적 규칙은 켜기 또는 끄기 값이어야 합니다.");
+		if (enemyOfEnemy !== value) revision++;
+		enemyOfEnemy = value;
+		return true;
+	};
+	const snapshot = () => ({
+		version: 1,
+		defaultRelation,
+		enemyOfEnemy,
+		relations: [...relations.values()].map((r) => ({ ...r })),
+		teams: [...teams].map(([objectId, team]) => ({
+			objectId,
+			team
+		}))
+	});
+	const restore = (value) => {
+		if (!value || value.version !== 1 || !validRelation(value.defaultRelation) || typeof value.enemyOfEnemy !== "boolean" || !Array.isArray(value.relations) || value.relations.length > 4096 || !Array.isArray(value.teams) || value.teams.length > 5e3) return false;
+		const nextRelations = new Map(), nextTeams = new Map();
+		for (const row of value.relations) {
+			if (!row || !validId(row.from) || !validId(row.to) || !validRelation(row.relation) || nextRelations.has(key(row.from, row.to))) return false;
+			nextRelations.set(key(row.from, row.to), {
+				from: row.from,
+				to: row.to,
+				relation: row.relation
+			});
+		};
+		for (const row of value.teams) {
+			if (!row || !validId(row.objectId) || !row.objectId || !validId(row.team) || nextTeams.has(row.objectId)) return false;
+			nextTeams.set(row.objectId, row.team);
+		};
+		relations.clear();
+		hostile.clear();
+		for (const row of nextRelations.values()) indexRelation(row);
+		teams.clear();
+		for (const [id, value] of nextTeams) teams.set(id, value);
+		defaultRelation = value.defaultRelation;
+		enemyOfEnemy = value.enemyOfEnemy;
+		revision++;
+		refresh();
+		return true;
+	};
+	const inspect = () => {
+		refresh();
+		const factions = new Map(names);
+		for (const entry of objects.values()) {
+			const value = team(entry.def.id);
+			if (!factions.has(value)) factions.set(value, value || "미지정");
+		};
+		for (const r of relations.values()) {
+			if (!factions.has(r.from)) factions.set(r.from, r.from || "미지정");
+			if (!factions.has(r.to)) factions.set(r.to, r.to || "미지정");
+		};
+		return {
+			factions: [...factions].map(([id, name]) => ({
+				id,
+				name,
+				registered: names.has(id)
+			})),
+			...snapshot()
+		};
+	};
+	const dispose = () => {
+		disposed = true;
+		objects.clear();
+		teams.clear();
+		relations.clear();
+		hostile.clear();
+	};
+	refresh();
+	return {
+		relation,
+		team,
+		setTeam,
+		setRelation,
+		clearRelation,
+		setDefault,
+		setEnemyOfEnemy,
+		snapshot,
+		restore,
+		inspect,
+		refresh,
+		get revision() {
+			return revision;
+		},
+		dispose
+	};
+},function createConnectionRuntime(scene, host) {
+	const entries = new Map(), pending = new Map(), textures = new Map(), warned = new Set();
+	let disposed = false, clock = 0, serial = 0;
+	const finite = (value, fallback = 0) => typeof value === "number" && Number.isFinite(value) ? value : fallback, clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+	const defaults = {
+		enabled: true,
+		start: {
+			mode: "self",
+			targetId: "",
+			offsetX: 0,
+			offsetY: 0,
+			x: 0,
+			y: 0
+		},
+		end: {
+			mode: "pointer",
+			targetId: "",
+			offsetX: 0,
+			offsetY: 0,
+			x: 0,
+			y: 0
+		},
+		style: "line",
+		textureMode: "stretch",
+		assetId: "",
+		frame: 0,
+		textureSpeed: 0,
+		jitterAmplitude: 0,
+		jitterSpeed: 18,
+		width: 4,
+		color: "#d7bd82",
+		opacity: 1,
+		sag: 24,
+		waveAmplitude: 0,
+		waveSpeed: 1,
+		segments: 24,
+		maxLength: 0,
+		progress: 1,
+		extendDuration: 300,
+		retractDuration: 300
+	};
+	const anchor = (go) => go?.getData?.("forgeAnchor") ?? go;
+	const rootOf = (go) => {
+		let root = anchor(go), depth = 0;
+		while (root?.parentContainer && depth++ < 64) root = root.parentContainer;
+		return root;
+	};
+	const visible = (go) => {
+		if (!go || go.active === false || go.visible === false) return false;
+		for (let node = anchor(go), depth = 0; node; node = node.parentContainer) if (++depth > 64 || node.active === false || node.visible === false) return false;
+		return true;
+	};
+	const matrix = (entry) => {
+		const go = anchor(entry.go);
+		if (!go) return;
+		let value;
+		try {
+			value = go.getWorldTransformMatrix?.();
+		} catch {
+			return;
+		};
+		if (!value) {
+			if (go.parentContainer) return;
+			const a = finite(go.rotation), sx = finite(go.scaleX, 1), sy = finite(go.scaleY, 1);
+			value = {
+				a: Math.cos(a) * sx,
+				b: Math.sin(a) * sx,
+				c: -Math.sin(a) * sy,
+				d: Math.cos(a) * sy,
+				tx: finite(go.x),
+				ty: finite(go.y)
+			};
+		};
+		const bx = finite(go.getData?.("forgeScaleX"), entry.def.kind === "sprite" && go.width > 0 ? entry.def.width / go.width : 1), by = finite(go.getData?.("forgeScaleY"), entry.def.kind === "sprite" && go.height > 0 ? entry.def.height / go.height : 1);
+		if (Math.abs(bx) < 1e-9 || Math.abs(by) < 1e-9) return;
+		const m = {
+			a: value.a / bx,
+			b: value.b / bx,
+			c: value.c / by,
+			d: value.d / by,
+			tx: value.tx,
+			ty: value.ty
+		};
+		return Object.values(m).every(Number.isFinite) ? m : undefined;
+	};
+	const camera = (entry) => {
+		const owner = rootOf(entry.go), cameras = scene.cameras?.cameras ?? [scene.cameras?.main];
+		return cameras.find((camera) => camera && camera.visible !== false && !(owner?.cameraFilter & camera.id)) ?? scene.cameras?.main;
+	};
+	const screenShift = (go, cam) => {
+		const root = rootOf(go);
+		return {
+			x: finite(cam?.scrollX) * (1 - finite(root?.scrollFactorX, 1)),
+			y: finite(cam?.scrollY) * (1 - finite(root?.scrollFactorY, 1))
+		};
+	};
+	const resolve = (entry, value, actors, cam) => {
+		if (value.mode === "point") return {
+			x: value.x + value.offsetX,
+			y: value.y + value.offsetY
+		};
+		if (value.mode === "pointer") {
+			const pointer = scene.input?.activePointer;
+			if (!pointer) return;
+			const point = cam?.getWorldPoint?.(pointer.x, pointer.y) ?? {
+				x: pointer.worldX ?? pointer.x,
+				y: pointer.worldY ?? pointer.y
+			};
+			return {
+				x: point.x + value.offsetX,
+				y: point.y + value.offsetY
+			};
+		};
+		const target = value.mode === "self" ? entry : actors.get(value.targetId);
+		if (!target || !visible(target.go)) return;
+		const m = matrix(target);
+		if (!m) return;
+		const shift = screenShift(target.go, cam);
+		return {
+			x: m.tx + m.a * value.offsetX + m.c * value.offsetY + shift.x,
+			y: m.ty + m.b * value.offsetX + m.d * value.offsetY + shift.y
+		};
+	};
+	// 씬 편집의 connectionCurve와 같은 식을 독립 게임 안에서도 사용한다.
+	const curve = (start, end, settings) => {
+		const count = Math.max(2, Math.min(128, Math.round(settings.segments))), dx = end.x - start.x, dy = end.y - start.y, chord = Math.hypot(dx, dy), nx = chord ? -dy / chord : 0, ny = chord ? dx / chord : 1, full = [];
+		let totalLength = 0;
+		if (chord < 1e-8) return {
+			points: [{ ...start }, { ...start }],
+			totalLength: 0,
+			length: 0,
+			end: { ...start }
+		};
+		const jitter = settings.jitterAmplitude ?? 0, tick = Math.floor(Math.max(0, clock) * (settings.jitterSpeed ?? 18));
+		for (let i = 0; i <= count; i++) {
+			const t = i / count;
+			let wave = settings.waveAmplitude * Math.sin(Math.PI * t) * Math.sin(clock * settings.waveSpeed * Math.PI * 2 - t * Math.PI * 2);
+			if (jitter > 0 && i > 0 && i < count) {
+				let hash = Math.imul((tick ^ Math.imul(i, 374761393)) >>> 0, 668265263);
+				hash = Math.imul(hash ^ hash >>> 13, 1274126177);
+				hash = (hash ^ hash >>> 16) >>> 0;
+				wave += (hash / 4294967295 * 2 - 1) * jitter * Math.sin(Math.PI * t);
+			};
+			const point = {
+				x: start.x + dx * t + nx * wave,
+				y: start.y + dy * t + settings.sag * 4 * t * (1 - t) + ny * wave
+			};
+			if (i) totalLength += Math.hypot(point.x - full[i - 1].x, point.y - full[i - 1].y);
+			full.push(point);
+		};
+		const length = Math.min(totalLength, settings.maxLength > 0 ? settings.maxLength : totalLength) * clamp(settings.progress, 0, 1), points = [full[0]];
+		let travelled = 0;
+		for (let i = 1; i < full.length; i++) {
+			const a = full[i - 1], b = full[i], span = Math.hypot(b.x - a.x, b.y - a.y);
+			if (travelled + span >= length) {
+				const t = span ? (length - travelled) / span : 0;
+				points.push({
+					x: a.x + (b.x - a.x) * t,
+					y: a.y + (b.y - a.y) * t
+				});
+				break;
+			};
+			points.push(b);
+			travelled += span;
+		};
+		if (points.length === 1) points.push({ ...points[0] });
+		return {
+			points,
+			totalLength,
+			length,
+			end: points[points.length - 1]
+		};
+	};
+	const warn = (key, message) => {
+		if (!warned.has(key)) {
+			warned.add(key);
+			host.error?.(message);
+		}
+	};
+	const isolated = (settings) => {
+		const id = settings.assetId + ":" + settings.frame, cached = textures.get(id);
+		if (cached) return cached;
+		const source = host.source(settings.assetId, settings.frame);
+		if (!source || !scene.textures?.exists(source.key)) return;
+		const frame = scene.textures.getFrame(source.key, source.frame);
+		if (!frame) return;
+		const width = Math.round(frame.realWidth ?? frame.width), height = Math.round(frame.realHeight ?? frame.height);
+		if (width < 1 || height < 1 || width > 4096 || height > 4096 || width * height > 4194304) {
+			warn(id, "연결 그림은 한 프레임 4096픽셀·총 419만 픽셀 이하로 선택하세요.");
+			return;
+		};
+		const key = "__forge_connection_" + scene.sys?.settings?.key + "_" + Date.now() + "_" + ++serial, texture = scene.textures.createCanvas(key, width, height);
+		if (!texture) return;
+		try {
+			const ctx = texture.context, image = frame.source?.image;
+			if (!image) throw Error("원본 그림이 없습니다.");
+			ctx.imageSmoothingEnabled = false;
+			const x = frame.x ?? 0, y = frame.y ?? 0;
+			if (frame.rotated) {
+				ctx.save();
+				ctx.translate(x, y + frame.cutWidth);
+				ctx.rotate(-Math.PI / 2);
+				ctx.drawImage(image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, 0, 0, frame.cutWidth, frame.cutHeight);
+				ctx.restore();
+			} else ctx.drawImage(image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, x, y, frame.cutWidth, frame.cutHeight);
+			texture.refresh();
+			const result = {
+				key,
+				width,
+				height
+			};
+			textures.set(id, result);
+			return result;
+		} catch (error) {
+			scene.textures.remove(key);
+			warn(id, "연결 그림을 읽지 못했습니다: " + String(error));
+			return;
+		}
+	};
+	const slice = (points, from, to) => {
+		const result = [];
+		let travelled = 0;
+		for (let i = 1; i < points.length; i++) {
+			const a = points[i - 1], b = points[i], length = Math.hypot(b.x - a.x, b.y - a.y), end = travelled + length;
+			if (end >= from && travelled <= to) {
+				const lo = length ? clamp((from - travelled) / length, 0, 1) : 0, hi = length ? clamp((to - travelled) / length, 0, 1) : 1;
+				if (!result.length) result.push({
+					x: a.x + (b.x - a.x) * lo,
+					y: a.y + (b.y - a.y) * lo
+				});
+				const point = {
+					x: a.x + (b.x - a.x) * hi,
+					y: a.y + (b.y - a.y) * hi
+				}, last = result[result.length - 1];
+				if (Math.hypot(point.x - last.x, point.y - last.y) > 1e-8) result.push(point);
+			};
+			travelled = end;
+			if (end >= to) break;
+		};
+		if (result.length === 1) result.push({ ...result[0] });
+		return result;
+	};
+	const paint = (entry) => {
+		const { settings: o, root, line, points } = entry, owner = rootOf(entry.go);
+		let alpha = o.opacity;
+		for (let node = anchor(entry.go), depth = 0; node && depth++ < 64; node = node.parentContainer) alpha *= finite(node.alpha, 1);
+		root.cameraFilter = owner?.cameraFilter ?? 0;
+		root.setDepth?.(finite(owner?.depth) + 1e-4);
+		root.setAlpha?.(alpha);
+		for (const child of root.list ?? []) child.cameraFilter = root.cameraFilter;
+		if (!o.enabled || !visible(entry.go) || !entry.start || !entry.end || entry.length < 1e-7) {
+			root.setVisible(false);
+			return;
+		};
+		root.setVisible(true);
+		line.clear();
+		if (o.style === "texture" && scene.game?.renderer?.gl && scene.add?.rope && !entry.textureAttempted) {
+			entry.texture = isolated(o);
+			entry.textureAttempted = true;
+		};
+		const native = !!scene.game?.renderer?.gl && !!scene.add?.rope && entry.texture;
+		if (o.style === "texture" && native) {
+			entry.mode = "texture";
+			line.setVisible(false);
+			const texture = entry.texture, repeat = o.textureMode === "repeat", flow = repeat && finite(o.textureSpeed) !== 0, period = repeat ? Math.max(o.width * texture.width / texture.height, entry.length / (flow ? 127 : 128)) : entry.length, phase = flow ? (-clock * finite(o.textureSpeed) % period + period) % period : 0, count = repeat ? Math.min(128, Math.max(1, Math.ceil((entry.length + phase) / period))) : 1, scale = o.width / texture.height;
+			for (let index = 0; index < count; index++) {
+				const boundary = index * period - phase, from = Math.max(0, boundary), to = Math.min(entry.length, boundary + period), part = slice(points, from, to);
+				if (part.length < 2) continue;
+				let rope = entry.ropes[index];
+				if (!rope) {
+					rope = scene.add.rope(0, 0, texture.key, undefined, part);
+					root.add(rope);
+					entry.ropes[index] = rope;
+				};
+				const origin = part[0], local = part.map((point) => ({
+					x: (point.x - origin.x) / scale,
+					y: (point.y - origin.y) / scale
+				}));
+				rope.setPosition(origin.x, origin.y).setScale(scale).setVisible(true);
+				rope.cameraFilter = root.cameraFilter;
+				rope.setPoints(local, parseInt(o.color.slice(1), 16));
+				let travelled = 0;
+				const fraction = repeat ? (to - from) / period : 1, span = to - from, offset = repeat ? (from - boundary) / period : 0;
+				for (let i = 0; i < part.length; i++) {
+					if (i) travelled += Math.hypot(part[i].x - part[i - 1].x, part[i].y - part[i - 1].y);
+					const u = clamp(offset + (span ? travelled / span * fraction : 0), 0, 1);
+					rope.uv[i * 4] = u;
+					rope.uv[i * 4 + 2] = u;
+				};
+				rope.dirty = true;
+			};
+			for (let index = count; index < entry.ropes.length; index++) entry.ropes[index].setVisible(false);
+		} else {
+			entry.mode = o.style === "texture" ? "line-fallback" : "line";
+			for (const rope of entry.ropes) rope.setVisible(false);
+			line.setVisible(true);
+			line.lineStyle(o.width, parseInt(o.color.slice(1), 16), 1);
+			line.beginPath();
+			line.moveTo(points[0].x, points[0].y);
+			for (let i = 1; i < points.length; i++) line.lineTo(points[i].x, points[i].y);
+			line.strokePath();
+		}
+	};
+	const load = (entry, saved) => {
+		entry.settings.enabled = saved.enabled;
+		entry.settings.start = { ...saved.start };
+		entry.settings.end = { ...saved.end };
+		entry.settings.progress = saved.progress;
+		entry.motion = saved.motion ? { ...saved.motion } : undefined;
+	};
+	const bind = (def, go) => {
+		if (disposed || !def.connection || !go) return false;
+		const old = entries.get(def.id);
+		if (old && old.go === go) return true;
+		if (old) {
+			old.root.destroy(true);
+			entries.delete(def.id);
+		};
+		const settings = {
+			...defaults,
+			...def.connection,
+			start: {
+				...defaults.start,
+				...def.connection.start
+			},
+			end: {
+				...defaults.end,
+				...def.connection.end
+			}
+		}, root = scene.add.container(0, 0), line = scene.add.graphics();
+		root.add(line);
+		root.setVisible(false);
+		const entry = {
+			def,
+			go,
+			settings,
+			root,
+			line,
+			ropes: [],
+			points: [],
+			length: 0,
+			mode: "line",
+			textureAttempted: false
+		};
+		entries.set(def.id, entry);
+		const saved = pending.get(def.id);
+		if (saved) {
+			load(entry, saved);
+			pending.delete(def.id);
+		};
+		return true;
+	};
+	const measure = (entry, actors) => {
+		const cam = camera(entry), start = resolve(entry, entry.settings.start, actors, cam), end = resolve(entry, entry.settings.end, actors, cam);
+		entry.start = start;
+		entry.end = end;
+		if (start && end) {
+			const result = curve(start, end, entry.settings);
+			entry.points = result.points;
+			entry.end = result.end;
+			entry.length = result.length;
+		} else {
+			entry.points = [];
+			entry.length = 0;
+		}
+	};
+	const update = (delta = 0) => {
+		if (disposed || entries.size === 0) return;
+		const dt = clamp(finite(delta), 0, 1e3);
+		clock += dt / 1e3;
+		const actors = new Map(host.actors().map((entry) => [entry.def.id, entry]));
+		for (const [id, entry] of entries) {
+			if (!actors.has(id) || entry.go?.isDestroyed || entry.go?.scene === null) {
+				entry.root.destroy(true);
+				entries.delete(id);
+				continue;
+			};
+			if (entry.motion) {
+				const motion = entry.motion;
+				motion.elapsed = Math.min(motion.duration, motion.elapsed + dt);
+				entry.settings.progress = motion.from + (motion.to - motion.from) * (motion.duration ? motion.elapsed / motion.duration : 1);
+				if (motion.elapsed >= motion.duration) {
+					entry.motion = undefined;
+					if (motion.to === 0) entry.settings.enabled = false;
+				}
+			};
+			if (!entry.settings.enabled || !visible(entry.go)) {
+				entry.root.setVisible(false);
+				continue;
+			};
+			measure(entry, actors);
+			paint(entry);
+		}
+	};
+	const commandSingle = (name, id, value) => {
+		if (disposed) return false;
+		if (!entries.has(id)) {
+			const actor = host.actors().find((actor) => actor.def.id === id);
+			if (actor) bind(actor.def, actor.go);
+		};
+		const entry = entries.get(id);
+		if (!entry) return false;
+		const o = entry.settings;
+		if ([
+			"on",
+			"off",
+			"toggle",
+			"enable",
+			"disable"
+		].includes(name)) {
+			o.enabled = name === "toggle" ? !o.enabled : name === "on" || name === "enable";
+			if (!o.enabled) entry.motion = undefined;
+		} else if (name === "progress") {
+			const next = Number(value);
+			if (!Number.isFinite(next) || next < 0 || next > 1) throw Error("연결 진행률은 0~1 사이 숫자여야 합니다.");
+			o.progress = next;
+			entry.motion = undefined;
+		} else if (name === "extend" || name === "retract") {
+			const duration = value === undefined ? name === "extend" ? o.extendDuration : o.retractDuration : Number(value);
+			if (!Number.isFinite(duration) || duration < 0 || duration > 6e4) throw Error("연결 시간은 0~60000ms여야 합니다.");
+			if (name === "extend" && o.progress >= 1) o.progress = 0;
+			o.enabled = true;
+			entry.motion = {
+				from: o.progress,
+				to: name === "extend" ? 1 : 0,
+				elapsed: 0,
+				duration
+			};
+		} else if (name === "attachEnd" || name === "attachStart") {
+			measure(entry, new Map(host.actors().map((actor) => [actor.def.id, actor])));
+			if (!value || typeof value !== "object" || typeof value.targetId !== "string") throw Error("연결할 오브젝트를 선택하세요.");
+			const input = value;
+			if ((input.x !== undefined || input.y !== undefined) && (!Number.isFinite(input.x) || !Number.isFinite(input.y))) throw Error("부착점의 X/Y 좌표를 함께 입력하세요.");
+			const actors = new Map(host.actors().map((actor) => [actor.def.id, actor])), target = actors.get(input.targetId);
+			if (!target || !visible(target.go)) throw Error("연결할 실행 중인 오브젝트가 없습니다.");
+			const m = matrix(target), point = name === "attachEnd" ? entry.end : entry.start, world = Number.isFinite(input.x) && Number.isFinite(input.y) ? {
+				x: input.x,
+				y: input.y
+			} : point;
+			if (!m || !world) throw Error("현재 연결점을 확인할 수 없습니다.");
+			const determinant = m.a * m.d - m.b * m.c;
+			if (Math.abs(determinant) < 1e-9) throw Error("크기가 0인 오브젝트에는 연결할 수 없습니다.");
+			const shift = screenShift(target.go, camera(entry)), x = world.x - m.tx - shift.x, y = world.y - m.ty - shift.y, offsetX = (m.d * x - m.c * y) / determinant, offsetY = (m.a * y - m.b * x) / determinant;
+			if (![offsetX, offsetY].every((value) => Number.isFinite(value) && Math.abs(value) <= 1e9)) throw Error("연결점이 오브젝트에서 너무 멉니다.");
+			o[name === "attachEnd" ? "end" : "start"] = {
+				mode: "object",
+				targetId: input.targetId,
+				offsetX,
+				offsetY,
+				x: 0,
+				y: 0
+			};
+			if (name === "attachEnd") {
+				o.progress = 1;
+				entry.motion = undefined;
+			}
+		} else if (name === "release") {
+			measure(entry, new Map(host.actors().map((actor) => [actor.def.id, actor])));
+			if (entry.end) {
+				o.end = {
+					mode: "point",
+					targetId: "",
+					x: entry.end.x,
+					y: entry.end.y,
+					offsetX: 0,
+					offsetY: 0
+				};
+				o.progress = 1;
+				entry.motion = undefined;
+			}
+		} else throw Error("지원하지 않는 연결 명령입니다.");
+		update(0);
+		return true;
+	};
+	const command = (name, id, value) => {
+		if (disposed) return false;
+		if (entries.has(id)) return commandSingle(name, id, value);
+		const actors = host.actors(), owner = actors.find((actor) => actor.def.id === id);
+		if (!owner) return false;
+		if (owner.def.connection) {
+			bind(owner.def, owner.go);
+			return commandSingle(name, id, value);
+		};
+		if (owner.def.kind !== "group") return false;
+		const root = anchor(owner.go), children = [...entries.values()].filter((entry) => {
+			const seen = new Set();
+			let node = anchor(entry.go)?.parentContainer;
+			for (let depth = 0; node && depth < 64; depth++) {
+				if (seen.has(node)) return false;
+				seen.add(node);
+				if (node === root) return true;
+				node = node.parentContainer;
+			};
+			return false;
+		});
+		if (!children.length) return false;
+		const before = children.map((entry) => ({
+			entry,
+			settings: {
+				...entry.settings,
+				start: { ...entry.settings.start },
+				end: { ...entry.settings.end }
+			},
+			motion: entry.motion && { ...entry.motion }
+		}));
+		try {
+			for (const child of children) commandSingle(name, child.def.id, value);
+			return true;
+		} catch (error) {
+			for (const saved of before) {
+				saved.entry.settings = saved.settings;
+				saved.entry.motion = saved.motion;
+			};
+			update(0);
+			throw error;
+		}
+	};
+	const snapshot = () => ({
+		version: 1,
+		clock,
+		connections: [...[...entries.values()].map((entry) => ({
+			id: entry.def.id,
+			enabled: entry.settings.enabled,
+			start: { ...entry.settings.start },
+			end: { ...entry.settings.end },
+			progress: entry.settings.progress,
+			...entry.motion ? { motion: { ...entry.motion } } : {}
+		})), ...[...pending.values()].map((saved) => ({
+			...saved,
+			start: { ...saved.start },
+			end: { ...saved.end },
+			...saved.motion ? { motion: { ...saved.motion } } : {}
+		}))]
+	});
+	const restore = (value) => {
+		if (disposed || !value || typeof value !== "object") return false;
+		const input = value;
+		if (input.version !== 1 || !Number.isFinite(input.clock) || input.clock < 0 || input.clock > 0xe8d4a51000 || !Array.isArray(input.connections) || input.connections.length > 5e3) return false;
+		const ids = new Set(), validAnchor = (a) => a && [
+			"self",
+			"object",
+			"point",
+			"pointer"
+		].includes(a.mode) && typeof a.targetId === "string" && a.targetId.length <= 200 && (a.bindingKey === undefined || typeof a.bindingKey === "string" && /^\$slot:[A-Za-z][A-Za-z0-9_.-]{0,79}$/.test(a.bindingKey)) && [
+			a.x,
+			a.y,
+			a.offsetX,
+			a.offsetY
+		].every((n) => Number.isFinite(n) && Math.abs(n) <= 1e9);
+		for (const row of input.connections) {
+			if (!row || typeof row.id !== "string" || !row.id || row.id.length > 200 || ids.has(row.id) || typeof row.enabled !== "boolean" || !validAnchor(row.start) || !validAnchor(row.end) || !Number.isFinite(row.progress) || row.progress < 0 || row.progress > 1) return false;
+			ids.add(row.id);
+			if (row.motion && (![
+				row.motion.from,
+				row.motion.to,
+				row.motion.elapsed,
+				row.motion.duration
+			].every(Number.isFinite) || row.motion.from < 0 || row.motion.from > 1 || row.motion.to < 0 || row.motion.to > 1 || row.motion.duration < 0 || row.motion.duration > 6e4 || row.motion.elapsed < 0 || row.motion.elapsed > row.motion.duration)) return false;
+		};
+		clock = input.clock;
+		pending.clear();
+		for (const row of input.connections) {
+			const saved = {
+				...row,
+				start: { ...row.start },
+				end: { ...row.end },
+				...row.motion ? { motion: { ...row.motion } } : {}
+			}, entry = entries.get(row.id);
+			if (entry) load(entry, saved);
+			else pending.set(row.id, saved);
+		};
+		update(0);
+		return true;
+	};
+	const inspect = () => [...entries.values()].map((entry) => ({
+		id: entry.def.id,
+		enabled: entry.settings.enabled,
+		progress: entry.settings.progress,
+		start: entry.start && { ...entry.start },
+		end: entry.end && { ...entry.end },
+		points: entry.points.map((point) => ({ ...point })),
+		length: entry.length,
+		mode: entry.mode,
+		visible: entry.root.visible,
+		textureKey: entry.texture?.key,
+		renderPieces: entry.ropes.filter((rope) => rope.visible).length
+	}));
+	const dispose = () => {
+		if (disposed) return;
+		disposed = true;
+		for (const entry of entries.values()) entry.root.destroy(true);
+		entries.clear();
+		pending.clear();
+		for (const texture of textures.values()) if (scene.textures?.exists(texture.key)) scene.textures.remove(texture.key);
+		textures.clear();
+	};
+	return {
+		bind,
+		update,
+		command,
+		snapshot,
+		restore,
+		inspect,
+		dispose
+	};
+},function createRopePhysicsRuntime(Phaser, scene) {
+	const worlds = new Set();
+	let disposed = false;
+	const create = (config = {}) => {
+		if (disposed) throw Error("종료한 씬에는 물리 세계를 만들 수 없습니다.");
+		const M = Phaser.Physics.Matter.Matter, engine = M.Engine.create({
+			positionIterations: 10,
+			velocityIterations: 8,
+			constraintIterations: 6
+		});
+		engine.gravity.x = 0;
+		engine.gravity.y = (config.gravity ?? 980) / 1e3;
+		engine.gravity.scale = .001;
+		const entries = new Map(), ropes = new Set();
+		let accumulator = 0, clock = 0, closed = false;
+		const fixed = Math.max(1e3 / 240, Math.min(1e3 / 60, config.step ?? 1e3 / 120));
+		const finite = (n) => {
+			if (!Number.isFinite(n)) throw Error("물리 좌표와 값은 유한한 숫자여야 합니다.");
+			return n;
+		};
+		const body = (id) => {
+			const e = entries.get(id);
+			if (!e) throw Error("물리 대상이 없습니다: " + id);
+			return e.body;
+		};
+		const add = (id, shape, x, y, w, h, options = {}, go) => {
+			if (closed || entries.has(id)) throw Error("물리 대상 ID가 중복되었거나 세계가 종료됐습니다.");
+			[
+				x,
+				y,
+				w,
+				h
+			].forEach(finite);
+			if (w <= 0 || h <= 0) throw Error("충돌체 크기는 0보다 커야 합니다.");
+			const b = shape === "circle" ? M.Bodies.circle(x, y, w, {
+				...options,
+				label: id
+			}) : M.Bodies.rectangle(x, y, w, h, {
+				...options,
+				label: id
+			});
+			M.Composite.add(engine.world, b);
+			const e = {
+				body: b,
+				go,
+				kinematic: options.kinematic === true,
+				offsetX: options.offsetX ?? 0,
+				offsetY: options.offsetY ?? 0
+			};
+			entries.set(id, e);
+			if (go?.body?.enable !== undefined) go.body.enable = false;
+			return b;
+		};
+		const rope = (id, point, options = {}) => {
+			const b = body(id), target = point.bodyId ? body(point.bodyId) : undefined, p = {
+				x: finite(point.x),
+				y: finite(point.y)
+			}, min = Math.max(8, options.minLength ?? 40), max = Math.max(min, options.maxLength ?? 560), position = target ? {
+				x: target.position.x + p.x,
+				y: target.position.y + p.y
+			} : p;
+			const constraint = M.Constraint.create({
+				bodyA: target,
+				pointA: p,
+				bodyB: b,
+				pointB: {
+					x: 0,
+					y: 0
+				},
+				length: Math.max(min, Math.min(max, options.length ?? Math.hypot(b.position.x - position.x, b.position.y - position.y))),
+				stiffness: options.stiffness ?? .98,
+				damping: options.damping ?? .025
+			});
+			M.Composite.add(engine.world, constraint);
+			let active = true;
+			const handle = {
+				constraint,
+				minLength: min,
+				maxLength: max,
+				get active() {
+					return active;
+				},
+				get length() {
+					return constraint.length;
+				},
+				setLength(value) {
+					constraint.length = Math.max(min, Math.min(max, finite(value)));
+					return constraint.length;
+				},
+				anchor() {
+					return target ? {
+						x: target.position.x + p.x,
+						y: target.position.y + p.y
+					} : { ...p };
+				},
+				release() {
+					if (!active) return;
+					active = false;
+					M.Composite.remove(engine.world, constraint);
+					ropes.delete(handle);
+				},
+				update() {
+					if (!active) return;
+					const a = handle.anchor(), distance = Math.hypot(b.position.x - a.x, b.position.y - a.y), slack = options.slack !== false && distance < constraint.length - 2;
+					constraint.stiffness = slack ? 0 : options.stiffness ?? .98;
+					constraint.damping = slack ? 0 : options.damping ?? .025;
+				}
+			};
+			ropes.add(handle);
+			return handle;
+		};
+		const api = {
+			engine,
+			entries,
+			rectangle: (id, x, y, w, h, o = {}, go) => add(id, "rectangle", x, y, w, h, o, go),
+			circle: (id, x, y, r, o = {}, go) => add(id, "circle", x, y, r, r, o, go),
+			body,
+			rope,
+			remove(id) {
+				const e = entries.get(id);
+				if (!e) return false;
+				for (const r of [...ropes]) if (r.constraint.bodyA === e.body || r.constraint.bodyB === e.body) r.release();
+				M.Composite.remove(engine.world, e.body);
+				entries.delete(id);
+				return true;
+			},
+			position(id, x, y) {
+				M.Body.setPosition(body(id), {
+					x: finite(x),
+					y: finite(y)
+				});
+			},
+			velocity(id, x, y) {
+				const b = body(id);
+				if (x !== undefined && y !== undefined) M.Body.setVelocity(b, {
+					x: finite(x) / 60,
+					y: finite(y) / 60
+				});
+				return {
+					x: b.velocity.x * 60,
+					y: b.velocity.y * 60
+				};
+			},
+			accelerate(id, x, y) {
+				const b = body(id);
+				M.Body.applyForce(b, b.position, {
+					x: finite(x) * b.mass / 1e6,
+					y: finite(y) * b.mass / 1e6
+				});
+			},
+			grounded(id, extra = 5) {
+				const b = body(id), bounds = b.bounds;
+				return [...entries.values()].some((e) => e.body !== b && !e.body.isSensor && e.body.bounds.min.y >= bounds.max.y - 10 && M.Query.region([e.body], {
+					min: {
+						x: bounds.min.x + 3,
+						y: bounds.max.y - 2
+					},
+					max: {
+						x: bounds.max.x - 3,
+						y: bounds.max.y + extra
+					}
+				}).length > 0);
+			},
+			raycast(from, to, ignore = []) {
+				return M.Query.ray([...entries.entries()].filter(([id, e]) => !ignore.includes(id) && !e.body.isSensor).map(([, e]) => e.body), from, to, 1).map((hit) => hit.bodyA.label);
+			},
+			touching(id, other) {
+				return M.Query.collides(body(id), [body(other)]).length > 0;
+			},
+			step(delta, before) {
+				if (closed) return;
+				accumulator = Math.min(accumulator + Math.max(0, finite(delta)), fixed * 12);
+				while (accumulator + 1e-7 >= fixed) {
+					clock += fixed;
+					before?.(fixed / 1e3, clock);
+					for (const r of ropes) r.update();
+					M.Engine.update(engine, fixed);
+					accumulator = Math.max(0, accumulator - fixed);
+				};
+				for (const e of entries.values()) if (e.go?.active !== false) {
+					e.go?.setPosition?.(e.body.position.x + e.offsetX, e.body.position.y + e.offsetY);
+				}
+			},
+			snapshot() {
+				return {
+					version: 1,
+					clock,
+					bodies: [...entries].filter(([, e]) => !e.body.isStatic || e.kinematic).map(([id, e]) => ({
+						id,
+						x: e.body.position.x,
+						y: e.body.position.y,
+						vx: e.body.velocity.x * 60,
+						vy: e.body.velocity.y * 60,
+						angle: e.body.angle
+					}))
+				};
+			},
+			restore(value) {
+				if (value?.version !== 1 || !Array.isArray(value.bodies)) return false;
+				if (Number.isFinite(value.clock) && value.clock >= 0) clock = value.clock;
+				accumulator = 0;
+				for (const p of value.bodies) {
+					if (!entries.has(p.id) || ![
+						p.x,
+						p.y,
+						p.vx,
+						p.vy,
+						p.angle
+					].every(Number.isFinite)) continue;
+					api.position(p.id, p.x, p.y);
+					api.velocity(p.id, p.vx, p.vy);
+					M.Body.setAngle(body(p.id), p.angle);
+					const e = entries.get(p.id);
+					e.go?.setPosition?.(p.x + e.offsetX, p.y + e.offsetY);
+				};
+				return true;
+			},
+			destroy() {
+				if (closed) return;
+				closed = true;
+				for (const r of [...ropes]) r.release();
+				M.Composite.clear(engine.world, false);
+				M.Engine.clear(engine);
+				entries.clear();
+				worlds.delete(api);
+			}
+		};
+		worlds.add(api);
+		return api;
+	};
+	const destroy = () => {
+		if (disposed) return;
+		disposed = true;
+		for (const w of [...worlds]) w.destroy();
+	};
+	scene.events.once("shutdown", destroy);
+	return {
+		create,
+		destroy
+	};
+},function createProjectileGuidanceRuntime(project, scene, host) {
+	const entries = new Map(), pending = new Map(), warned = new Set();
+	let disposed = false;
+	const defaults = {
+		enabled: false,
+		mode: "homing",
+		target: "object",
+		targetId: "",
+		ownerId: "",
+		speed: 320,
+		turnRate: 360,
+		acquireRange: 800,
+		trackDurationMs: 0,
+		reacquireMs: 250,
+		startDelayMs: 0,
+		lostTarget: "reacquire",
+		stopDistance: 12,
+		arrival: "destroy",
+		returnArrival: "destroy",
+		lifetimeMs: 8e3,
+		rotateToDirection: true,
+		rotationOffset: 0,
+		targetOffsetX: 0,
+		targetOffsetY: 0,
+		onAcquire: "",
+		onArrive: "",
+		onLost: ""
+	};
+	const finite = (n, fallback = 0) => typeof n === "number" && Number.isFinite(n) ? n : fallback, copy = (value) => JSON.parse(JSON.stringify(value));
+	const anchor = (go) => go?.getData?.("forgeAnchor") ?? go;
+	const warn = (id, message) => {
+		if (!warned.has(id + message)) {
+			warned.add(id + message);
+			host.error?.(message);
+		}
+	};
+	const usable = (go) => {
+		if (!go || go.active === false || go.isDestroyed || go.scene === null) return false;
+		for (let node = anchor(go), depth = 0; node; node = node.parentContainer) {
+			if (++depth > 64 || node.active === false || node.visible === false) return false;
+		};
+		return true;
+	};
+	const live = (id, go) => {
+		if (!usable(go)) return false;
+		if (host.alive) return host.alive(id, go);
+		const hp = go.getData?.("hp");
+		return !(typeof hp === "number" && hp <= 0) && !go.getData?.("dead") && !go.getData?.("gameplayDead");
+	};
+	const matrix = (node) => {
+		try {
+			const value = node?.getWorldTransformMatrix?.();
+			if (value && [
+				"a",
+				"b",
+				"c",
+				"d",
+				"tx",
+				"ty"
+			].every((key) => Number.isFinite(value[key]))) return value;
+		} catch {
+			return;
+		};
+		if (!node || node.parentContainer) return;
+		const angle = finite(node.rotation, finite(node.angle) * Math.PI / 180), sx = finite(node.scaleX, 1), sy = finite(node.scaleY, 1);
+		return {
+			a: Math.cos(angle) * sx,
+			b: Math.sin(angle) * sx,
+			c: -Math.sin(angle) * sy,
+			d: Math.cos(angle) * sy,
+			tx: finite(node.x),
+			ty: finite(node.y)
+		};
+	};
+	const position = (go) => {
+		const m = matrix(anchor(go));
+		return m ? {
+			x: m.tx,
+			y: m.ty
+		} : undefined;
+	};
+	const local = (parent, world) => {
+		if (!parent) return world;
+		const m = matrix(parent);
+		if (!m) return;
+		const det = m.a * m.d - m.b * m.c;
+		if (Math.abs(det) < 1e-10) return;
+		const x = world.x - m.tx, y = world.y - m.ty;
+		return {
+			x: (m.d * x - m.c * y) / det,
+			y: (m.a * y - m.b * x) / det
+		};
+	};
+	const place = (entry, point) => {
+		const p = local(entry.node.parentContainer, point);
+		if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
+		entry.node.x = p.x;
+		entry.node.y = p.y;
+		return true;
+	};
+	const rotate = (entry) => {
+		if (!entry.settings.rotateToDirection) return;
+		const angle = entry.heading + entry.settings.rotationOffset * Math.PI / 180, m = entry.node.parentContainer ? matrix(entry.node.parentContainer) : undefined;
+		if (entry.node.parentContainer && !m) return;
+		const desired = m ? Math.atan2(-m.b * Math.cos(angle) + m.a * Math.sin(angle), m.d * Math.cos(angle) - m.c * Math.sin(angle)) : angle;
+		const determinant = m ? m.a * m.d - m.b * m.c : 1;
+		entry.node.rotation = desired + (determinant < 0 ? Math.PI : 0) + (finite(entry.node.scaleX, 1) < 0 ? Math.PI : 0);
+	};
+	const conflict = (object) => object.physics === "static" ? "고정 물리 오브젝트는 유도 이동을 사용할 수 없습니다." : object.gameUi?.enabled ? "게임 UI의 위치 맞춤과 유도 이동을 함께 사용할 수 없습니다." : object.motionPath?.enabled ? "이동 경로와 유도 이동이 같은 위치를 제어합니다." : object.gameplay?.agent?.enabled ? "AI 이동과 유도 이동이 같은 위치를 제어합니다." : [
+		"platformer",
+		"topdown",
+		"patrol",
+		"float"
+	].includes(object.behavior) ? "기본 이동 동작과 유도 이동이 같은 위치를 제어합니다." : object.tween === "float" || object.projectileGuidance?.rotateToDirection && (object.tween === "spin" || object.behavior === "rotate") ? "위치·회전 효과와 유도 이동이 같은 값을 바꿉니다." : "";
+	const driveIssue = (def, go, settings) => {
+		const message = conflict({
+			...def,
+			projectileGuidance: {
+				...settings,
+				enabled: true
+			}
+		});
+		if (message) return message;
+		const node = anchor(go);
+		if (node?.body && !node.body.setDirectControl) return "이 물리 방식은 유도 이동을 지원하지 않습니다.";
+		if (def.kind === "group" && host.actors().some((actor) => actor.go !== go && anchor(actor.go)?.body && (() => {
+			for (let parent = anchor(actor.go).parentContainer, depth = 0; parent && depth++ < 64; parent = parent.parentContainer) if (parent === node) return true;
+			return false;
+		})())) return "물리 자식이 있는 그룹은 유도 이동을 사용할 수 없습니다.";
+		return "";
+	};
+	const validSettings = (o) => o && typeof o.enabled === "boolean" && [
+		"homing",
+		"follow",
+		"return"
+	].includes(o.mode) && [
+		"object",
+		"nearestEnemy",
+		"pointer",
+		"owner"
+	].includes(o.target) && [
+		"straight",
+		"reacquire",
+		"stop",
+		"destroy"
+	].includes(o.lostTarget) && [
+		"stop",
+		"pass",
+		"destroy",
+		"return"
+	].includes(o.arrival) && ["stop", "destroy"].includes(o.returnArrival) && typeof o.rotateToDirection === "boolean" && [
+		"targetId",
+		"ownerId",
+		"onAcquire",
+		"onArrive",
+		"onLost"
+	].every((k) => typeof o[k] === "string" && o[k].length <= 200) && [
+		"speed",
+		"turnRate",
+		"acquireRange",
+		"stopDistance",
+		"trackDurationMs",
+		"reacquireMs",
+		"startDelayMs",
+		"lifetimeMs",
+		"rotationOffset",
+		"targetOffsetX",
+		"targetOffsetY"
+	].every((k) => Number.isFinite(o[k])) && o.speed >= 0 && o.speed <= 1e4 && o.turnRate >= 0 && o.turnRate <= 36e3 && o.acquireRange >= 0 && o.acquireRange <= 1e6 && o.stopDistance >= 0 && o.stopDistance <= 1e6 && o.reacquireMs >= 16 && o.reacquireMs <= 6e4 && [
+		"trackDurationMs",
+		"startDelayMs",
+		"lifetimeMs"
+	].every((k) => o[k] >= 0 && o[k] <= 864e5) && Math.abs(o.rotationOffset) <= 36e3 && Math.abs(o.targetOffsetX) <= 1e6 && Math.abs(o.targetOffsetY) <= 1e6;
+	const acquireBody = (entry) => {
+		if (entry.held) return;
+		entry.held = true;
+		entry.node.setData?.("forgeProjectileGuidance", true);
+		const body = entry.node.body;
+		if (body?.setDirectControl) {
+			entry.body = {
+				direct: !!body.directControl,
+				gravity: !!body.allowGravity,
+				vx: finite(body.velocity?.x),
+				vy: finite(body.velocity?.y),
+				ax: finite(body.acceleration?.x),
+				ay: finite(body.acceleration?.y)
+			};
+			body.setDirectControl(true);
+			body.setAllowGravity?.(false);
+			body.setAcceleration?.(0, 0);
+			body.setVelocity?.(0, 0);
+		}
+	};
+	const releaseBody = (entry) => {
+		if (!entry.held) return;
+		entry.held = false;
+		entry.node.setData?.("forgeProjectileGuidance", false);
+		const body = entry.node.body;
+		if (body && entry.body) {
+			body.setDirectControl?.(entry.body.direct);
+			body.setAllowGravity?.(entry.body.gravity);
+			body.setAcceleration?.(entry.body.ax, entry.body.ay);
+			body.setVelocity?.(entry.body.vx, entry.body.vy);
+		};
+		entry.body = undefined;
+	};
+	const resolveId = (id, entry) => {
+		try {
+			return host.resolveTarget?.(id, entry.settings.ownerId, entry.id) ?? id;
+		} catch {
+			return "";
+		}
+	};
+	const owner = (entry) => resolveId(entry.settings.ownerId || entry.go.getData?.("spawnOwnerId") || entry.go.getData?.("ownerId") || "", entry);
+	const emit = (entry, kind, reason, point) => {
+		const fn = entry.settings[kind];
+		if (!fn) return;
+		const at = position(entry.go) ?? {
+			x: 0,
+			y: 0
+		};
+		try {
+			host.run(fn, {
+				sourceId: entry.id,
+				ownerId: owner(entry),
+				targetId: entry.targetId,
+				x: at.x,
+				y: at.y,
+				targetX: point?.x ?? at.x,
+				targetY: point?.y ?? at.y,
+				reason,
+				phase: entry.phase
+			}, entry.id);
+		} catch (error) {
+			warn(entry.id, entry.def.name + ": 유도 이벤트 실행 실패 " + String(error));
+		}
+	};
+	const destroy = (entry) => {
+		entries.delete(entry.id);
+		releaseBody(entry);
+		entry.go.destroy?.();
+		if (entry.node !== entry.go && entry.node.active !== false && !entry.node.isDestroyed) entry.node.destroy?.();
+	};
+	const beginReturn = (entry) => {
+		entry.phase = "returning";
+		entry.returnStarted = true;
+		entry.targetId = "";
+		entry.acquired = false;
+		entry.lostNotified = false;
+		entry.arrived = false;
+		entry.searchInMs = 0;
+	};
+	const candidate = (entry, id, actors) => {
+		if (!id || id === entry.id) return;
+		const go = actors.get(id)?.go ?? host.object(id);
+		if (!live(id, go)) return;
+		const p = position(go);
+		if (!p) return;
+		return {
+			x: p.x + entry.settings.targetOffsetX,
+			y: p.y + entry.settings.targetOffsetY
+		};
+	};
+	const hostile = (entry, id, actors) => {
+		const own = owner(entry) || entry.id, relation = host.relation?.(own, id);
+		if (host.relation) return relation === "hostile" || relation === "enemy";
+		const source = actors.get(own)?.def, other = actors.get(id)?.def, from = source?.gameplay?.faction ?? source?.gameplay?.combat?.team ?? "", to = other?.gameplay?.faction ?? other?.gameplay?.combat?.team ?? "";
+		return !!from && !!to && from !== to;
+	};
+	const target = (entry, actors) => {
+		const o = entry.settings;
+		if (entry.phase === "returning") {
+			const id = owner(entry), p = candidate(entry, id, actors);
+			if (p) {
+				const changed = entry.targetId !== id;
+				entry.targetId = id;
+				if (changed || !entry.acquired) {
+					entry.acquired = true;
+					entry.lostNotified = false;
+					emit(entry, "onAcquire", "return", p);
+				}
+			};
+			return p;
+		};
+		if (o.target === "pointer") {
+			const pointer = scene.input?.activePointer;
+			if (!pointer || pointer.active === false || !Number.isFinite(pointer.x) || !Number.isFinite(pointer.y)) return;
+			const camera = scene.cameras?.main, p = camera?.getWorldPoint?.(pointer.x, pointer.y) ?? {
+				x: pointer.worldX ?? pointer.x,
+				y: pointer.worldY ?? pointer.y
+			};
+			if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
+			const point = {
+				x: p.x + o.targetOffsetX,
+				y: p.y + o.targetOffsetY
+			};
+			if (!entry.acquired) {
+				entry.targetId = "";
+				entry.acquired = true;
+				entry.lostNotified = false;
+				emit(entry, "onAcquire", "pointer", point);
+			};
+			return point;
+		};
+		if (entry.targetId) {
+			const p = candidate(entry, entry.targetId, actors);
+			if (p) return p;
+		};
+		if (entry.searchInMs > 0) return;
+		entry.searchInMs = o.reacquireMs;
+		const own = owner(entry), at = position(entry.go);
+		if (!at) return;
+		let id = o.target === "owner" ? own : o.target === "object" ? resolveId(o.targetId, entry) : "", p = id ? candidate(entry, id, actors) : undefined;
+		if (o.target === "nearestEnemy") {
+			let shortest = o.acquireRange > 0 ? o.acquireRange : Infinity;
+			for (const actor of actors.values()) {
+				if (actor.def.id === entry.id || actor.def.id === own || actor.go === entry.go || !hostile(entry, actor.def.id, actors)) continue;
+				const point = candidate(entry, actor.def.id, actors);
+				if (!point) continue;
+				const distance = Math.hypot(point.x - at.x, point.y - at.y);
+				if (distance < shortest || distance === shortest && (!id || actor.def.id < id)) {
+					shortest = distance;
+					id = actor.def.id;
+					p = point;
+				}
+			}
+		} else if (p && o.acquireRange > 0 && Math.hypot(p.x - at.x, p.y - at.y) > o.acquireRange) p = undefined;
+		if (p) {
+			entry.targetId = id;
+			entry.acquired = true;
+			entry.lostNotified = false;
+			entry.arrived = false;
+			emit(entry, "onAcquire", "acquire", p);
+		};
+		return p;
+	};
+	const lost = (entry) => {
+		if (!entry.lostNotified) {
+			entry.lostNotified = true;
+			emit(entry, "onLost", entry.acquired ? "target-unavailable" : "target-not-found");
+		};
+		entry.targetId = "";
+		entry.acquired = false;
+		entry.arrived = false;
+		if (entry.settings.lostTarget === "destroy") {
+			destroy(entry);
+			return false;
+		};
+		if (entry.settings.lostTarget === "stop") {
+			entry.phase = "lost";
+			return false;
+		};
+		if (entry.settings.lostTarget === "straight") {
+			entry.phase = "coasting";
+			return true;
+		};
+		return true;
+	};
+	const arrived = (entry, point) => {
+		if (!entry.arrived) {
+			entry.arrived = true;
+			emit(entry, "onArrive", entry.phase === "returning" ? "returned" : "arrived", point);
+		};
+		if (!entries.has(entry.id) || !usable(entry.go)) return;
+		const action = entry.phase === "returning" ? entry.settings.returnArrival : entry.settings.arrival;
+		if (action === "destroy") {
+			destroy(entry);
+			return;
+		};
+		if (action === "return") {
+			beginReturn(entry);
+			return;
+		};
+		if (action === "stop") entry.phase = "arrived";
+	};
+	const bind = (def, go) => {
+		if (disposed || !go || !def.projectileGuidance) return false;
+		const old = entries.get(def.id);
+		if (old?.go === go) return true;
+		if (old) {
+			releaseBody(old);
+			entries.delete(def.id);
+		};
+		const settings = {
+			...defaults,
+			...def.projectileGuidance
+		}, issue = settings.enabled ? driveIssue(def, go, settings) : "";
+		if (issue) {
+			warn(def.id, def.name + ": " + issue);
+			return false;
+		};
+		if (!validSettings(settings)) {
+			warn(def.id, def.name + ": 유도 이동 설정을 확인하세요.");
+			return false;
+		};
+		const node = anchor(go);
+		const m = matrix(node);
+		if (!m) return false;
+		const entry = {
+			id: def.id,
+			def,
+			go,
+			node,
+			settings,
+			playing: true,
+			ageMs: 0,
+			trackedMs: 0,
+			searchInMs: 0,
+			delayLeftMs: settings.startDelayMs,
+			heading: Math.atan2(m.b, m.a) - settings.rotationOffset * Math.PI / 180,
+			phase: "outbound",
+			targetId: "",
+			acquired: false,
+			lostNotified: false,
+			arrived: false,
+			returnStarted: false,
+			held: false
+		};
+		entries.set(def.id, entry);
+		if (settings.enabled) acquireBody(entry);
+		const saved = pending.get(def.id);
+		if (saved) {
+			load(entry, saved);
+			pending.delete(def.id);
+		};
+		return true;
+	};
+	const step = (entry, delta, actors) => {
+		entry.ageMs += delta;
+		if (entry.settings.lifetimeMs > 0 && entry.ageMs >= entry.settings.lifetimeMs) {
+			destroy(entry);
+			return;
+		};
+		if (entry.delayLeftMs > 0) {
+			const used = Math.min(entry.delayLeftMs, delta);
+			entry.delayLeftMs -= used;
+			delta -= used;
+			if (!delta) return;
+		};
+		entry.searchInMs = Math.max(0, entry.searchInMs - delta);
+		if (entry.phase === "lost" && entry.settings.mode !== "return") return;
+		if (!entry.returnStarted && (entry.phase === "outbound" || entry.settings.mode === "return" && (entry.phase === "coasting" || entry.phase === "lost"))) {
+			entry.trackedMs += delta;
+			if (entry.settings.trackDurationMs > 0 && entry.trackedMs >= entry.settings.trackDurationMs) {
+				if (entry.settings.mode === "return") beginReturn(entry);
+				else if (entry.settings.mode === "follow") {
+					entry.phase = "lost";
+					return;
+				} else entry.phase = "coasting";
+			}
+		};
+		if (entry.phase === "lost") return;
+		if (entry.phase === "arrived" && entry.settings.mode !== "follow") return;
+		if (entry.acquired && entry.targetId && entry.phase !== "coasting" && (!candidate(entry, entry.targetId, actors) || entry.phase !== "returning" && entry.settings.target === "nearestEnemy" && !hostile(entry, entry.targetId, actors))) {
+			if (!lost(entry)) return;
+		};
+		if (!entries.has(entry.id) || !entry.settings.enabled || !entry.playing) return;
+		let aim;
+		if (entry.phase !== "coasting") aim = target(entry, actors);
+		if (!entries.has(entry.id) || !usable(entry.go) || !entry.settings.enabled || !entry.playing) return;
+		if (!aim && entry.phase !== "coasting") {
+			if (entry.phase === "arrived") return;
+			if (!lost(entry)) return;
+		};
+		const initialPosition = position(entry.go);
+		if (!initialPosition) return;
+		let at = initialPosition;
+		if (entry.phase === "arrived") {
+			if (entry.settings.mode !== "follow" || !aim || Math.hypot(aim.x - at.x, aim.y - at.y) <= entry.settings.stopDistance + .5) return;
+			entry.phase = "outbound";
+			entry.arrived = false;
+		};
+		let remaining = delta;
+		while (remaining > 0 && entries.has(entry.id) && usable(entry.go)) {
+			const milliseconds = Math.min(remaining, 16), seconds = milliseconds / 1e3;
+			remaining -= milliseconds;
+			if (aim) {
+				const distance = Math.hypot(aim.x - at.x, aim.y - at.y);
+				if (distance <= entry.settings.stopDistance) {
+					arrived(entry, aim);
+					if (entry.phase !== "outbound" || entry.settings.arrival !== "pass") break;
+				};
+				const desired = Math.atan2(aim.y - at.y, aim.x - at.x), difference = Math.atan2(Math.sin(desired - entry.heading), Math.cos(desired - entry.heading)), turn = entry.settings.turnRate * Math.PI / 180 * seconds;
+				entry.heading += Math.max(-turn, Math.min(turn, difference));
+			};
+			const travel = entry.settings.speed * seconds, next = {
+				x: at.x + Math.cos(entry.heading) * travel,
+				y: at.y + Math.sin(entry.heading) * travel
+			};
+			if (aim && !entry.arrived) {
+				const dx = next.x - at.x, dy = next.y - at.y, length = dx * dx + dy * dy, t = length ? Math.max(0, Math.min(1, ((aim.x - at.x) * dx + (aim.y - at.y) * dy) / length)) : 0, nearest = {
+					x: at.x + dx * t,
+					y: at.y + dy * t
+				};
+				if (Math.hypot(aim.x - nearest.x, aim.y - nearest.y) <= entry.settings.stopDistance) {
+					const action = entry.phase === "returning" ? entry.settings.returnArrival : entry.settings.arrival;
+					if (action !== "pass") {
+						const fx = at.x - aim.x, fy = at.y - aim.y, b = 2 * (fx * dx + fy * dy), c = fx * fx + fy * fy - entry.settings.stopDistance * entry.settings.stopDistance, discriminant = b * b - 4 * length * c, hit = length && discriminant >= 0 ? Math.max(0, Math.min(1, (-b - Math.sqrt(discriminant)) / (2 * length))) : t;
+						place(entry, {
+							x: at.x + dx * hit,
+							y: at.y + dy * hit
+						});
+						rotate(entry);
+						arrived(entry, aim);
+						break;
+					};
+					arrived(entry, aim);
+				}
+			};
+			if (!place(entry, next)) {
+				warn(entry.id, entry.def.name + ": 부모 좌표를 변환할 수 없습니다.");
+				break;
+			};
+			rotate(entry);
+			at = next;
+		}
+	};
+	const update = (delta = 0) => {
+		if (disposed || !entries.size || host.paused?.()) return;
+		const dt = Math.min(1e3, Math.max(0, finite(delta)));
+		if (!dt) return;
+		const actors = new Map(host.actors().map((actor) => [actor.def.id, actor]));
+		for (const [id, entry] of entries) {
+			if (!actors.has(id) || entry.go.isDestroyed || entry.go.scene === null) {
+				releaseBody(entry);
+				entries.delete(id);
+				continue;
+			};
+			if (!entry.settings.enabled || !entry.playing || !usable(entry.go) || entry.go.getData?.("gameplayBlocked")) continue;
+			acquireBody(entry);
+			let remaining = dt;
+			while (remaining > 0 && entries.has(id) && entry.settings.enabled && entry.playing && usable(entry.go)) {
+				const chunk = Math.min(remaining, 16);
+				step(entry, chunk, actors);
+				remaining -= chunk;
+			}
+		}
+	};
+	const command = (name, id, value) => {
+		if (disposed) return false;
+		let entry = entries.get(id);
+		if (!entry) {
+			const actor = host.actors().find((actor) => actor.def.id === id);
+			if (actor) bind(actor.def, actor.go);
+			entry = entries.get(id);
+		};
+		if (!entry) return false;
+		if ([
+			"enable",
+			"on",
+			"resume",
+			"restart",
+			"return"
+		].includes(name)) {
+			const issue = driveIssue(entry.def, entry.go, entry.settings);
+			if (issue) {
+				warn(id, entry.def.name + ": " + issue);
+				return false;
+			}
+		};
+		if (name === "enable" || name === "on" || name === "resume") {
+			entry.settings.enabled = true;
+			entry.playing = true;
+			acquireBody(entry);
+		} else if (name === "disable" || name === "off") {
+			entry.settings.enabled = false;
+			releaseBody(entry);
+		} else if (name === "pause" || name === "stop") {
+			entry.playing = false;
+		} else if (name === "restart") {
+			entry.ageMs = entry.trackedMs = entry.searchInMs = 0;
+			entry.delayLeftMs = entry.settings.startDelayMs;
+			entry.phase = "outbound";
+			entry.targetId = "";
+			entry.acquired = entry.lostNotified = entry.arrived = entry.returnStarted = false;
+			entry.settings.enabled = entry.playing = true;
+			acquireBody(entry);
+		} else if (name === "return") {
+			entry.settings.enabled = entry.playing = true;
+			acquireBody(entry);
+			beginReturn(entry);
+		} else if (name === "target" || name === "retarget" || name === "owner") {
+			if (typeof value !== "string" || value.length > 200) throw Error("연결할 오브젝트 ID를 입력하세요.");
+			if (name === "owner") entry.settings.ownerId = value;
+			else {
+				entry.settings.target = "object";
+				entry.settings.targetId = value;
+				entry.phase = "outbound";
+				entry.trackedMs = 0;
+				entry.returnStarted = false;
+			};
+			entry.targetId = "";
+			entry.acquired = entry.lostNotified = entry.arrived = false;
+			entry.searchInMs = 0;
+		} else throw Error("지원하지 않는 유도 이동 명령입니다.");
+		return true;
+	};
+	const save = (entry) => ({
+		id: entry.id,
+		settings: copy(entry.settings),
+		playing: entry.playing,
+		ageMs: entry.ageMs,
+		trackedMs: entry.trackedMs,
+		searchInMs: entry.searchInMs,
+		delayLeftMs: entry.delayLeftMs,
+		heading: entry.heading,
+		phase: entry.phase,
+		targetId: entry.targetId,
+		acquired: entry.acquired,
+		lostNotified: entry.lostNotified,
+		arrived: entry.arrived,
+		returnStarted: entry.returnStarted,
+		position: position(entry.go) ?? {
+			x: 0,
+			y: 0
+		}
+	});
+	function load(entry, saved) {
+		releaseBody(entry);
+		entry.settings = copy(saved.settings);
+		for (const key of [
+			"playing",
+			"ageMs",
+			"trackedMs",
+			"searchInMs",
+			"delayLeftMs",
+			"heading",
+			"phase",
+			"targetId",
+			"acquired",
+			"lostNotified",
+			"arrived",
+			"returnStarted"
+		]) entry[key] = saved[key];
+		const issue = entry.settings.enabled ? driveIssue(entry.def, entry.go, entry.settings) : "";
+		if (issue) {
+			entry.settings.enabled = false;
+			warn(entry.id, entry.def.name + ": " + issue);
+			return;
+		};
+		place(entry, saved.position);
+		rotate(entry);
+		entry.node.body?.updateFromGameObject?.();
+		if (entry.settings.enabled) acquireBody(entry);
+	}
+	const snapshot = () => ({
+		version: 1,
+		projectiles: [...[...entries.values()].map(save), ...[...pending.values()].map(copy)]
+	});
+	const restore = (value) => {
+		if (disposed || !value || typeof value !== "object") return false;
+		const input = value;
+		if (input.version !== 1 || !Array.isArray(input.projectiles) || input.projectiles.length > 5e3) return false;
+		const ids = new Set();
+		for (const row of input.projectiles) {
+			if (!row || typeof row.id !== "string" || !row.id || row.id.length > 200 || ids.has(row.id) || !validSettings(row.settings) || ![
+				"outbound",
+				"returning",
+				"coasting",
+				"arrived",
+				"lost"
+			].includes(row.phase) || typeof row.targetId !== "string" || row.targetId.length > 200 || ![
+				"playing",
+				"acquired",
+				"lostNotified",
+				"arrived",
+				"returnStarted"
+			].every((k) => typeof row[k] === "boolean") || ![
+				"ageMs",
+				"trackedMs",
+				"searchInMs",
+				"delayLeftMs"
+			].every((k) => Number.isFinite(row[k]) && row[k] >= 0 && row[k] <= 0xe8d4a51000) || !Number.isFinite(row.heading) || !row.position || ![row.position.x, row.position.y].every((n) => Number.isFinite(n) && Math.abs(n) <= 1e9)) return false;
+			ids.add(row.id);
+		};
+		pending.clear();
+		for (const row of input.projectiles) {
+			const saved = copy(row), entry = entries.get(row.id);
+			if (entry) load(entry, saved);
+			else pending.set(row.id, saved);
+		};
+		return true;
+	};
+	const inspect = () => [...entries.values()].map((entry) => ({
+		id: entry.id,
+		enabled: entry.settings.enabled,
+		playing: entry.playing,
+		phase: entry.phase,
+		targetId: entry.targetId,
+		heading: entry.heading * 180 / Math.PI,
+		ageMs: entry.ageMs,
+		trackedMs: entry.trackedMs,
+		position: position(entry.go)
+	}));
+	const dispose = () => {
+		if (disposed) return;
+		disposed = true;
+		for (const entry of entries.values()) releaseBody(entry);
+		entries.clear();
+		pending.clear();
+		warned.clear();
+	};
+	return {
+		bind,
+		update,
+		command,
+		snapshot,
+		restore,
+		inspect,
+		isDriving: (id) => !!entries.get(id)?.held,
+		dispose
+	};
+},function createRuntimeTextureLookup(project) {
+	const registered = new Map();
+	const frameIndex = (asset, frame) => {
+		const frames = asset.atlas?.frames;
+		const named = typeof frame === "string" ? frames?.findIndex((value) => value.name === frame) : -1;
+		return named !== undefined && named >= 0 ? named : frame === "__BASE" ? 0 : Number(frame);
+	};
+	const physicalSource = (asset, frame = 0) => {
+		const frames = asset.atlas?.frames, index = frameIndex(asset, frame);
+		const area = Number.isInteger(index) && index >= 0 ? frames?.[index] : undefined;
+		return {
+			key: area?.pageId ?? asset.id,
+			frame: area ? area.pageId ? `${asset.id}:${index}` : area.name : asset.type === "image" ? "__BASE" : frame
+		};
+	};
+	const source = (asset, frame = 0) => {
+		const physical = physicalSource(asset, frame);
+		if (!registered.has(asset.id)) return physical;
+		// Native objects also use the logical texture. Later user calls to
+		// sprite.setFrame(N/name) therefore keep working after packing.
+		const area = asset.atlas?.frames[frameIndex(asset, frame)];
+		return {
+			key: asset.id,
+			frame: area?.name ?? physical.frame
+		};
+	};
+	const register = (textures) => {
+		for (const asset of project.assets) {
+			const frames = asset.atlas?.frames;
+			if (!frames?.some((frame) => frame.pageId) || textures.exists(asset.id)) continue;
+			// Texture.create([]) allocates no image or GPU texture. Frames borrow the
+			// already loaded page's TextureSource, including multi-page sheets.
+			const entries = frames.map((_frame, index) => {
+				const location = physicalSource(asset, index);
+				if (!textures.exists(location.key)) return undefined;
+				const page = textures.get(location.key);
+				return page.has(location.frame) ? page.get(location.frame) : undefined;
+			});
+			if (entries.some((frame) => !frame)) continue;
+			const alias = textures.create(asset.id, []);
+			if (!alias) continue;
+			const destroy = alias.destroy;
+			alias.destroy = function() {
+				// Only the physical page owns its GPU sources. Destroying a logical
+				// texture must not invalidate other assets on the same page.
+				this.source = [];
+				this.dataSource = [];
+				registered.delete(asset.id);
+				destroy.call(this);
+			};
+			const add = (name, physical) => {
+				if (Object.prototype.hasOwnProperty.call(alias.frames, name)) return;
+				let index = alias.source.indexOf(physical.source);
+				if (index < 0) index = alias.source.push(physical.source) - 1;
+				const frame = physical.clone();
+				frame.texture = alias;
+				frame.name = name;
+				frame.sourceIndex = index;
+				frame.source = physical.source;
+				frame.customData = physical.customData;
+				frame.customPivot = physical.customPivot;
+				frame.pivotX = physical.pivotX;
+				frame.pivotY = physical.pivotY;
+				if (frame.rotated) frame.updateUVsInverted();
+				alias.frames[name] = frame;
+				alias.frameTotal++;
+			};
+			// Reserve original names first: a named atlas may itself have numeric
+			// names. Numeric aliases must never overwrite those names.
+			frames.forEach((frame, index) => add(frame.name, entries[index]));
+			frames.forEach((_frame, index) => add(index, entries[index]));
+			add("__BASE", entries[0]);
+			alias.firstFrame = frames[0].name;
+			registered.set(asset.id, alias);
+		}
+	};
+	return {
+		source,
+		register
+	};
+},function createProjectScriptRuntime(project, ctx, Phaser, onError) {
+	const modules = new Map();
+	const cache = new Map();
+	function normalize(path) {
+		const parts = [];
+		for (const part of path.replaceAll("\\", "/").split("/")) {
+			if (!part || part === ".") continue;
+			if (part === "..") {
+				if (!parts.length) throw Error("공통 코드의 경로가 프로젝트 밖을 가리킵니다: " + path);
+				parts.pop();
+			} else parts.push(part);
+		};
+		return parts.join("/");
+	}
+	for (const script of project.scripts) {
+		if (!script.modulePath) continue;
+		const path = normalize(script.modulePath);
+		if (modules.has(path)) throw Error("공통 코드 경로가 중복됩니다: " + path);
+		modules.set(path, script);
+	};
+	function resolve(request, from = "") {
+		const parent = from.split("/").slice(0, -1).join("/");
+		const path = normalize(request.startsWith(".") ? parent + "/" + request : request);
+		const candidates = [
+			path,
+			path + ".js",
+			path + "/index.js"
+		];
+		const result = candidates.find((candidate) => modules.has(candidate));
+		if (!result) throw Error("연결된 공통 코드가 없습니다: " + request + (from ? " ← " + from : ""));
+		return result;
+	}
+	function requireModule(request, from = "") {
+		const path = resolve(request, from);
+		const found = cache.get(path);
+		if (found) return found.exports;
+		const script = modules.get(path);
+		const module = { exports: {} };
+		cache.set(path, module);
+		try {
+			new Function("require", "module", "exports", "ctx", "Phaser", script.code + "\n//# sourceURL=forge-script:///" + encodeURI(path) + "\n")((id) => requireModule(id, path), module, module.exports, ctx, Phaser);
+			return module.exports;
+		} catch (error) {
+			cache.delete(path);
+			throw Error(script.name + " [" + path + "]: " + (error instanceof Error ? error.message : String(error)));
+		}
+	}
+	return {
+		require: (path) => requireModule(path),
+		list: () => [...modules].map(([path, script]) => ({
+			id: script.id,
+			path,
+			entry: !!script.moduleEntry,
+			loaded: cache.has(path)
+		})),
+		load() {
+			for (const script of project.scripts) {
+				if (script.modulePath && !script.moduleEntry) continue;
+				try {
+					const result = script.modulePath ? requireModule(script.modulePath) : new Function("ctx", "Phaser", script.code + "\n//# sourceURL=forge-script:///" + encodeURIComponent(script.id) + ".js\n")(ctx, Phaser);
+					if (result && typeof result === "object") Object.assign(ctx.utils, result);
+				} catch (error) {
+					onError(error instanceof Error ? error.message : String(error));
+				}
+			}
+		}
+	};
+});
