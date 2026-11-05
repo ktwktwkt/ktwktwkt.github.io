@@ -1,0 +1,1496 @@
+{
+  "format": "phaser-forge-resource-files",
+  "version": 1,
+  "transport": "base64-classic-script",
+  "maximumScriptBytes": 4194304,
+  "resources": [
+    {
+      "url": "resources/r000001.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 1876112,
+      "parts": [
+        "resources/r000001.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-forest"
+      ]
+    },
+    {
+      "url": "resources/r000002.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 2091340,
+      "parts": [
+        "resources/r000002.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-candy"
+      ]
+    },
+    {
+      "url": "resources/r000003.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 2425358,
+      "parts": [
+        "resources/r000003.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-rose"
+      ]
+    },
+    {
+      "url": "resources/r000004.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 2013227,
+      "parts": [
+        "resources/r000004.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-library"
+      ]
+    },
+    {
+      "url": "resources/r000005.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 1974038,
+      "parts": [
+        "resources/r000005.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-clock"
+      ]
+    },
+    {
+      "url": "resources/r000006.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 2132317,
+      "parts": [
+        "resources/r000006.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.tiles-moon"
+      ]
+    },
+    {
+      "url": "resources/r000007.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 1612731,
+      "parts": [
+        "resources/r000007.part0001.js"
+      ],
+      "references": [
+        "asset:fable.art.ground-base-171"
+      ]
+    },
+    {
+      "url": "resources/r000008.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 13608044,
+      "parts": [
+        "resources/r000008.part0001.js",
+        "resources/r000008.part0002.js",
+        "resources/r000008.part0003.js",
+        "resources/r000008.part0004.js",
+        "resources/r000008.part0005.js"
+      ],
+      "references": [
+        "asset:fable.orchestral162.title"
+      ]
+    },
+    {
+      "url": "resources/r000009.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 11206636,
+      "parts": [
+        "resources/r000009.part0001.js",
+        "resources/r000009.part0002.js",
+        "resources/r000009.part0003.js",
+        "resources/r000009.part0004.js"
+      ],
+      "references": [
+        "asset:fable.orchestral162.field"
+      ]
+    },
+    {
+      "url": "resources/r000010.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 11206636,
+      "parts": [
+        "resources/r000010.part0001.js",
+        "resources/r000010.part0002.js",
+        "resources/r000010.part0003.js",
+        "resources/r000010.part0004.js"
+      ],
+      "references": [
+        "asset:fable.journey157.05"
+      ]
+    },
+    {
+      "url": "resources/r000011.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 10584044,
+      "parts": [
+        "resources/r000011.part0001.js",
+        "resources/r000011.part0002.js",
+        "resources/r000011.part0003.js",
+        "resources/r000011.part0004.js"
+      ],
+      "references": [
+        "asset:fable.journey157.07"
+      ]
+    },
+    {
+      "url": "resources/r000012.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 11907044,
+      "parts": [
+        "resources/r000012.part0001.js",
+        "resources/r000012.part0002.js",
+        "resources/r000012.part0003.js",
+        "resources/r000012.part0004.js"
+      ],
+      "references": [
+        "asset:fable.journey157.06"
+      ]
+    },
+    {
+      "url": "resources/r000013.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 19756844,
+      "parts": [
+        "resources/r000013.part0001.js",
+        "resources/r000013.part0002.js",
+        "resources/r000013.part0003.js",
+        "resources/r000013.part0004.js",
+        "resources/r000013.part0005.js",
+        "resources/r000013.part0006.js",
+        "resources/r000013.part0007.js"
+      ],
+      "references": [
+        "asset:fable.orchestra157.battle"
+      ]
+    },
+    {
+      "url": "resources/r000014.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 10297992,
+      "parts": [
+        "resources/r000014.part0001.js",
+        "resources/r000014.part0002.js",
+        "resources/r000014.part0003.js",
+        "resources/r000014.part0004.js"
+      ],
+      "references": [
+        "asset:fable.orchestral162.boss"
+      ]
+    },
+    {
+      "url": "resources/r000015.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 15876044,
+      "parts": [
+        "resources/r000015.part0001.js",
+        "resources/r000015.part0002.js",
+        "resources/r000015.part0003.js",
+        "resources/r000015.part0004.js",
+        "resources/r000015.part0005.js",
+        "resources/r000015.part0006.js"
+      ],
+      "references": [
+        "asset:fable.orchestral162.rest"
+      ]
+    },
+    {
+      "url": "resources/r000016.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 13138804,
+      "parts": [
+        "resources/r000016.part0001.js",
+        "resources/r000016.part0002.js",
+        "resources/r000016.part0003.js",
+        "resources/r000016.part0004.js",
+        "resources/r000016.part0005.js"
+      ],
+      "references": [
+        "asset:fable.orchestral162.result"
+      ]
+    },
+    {
+      "url": "resources/r000017.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 12394,
+      "parts": [
+        "resources/r000017.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.slash"
+      ]
+    },
+    {
+      "url": "resources/r000018.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 15920,
+      "parts": [
+        "resources/r000018.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.bow"
+      ]
+    },
+    {
+      "url": "resources/r000019.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 17684,
+      "parts": [
+        "resources/r000019.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.gun"
+      ]
+    },
+    {
+      "url": "resources/r000020.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 32678,
+      "parts": [
+        "resources/r000020.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.fire"
+      ]
+    },
+    {
+      "url": "resources/r000021.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 21212,
+      "parts": [
+        "resources/r000021.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.ice"
+      ]
+    },
+    {
+      "url": "resources/r000022.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 23858,
+      "parts": [
+        "resources/r000022.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.lightning"
+      ]
+    },
+    {
+      "url": "resources/r000023.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000023.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.wind"
+      ]
+    },
+    {
+      "url": "resources/r000024.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 75896,
+      "parts": [
+        "resources/r000024.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.arcane"
+      ]
+    },
+    {
+      "url": "resources/r000025.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 14156,
+      "parts": [
+        "resources/r000025.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.dash"
+      ]
+    },
+    {
+      "url": "resources/r000026.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 7542,
+      "parts": [
+        "resources/r000026.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.hit"
+      ]
+    },
+    {
+      "url": "resources/r000027.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 16802,
+      "parts": [
+        "resources/r000027.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.hurt"
+      ]
+    },
+    {
+      "url": "resources/r000028.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 38852,
+      "parts": [
+        "resources/r000028.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.level"
+      ]
+    },
+    {
+      "url": "resources/r000029.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 130582,
+      "parts": [
+        "resources/r000029.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.evolution"
+      ]
+    },
+    {
+      "url": "resources/r000030.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 37088,
+      "parts": [
+        "resources/r000030.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.elite"
+      ]
+    },
+    {
+      "url": "resources/r000031.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 225836,
+      "parts": [
+        "resources/r000031.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boss"
+      ]
+    },
+    {
+      "url": "resources/r000032.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 178208,
+      "parts": [
+        "resources/r000032.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.win"
+      ]
+    },
+    {
+      "url": "resources/r000033.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 68840,
+      "parts": [
+        "resources/r000033.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.lose"
+      ]
+    },
+    {
+      "url": "resources/r000034.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 4896,
+      "parts": [
+        "resources/r000034.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.ui"
+      ]
+    },
+    {
+      "url": "resources/r000035.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 33560,
+      "parts": [
+        "resources/r000035.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.greatswordSwing"
+      ]
+    },
+    {
+      "url": "resources/r000036.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 35324,
+      "parts": [
+        "resources/r000036.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.greatswordHit"
+      ]
+    },
+    {
+      "url": "resources/r000037.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 40616,
+      "parts": [
+        "resources/r000037.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.greatswordClash"
+      ]
+    },
+    {
+      "url": "resources/r000038.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 18566,
+      "parts": [
+        "resources/r000038.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.katanaSwing"
+      ]
+    },
+    {
+      "url": "resources/r000039.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 22094,
+      "parts": [
+        "resources/r000039.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.katanaHit"
+      ]
+    },
+    {
+      "url": "resources/r000040.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 33560,
+      "parts": [
+        "resources/r000040.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.katanaClash"
+      ]
+    },
+    {
+      "url": "resources/r000041.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30914,
+      "parts": [
+        "resources/r000041.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.bladeDraw"
+      ]
+    },
+    {
+      "url": "resources/r000042.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 14156,
+      "parts": [
+        "resources/r000042.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.thrustHit"
+      ]
+    },
+    {
+      "url": "resources/r000043.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 11510,
+      "parts": [
+        "resources/r000043.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.daggerHit"
+      ]
+    },
+    {
+      "url": "resources/r000044.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 48556,
+      "parts": [
+        "resources/r000044.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.chainFinish"
+      ]
+    },
+    {
+      "url": "resources/r000045.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 12394,
+      "parts": [
+        "resources/r000045.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.chargeReady"
+      ]
+    },
+    {
+      "url": "resources/r000046.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 37970,
+      "parts": [
+        "resources/r000046.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.hammerSwing"
+      ]
+    },
+    {
+      "url": "resources/r000047.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 49438,
+      "parts": [
+        "resources/r000047.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.hammerHit"
+      ]
+    },
+    {
+      "url": "resources/r000048.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 32678,
+      "parts": [
+        "resources/r000048.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.shieldBlock"
+      ]
+    },
+    {
+      "url": "resources/r000049.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 21212,
+      "parts": [
+        "resources/r000049.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.crossbow"
+      ]
+    },
+    {
+      "url": "resources/r000050.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 28268,
+      "parts": [
+        "resources/r000050.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.crossbowReload"
+      ]
+    },
+    {
+      "url": "resources/r000051.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 18566,
+      "parts": [
+        "resources/r000051.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boltHit"
+      ]
+    },
+    {
+      "url": "resources/r000052.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 10628,
+      "parts": [
+        "resources/r000052.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.gunSmg"
+      ]
+    },
+    {
+      "url": "resources/r000053.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30034,
+      "parts": [
+        "resources/r000053.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.gunShotgun"
+      ]
+    },
+    {
+      "url": "resources/r000054.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 20330,
+      "parts": [
+        "resources/r000054.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.gunRifle"
+      ]
+    },
+    {
+      "url": "resources/r000055.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000055.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.sheathClick"
+      ]
+    },
+    {
+      "url": "resources/r000056.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 19448,
+      "parts": [
+        "resources/r000056.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.whipbladeSwing"
+      ]
+    },
+    {
+      "url": "resources/r000057.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000057.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.whipbladeExtend"
+      ]
+    },
+    {
+      "url": "resources/r000058.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 20330,
+      "parts": [
+        "resources/r000058.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.chakramThrow"
+      ]
+    },
+    {
+      "url": "resources/r000059.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 12394,
+      "parts": [
+        "resources/r000059.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.chakramCatch"
+      ]
+    },
+    {
+      "url": "resources/r000060.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000060.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boomerangThrow"
+      ]
+    },
+    {
+      "url": "resources/r000061.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 12394,
+      "parts": [
+        "resources/r000061.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boomerangCatch"
+      ]
+    },
+    {
+      "url": "resources/r000062.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000062.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.warfanGust"
+      ]
+    },
+    {
+      "url": "resources/r000063.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 22976,
+      "parts": [
+        "resources/r000063.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.pipeSwing"
+      ]
+    },
+    {
+      "url": "resources/r000064.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000064.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.pipeHit"
+      ]
+    },
+    {
+      "url": "resources/r000065.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30914,
+      "parts": [
+        "resources/r000065.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.pipeClash"
+      ]
+    },
+    {
+      "url": "resources/r000066.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 29150,
+      "parts": [
+        "resources/r000066.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batSwing"
+      ]
+    },
+    {
+      "url": "resources/r000067.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 24742,
+      "parts": [
+        "resources/r000067.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batWoodHit"
+      ]
+    },
+    {
+      "url": "resources/r000068.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30034,
+      "parts": [
+        "resources/r000068.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batAlloyHit"
+      ]
+    },
+    {
+      "url": "resources/r000069.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 35324,
+      "parts": [
+        "resources/r000069.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batResonanceHit"
+      ]
+    },
+    {
+      "url": "resources/r000070.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 37970,
+      "parts": [
+        "resources/r000070.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batStarHit"
+      ]
+    },
+    {
+      "url": "resources/r000071.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 17684,
+      "parts": [
+        "resources/r000071.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.batStarReflect"
+      ]
+    },
+    {
+      "url": "resources/r000072.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000072.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.flamePunch"
+      ]
+    },
+    {
+      "url": "resources/r000073.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 21212,
+      "parts": [
+        "resources/r000073.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.flameSwing"
+      ]
+    },
+    {
+      "url": "resources/r000074.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 60902,
+      "parts": [
+        "resources/r000074.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.flameRing"
+      ]
+    },
+    {
+      "url": "resources/r000075.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 54728,
+      "parts": [
+        "resources/r000075.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.flameLine"
+      ]
+    },
+    {
+      "url": "resources/r000076.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 13274,
+      "parts": [
+        "resources/r000076.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boxingSwing"
+      ]
+    },
+    {
+      "url": "resources/r000077.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 16802,
+      "parts": [
+        "resources/r000077.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boxingHit"
+      ]
+    },
+    {
+      "url": "resources/r000078.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 18566,
+      "parts": [
+        "resources/r000078.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.boxingClash"
+      ]
+    },
+    {
+      "url": "resources/r000079.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 23858,
+      "parts": [
+        "resources/r000079.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketThrust"
+      ]
+    },
+    {
+      "url": "resources/r000080.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 32678,
+      "parts": [
+        "resources/r000080.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketIgnite"
+      ]
+    },
+    {
+      "url": "resources/r000081.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30034,
+      "parts": [
+        "resources/r000081.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketLaunch"
+      ]
+    },
+    {
+      "url": "resources/r000082.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000082.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketPunch"
+      ]
+    },
+    {
+      "url": "resources/r000083.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 27386,
+      "parts": [
+        "resources/r000083.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketClash"
+      ]
+    },
+    {
+      "url": "resources/r000084.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 45908,
+      "parts": [
+        "resources/r000084.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.rocketBlast"
+      ]
+    },
+    {
+      "url": "resources/r000085.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 24742,
+      "parts": [
+        "resources/r000085.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeSwing"
+      ]
+    },
+    {
+      "url": "resources/r000086.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 31796,
+      "parts": [
+        "resources/r000086.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeHeavySwing"
+      ]
+    },
+    {
+      "url": "resources/r000087.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 24742,
+      "parts": [
+        "resources/r000087.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeHit"
+      ]
+    },
+    {
+      "url": "resources/r000088.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 27386,
+      "parts": [
+        "resources/r000088.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeClash"
+      ]
+    },
+    {
+      "url": "resources/r000089.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000089.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeFireHit"
+      ]
+    },
+    {
+      "url": "resources/r000090.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000090.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeIceHit"
+      ]
+    },
+    {
+      "url": "resources/r000091.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 19448,
+      "parts": [
+        "resources/r000091.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeLightningHit"
+      ]
+    },
+    {
+      "url": "resources/r000092.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 37970,
+      "parts": [
+        "resources/r000092.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeFireBurst"
+      ]
+    },
+    {
+      "url": "resources/r000093.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 32678,
+      "parts": [
+        "resources/r000093.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeIceBurst"
+      ]
+    },
+    {
+      "url": "resources/r000094.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 25622,
+      "parts": [
+        "resources/r000094.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeLightningBurst"
+      ]
+    },
+    {
+      "url": "resources/r000095.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 34442,
+      "parts": [
+        "resources/r000095.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeFireCoat"
+      ]
+    },
+    {
+      "url": "resources/r000096.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 30914,
+      "parts": [
+        "resources/r000096.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeIceCoat"
+      ]
+    },
+    {
+      "url": "resources/r000097.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 23858,
+      "parts": [
+        "resources/r000097.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeLightningCoat"
+      ]
+    },
+    {
+      "url": "resources/r000098.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 40616,
+      "parts": [
+        "resources/r000098.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.spellbladeFinish"
+      ]
+    },
+    {
+      "url": "resources/r000099.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 37970,
+      "parts": [
+        "resources/r000099.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSwing"
+      ]
+    },
+    {
+      "url": "resources/r000100.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 34442,
+      "parts": [
+        "resources/r000100.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSwingLow"
+      ]
+    },
+    {
+      "url": "resources/r000101.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 26504,
+      "parts": [
+        "resources/r000101.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSwingHigh"
+      ]
+    },
+    {
+      "url": "resources/r000102.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 50318,
+      "parts": [
+        "resources/r000102.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSweep"
+      ]
+    },
+    {
+      "url": "resources/r000103.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 97066,
+      "parts": [
+        "resources/r000103.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberOrbit"
+      ]
+    },
+    {
+      "url": "resources/r000104.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 87362,
+      "parts": [
+        "resources/r000104.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSpin"
+      ]
+    },
+    {
+      "url": "resources/r000105.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 40616,
+      "parts": [
+        "resources/r000105.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberBeam"
+      ]
+    },
+    {
+      "url": "resources/r000106.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 20330,
+      "parts": [
+        "resources/r000106.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberImpact"
+      ]
+    },
+    {
+      "url": "resources/r000107.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 15040,
+      "parts": [
+        "resources/r000107.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberSharpHit"
+      ]
+    },
+    {
+      "url": "resources/r000108.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 28268,
+      "parts": [
+        "resources/r000108.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberHeavyHit"
+      ]
+    },
+    {
+      "url": "resources/r000109.wav",
+      "header": "data:audio/wav;base64,",
+      "mime": "audio/wav",
+      "bytes": 20330,
+      "parts": [
+        "resources/r000109.part0001.js"
+      ],
+      "references": [
+        "asset:fable.sfx.saberCatch"
+      ]
+    },
+    {
+      "url": "resources/r000110.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 952147,
+      "parts": [
+        "resources/r000110.part0001.js"
+      ],
+      "references": [
+        "asset:e1f4a2a1-6d37-40bc-90e7-9c583a116a3d"
+      ]
+    },
+    {
+      "url": "resources/r000111.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 121217,
+      "parts": [
+        "resources/r000111.part0001.js"
+      ],
+      "references": [
+        "asset:6fdc3461-0c6b-4baf-8551-f875c4c352fd"
+      ]
+    },
+    {
+      "url": "resources/r000112.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 11698843,
+      "parts": [
+        "resources/r000112.part0001.js",
+        "resources/r000112.part0002.js",
+        "resources/r000112.part0003.js",
+        "resources/r000112.part0004.js"
+      ],
+      "references": [
+        "atlas:__forge_page_0"
+      ]
+    },
+    {
+      "url": "resources/r000113.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 14744737,
+      "parts": [
+        "resources/r000113.part0001.js",
+        "resources/r000113.part0002.js",
+        "resources/r000113.part0003.js",
+        "resources/r000113.part0004.js",
+        "resources/r000113.part0005.js"
+      ],
+      "references": [
+        "atlas:__forge_page_1"
+      ]
+    },
+    {
+      "url": "resources/r000114.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 24246384,
+      "parts": [
+        "resources/r000114.part0001.js",
+        "resources/r000114.part0002.js",
+        "resources/r000114.part0003.js",
+        "resources/r000114.part0004.js",
+        "resources/r000114.part0005.js",
+        "resources/r000114.part0006.js",
+        "resources/r000114.part0007.js",
+        "resources/r000114.part0008.js"
+      ],
+      "references": [
+        "atlas:__forge_page_2"
+      ]
+    },
+    {
+      "url": "resources/r000115.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 24114550,
+      "parts": [
+        "resources/r000115.part0001.js",
+        "resources/r000115.part0002.js",
+        "resources/r000115.part0003.js",
+        "resources/r000115.part0004.js",
+        "resources/r000115.part0005.js",
+        "resources/r000115.part0006.js",
+        "resources/r000115.part0007.js",
+        "resources/r000115.part0008.js"
+      ],
+      "references": [
+        "atlas:__forge_page_3"
+      ]
+    },
+    {
+      "url": "resources/r000116.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 25629378,
+      "parts": [
+        "resources/r000116.part0001.js",
+        "resources/r000116.part0002.js",
+        "resources/r000116.part0003.js",
+        "resources/r000116.part0004.js",
+        "resources/r000116.part0005.js",
+        "resources/r000116.part0006.js",
+        "resources/r000116.part0007.js",
+        "resources/r000116.part0008.js",
+        "resources/r000116.part0009.js"
+      ],
+      "references": [
+        "atlas:__forge_page_4"
+      ]
+    },
+    {
+      "url": "resources/r000117.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 28057484,
+      "parts": [
+        "resources/r000117.part0001.js",
+        "resources/r000117.part0002.js",
+        "resources/r000117.part0003.js",
+        "resources/r000117.part0004.js",
+        "resources/r000117.part0005.js",
+        "resources/r000117.part0006.js",
+        "resources/r000117.part0007.js",
+        "resources/r000117.part0008.js",
+        "resources/r000117.part0009.js"
+      ],
+      "references": [
+        "atlas:__forge_page_5"
+      ]
+    },
+    {
+      "url": "resources/r000118.png",
+      "header": "data:image/png;base64,",
+      "mime": "image/png",
+      "bytes": 3928326,
+      "parts": [
+        "resources/r000118.part0001.js",
+        "resources/r000118.part0002.js"
+      ],
+      "references": [
+        "atlas:__forge_page_6"
+      ]
+    }
+  ]
+}

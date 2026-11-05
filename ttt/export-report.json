@@ -1,0 +1,17 @@
+{
+  "format": "phaser-forge-game",
+  "engine": "4.2.1",
+  "codeObfuscation": "none",
+  "includeSource": true,
+  "atlas": true,
+  "resources": {
+    "mode": "split-data-scripts",
+    "resources": 118,
+    "references": 118,
+    "deduplicatedReferences": 0,
+    "dataBytes": 268384893,
+    "chunkFiles": 190,
+    "maximumScriptBytes": 4194113,
+    "manifest": "resource-manifest.json"
+  }
+}

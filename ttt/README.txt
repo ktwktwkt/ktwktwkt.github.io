@@ -1,0 +1,9 @@
+자정의 숲
+Phaser 4.2.1 · Phaser Forge
+
+실행: index.html을 브라우저에서 열어 주세요.
+배포: 폴더 전체를 정적 호스팅에 업로드하세요. 인터넷에서 엔진을 받지 않습니다.
+편집: project.forge.json을 Phaser Forge에서 열어 주세요.
+
+LICENSE-phaser.txt와 THIRD-PARTY-NOTICES.txt의 저작권·라이선스 고지를 유지하세요. 게임 화면에 표시할 필요는 없습니다.
+공식 예제의 이미지·음원은 코드의 MIT가 적용되지 않으므로 상업·광고 게임에 사용하려면 사용 가능한 자료로 교체하세요.
